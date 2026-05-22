@@ -1,0 +1,8 @@
+# Crontab para Light Manager
+# Localizacao sugerida: /etc/crontabs/bruno (ou rodar crontab -e)
+
+# 1. Gerar relatorio diario de consumo (Todo dia as 23:55)
+55 23 * * * /home/bruno/Documentos/4_HOMELAB/9_LIGHT_MANAGER/reports/generate_daily.sh >> /home/bruno/Documentos/4_HOMELAB/9_LIGHT_MANAGER/logs/cron.log 2>&1
+
+# 2. Backup semanal para Cloudflare R2 (Todo domingo as 03:00 da manha)
+00 03 * * 0 /home/bruno/Documentos/4_HOMELAB/9_LIGHT_MANAGER/scripts/backup_r2.sh >> /home/bruno/Documentos/4_HOMELAB/9_LIGHT_MANAGER/logs/backup.log 2>&1

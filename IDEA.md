@@ -42,3 +42,4 @@ Este repositoio se destina a criar uma solução caseira para o controle de ilum
 ## Premissas
 	Minimalismo no gasto de RAM
 	Verbosidade (Log e telegram)
+	Crie .env e variáveis de ambiente

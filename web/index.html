@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Light Manager - Painel</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>💡 Light Manager</h1>
+            <div id="sun-info" class="sun-card">
+                Carregando dados do sol...
+            </div>
+        </header>
+
+        <section class="controls">
+            <h2>Controle em Tempo Real</h2>
+            <div id="light-cards" class="grid">
+                <!-- Cards de luz serão inseridos aqui -->
+            </div>
+        </section>
+
+        <section class="stats">
+            <h2>Histórico de Uso (Últimos 7 dias)</h2>
+            <canvas id="usageChart"></canvas>
+        </section>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
