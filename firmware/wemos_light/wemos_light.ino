@@ -7,11 +7,11 @@ const char* ssid = "quarto";
 const char* password = "veracruz";
 
 // Configuração de IP Estático
-IPAddress local_IP(192.168.1.111);
-IPAddress gateway(192.168.1.1);
+IPAddress local_IP(192, 168, 1, 111);
+IPAddress gateway(192, 168, 1, 1);
 IPAddress subnet(255, 255, 255, 0);
-IPAddress primaryDNS(192.168.1.1);   // Geralmente o roteador
-IPAddress secondaryDNS(8, 8, 8, 8); // Google DNS fallback
+IPAddress primaryDNS(192, 168, 1, 7);   // unbound localserver
+IPAddress secondaryDNS(1, 1, 1, 1); // Cloudflare fallback
 
 // Configurações de MQTT
 const char* mqtt_server = "192.168.1.7";
