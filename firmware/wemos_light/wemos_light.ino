@@ -11,12 +11,16 @@ const int mqtt_port = 1883;
 const char* mqtt_user = "bruno";
 const char* mqtt_password = "blurbang";
 
-// ATENÇÃO: Ajuste o tópico base para cada Wemos (Ex: home/outdoor/frente ou home/outdoor/fundos)
-const char* base_topic = "home/outdoor/frente"; 
-String topic_set = String(base_topic) + "/set";
-String topic_state = String(base_topic) + "/state";
+// Definições de Tópicos e Pinos
+const char* set_frente = "home/outdoor/frente/set";
+const char* state_frente = "home/outdoor/frente/state";
+const int pinFrente = D1; 
 
-const int relayPin = D1; // Pino do relé
+const char* set_fundos = "home/outdoor/fundos/set";
+const char* state_fundos = "home/outdoor/fundos/state";
+const int pinFundos = D2;
+
+const char* status_topic = "home/outdoor/status";
 
 WiFiClient espClient;
 PubSubClient client(espClient);
@@ -33,7 +37,8 @@ void setup_wifi() {
     delay(500);
     Serial.print(".");
   }
-  Serial.println("\nWiFi conectado. IP: ");
+  Serial.println("
+WiFi conectado. IP: ");
   Serial.println(WiFi.localIP());
 }
 
@@ -41,15 +46,29 @@ void callback(char* topic, byte* payload, unsigned int length) {
   String messageTemp;
   for (int i = 0; i < length; i++) messageTemp += (char)payload[i];
   
-  if (String(topic) == topic_set) {
+  // Controle Frente (Canal 1)
+  if (String(topic) == set_frente) {
     if (messageTemp == "ON") {
-      digitalWrite(relayPin, HIGH); // Ajuste HIGH/LOW conforme modulo rele
-      client.publish(topic_state.c_str(), "ON");
-      Serial.println("Luz LIGADA");
+      digitalWrite(pinFrente, HIGH);
+      client.publish(state_frente, "ON");
+      Serial.println("Frente LIGADA");
     } else if (messageTemp == "OFF") {
-      digitalWrite(relayPin, LOW);
-      client.publish(topic_state.c_str(), "OFF");
-      Serial.println("Luz DESLIGADA");
+      digitalWrite(pinFrente, LOW);
+      client.publish(state_frente, "OFF");
+      Serial.println("Frente DESLIGADA");
+    }
+  }
+  
+  // Controle Fundos (Canal 2)
+  else if (String(topic) == set_fundos) {
+    if (messageTemp == "ON") {
+      digitalWrite(pinFundos, HIGH);
+      client.publish(state_fundos, "ON");
+      Serial.println("Fundos LIGADO");
+    } else if (messageTemp == "OFF") {
+      digitalWrite(pinFundos, LOW);
+      client.publish(state_fundos, "OFF");
+      Serial.println("Fundos DESLIGADO");
     }
   }
 }
@@ -57,13 +76,13 @@ void callback(char* topic, byte* payload, unsigned int length) {
 void reconnect() {
   while (!client.connected()) {
     Serial.print("Tentando MQTT...");
-    // Nome unico do client (pode concatenar com um ID se houver varios)
     String clientId = "WemosClient-";
     clientId += String(random(0xffff), HEX);
     
     if (client.connect(clientId.c_str(), mqtt_user, mqtt_password)) {
       Serial.println("Conectado");
-      client.subscribe(topic_set.c_str());
+      client.subscribe(set_frente);
+      client.subscribe(set_fundos);
     } else {
       Serial.print("Falhou, rc=");
       Serial.print(client.state());
@@ -75,8 +94,10 @@ void reconnect() {
 
 void setup() {
   Serial.begin(115200);
-  pinMode(relayPin, OUTPUT);
-  digitalWrite(relayPin, LOW); 
+  pinMode(pinFrente, OUTPUT);
+  digitalWrite(pinFrente, LOW); 
+  pinMode(pinFundos, OUTPUT);
+  digitalWrite(pinFundos, LOW); 
   setup_wifi();
   client.setServer(mqtt_server, mqtt_port);
   client.setCallback(callback);
@@ -91,7 +112,6 @@ void loop() {
   if (now - lastMsg > 60000) {
     lastMsg = now;
     
-    // Construir payload (JSON simples)
     int rssi = WiFi.RSSI();
     String quality;
     if (rssi > -50) quality = "Excellent";
@@ -100,12 +120,13 @@ void loop() {
     else quality = "Poor";
 
     String payload = "{";
-    payload += "\"status\": \"online\",";
-    payload += "\"rssi\": " + String(rssi) + ",";
-    payload += "\"signal_quality\": \"" + quality + "\",";
-    payload += "\"ip\": \"" + WiFi.localIP().toString() + "\"";
+    payload += ""status": "online",";
+    payload += ""frente": "" + String(digitalRead(pinFrente) ? "ON" : "OFF") + "",";
+    payload += ""fundos": "" + String(digitalRead(pinFundos) ? "ON" : "OFF") + "",";
+    payload += ""rssi": " + String(rssi) + ",";
+    payload += ""ip": "" + WiFi.localIP().toString() + """;
     payload += "}";
     
-    client.publish((String(base_topic) + "/status").c_str(), payload.c_str());
+    client.publish(status_topic, payload.c_str());
   }
 }
