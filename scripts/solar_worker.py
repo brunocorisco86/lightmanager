@@ -33,27 +33,30 @@ def get_db_conn():
     return psycopg2.connect(
         host=os.getenv("POSTGRES_HOST", "localhost"),
         database=os.getenv("POSTGRES_DB", "light_manager"),
-        user=os.getenv("POSTGRES_USER", "postgres"),
-        password=os.getenv("POSTGRES_PASSWORD", "secret")
+        user=os.getenv("POSTGRES_USER", "brunoconter"),
+        password=os.getenv("POSTGRES_PASSWORD", "blurbang")
     )
 
-def log_event_to_db(topic, state):
-    """Salva um evento de estado no banco de dados."""
+def log_event_to_db(topic, state, source="mqtt_capture"):
+    """Salva um evento de estado no banco de dados com fonte e timestamp correto."""
     try:
         conn = get_db_conn()
         cur = conn.cursor()
         base_topic = topic.replace("/state", "").replace("/set", "")
+        
+        # Timestamp atual em GMT-3
+        now_br = datetime.now(BR_TZ)
         
         cur.execute("SELECT id FROM light_points WHERE mqtt_topic = %s", (base_topic,))
         res = cur.fetchone()
         if res:
             point_id = res[0]
             cur.execute(
-                "INSERT INTO light_events (point_id, event_type) VALUES (%s, %s)",
-                (point_id, state)
+                "INSERT INTO light_events (point_id, event_type, source, timestamp) VALUES (%s, %s, %s, %s)",
+                (point_id, state, source, now_br)
             )
             conn.commit()
-            logging.info(f"💾 Registrado no DB: {base_topic} -> {state}")
+            logging.info(f"💾 Registrado no DB [{source}]: {base_topic} -> {state}")
         cur.close()
         conn.close()
     except Exception as e:
@@ -61,13 +64,17 @@ def log_event_to_db(topic, state):
 
 def on_connect(client, userdata, flags, rc, properties):
     logging.info(f"Conectado ao Broker com resultado: {rc}")
+    # Inscreve para capturar mudanças de estado de qualquer dispositivo
     client.subscribe("home/outdoor/+/state")
 
 def on_message(client, userdata, msg):
     topic = msg.topic.replace("/state", "")
     state = msg.payload.decode()
-    current_states[topic] = state
-    log_event_to_db(topic, state)
+    
+    # Se o estado mudou em relação ao que temos em memória, logamos como captura MQTT
+    if current_states.get(topic) != state:
+        current_states[topic] = state
+        log_event_to_db(topic, state, source="mqtt_capture")
 
 def fetch_sun_data_with_retry(max_retries=5):
     url = f"https://api.sunrise-sunset.org/json?lat={LAT}&lng={LONG}&formatted=0"
@@ -110,11 +117,11 @@ def run_automation_cycle(client):
     current_time_str = now_br.strftime("%H:%M")
     current_hour = now_br.hour
 
-    # 1. Registro Horário (Snapshot)
+    # 1. Registro Horário (Snapshot) - Fonte: "hourly_snapshot"
     if current_hour != last_hour_logged:
         logging.info(f"⏰ Verificação Horária: {current_hour}:00")
         for topic, state in current_states.items():
-            log_event_to_db(topic, state)
+            log_event_to_db(topic, state, source="hourly_snapshot")
         last_hour_logged = current_hour
 
     # 2. Lógica Solar
@@ -127,17 +134,19 @@ def run_automation_cycle(client):
         conn.close()
         
         for topic, off_on, off_off in points:
-            # target_on é sunset + offset
             target_on = (sunset_br + timedelta(minutes=off_on)).strftime("%H:%M")
-            # target_off é sunrise + offset
             target_off = (sunrise_br + timedelta(minutes=off_off)).strftime("%H:%M")
 
             if current_time_str == target_on:
                 logging.info(f"🌑 Gatilho Solar: LIGANDO {topic}")
                 client.publish(f"{topic}/set", "ON")
+                # Logamos aqui com fonte "solar_trigger"
+                log_event_to_db(topic, "ON", source="solar_trigger")
             elif current_time_str == target_off:
                 logging.info(f"🌅 Gatilho Solar: DESLIGANDO {topic}")
                 client.publish(f"{topic}/set", "OFF")
+                # Logamos aqui com fonte "solar_trigger"
+                log_event_to_db(topic, "OFF", source="solar_trigger")
     except Exception as e:
         logging.error(f"Erro no ciclo: {e}")
 
