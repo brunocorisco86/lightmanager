@@ -6,6 +6,13 @@
 const char* ssid = "quarto";
 const char* password = "veracruz";
 
+// Configuração de IP Estático
+IPAddress local_IP(192.168.1.111);
+IPAddress gateway(192.168.1.1);
+IPAddress subnet(255, 255, 255, 0);
+IPAddress primaryDNS(192.168.1.1);   // Geralmente o roteador
+IPAddress secondaryDNS(8, 8, 8, 8); // Google DNS fallback
+
 // Configurações de MQTT
 const char* mqtt_server = "192.168.1.7";
 const int mqtt_port = 1883;
@@ -64,7 +71,14 @@ bool isNightTime() {
 void setup_wifi() {
   if (WiFi.status() == WL_CONNECTED) return;
   
-  Serial.print("\nConectando a ");
+  Serial.print("\nConfigurando IP Estatico: ");
+  Serial.println(local_IP);
+
+  if (!WiFi.config(local_IP, gateway, subnet, primaryDNS, secondaryDNS)) {
+    Serial.println("Falha ao configurar IP Estatico");
+  }
+
+  Serial.print("Conectando a ");
   Serial.println(ssid);
   WiFi.mode(WIFI_STA);
   WiFi.begin(ssid, password);
