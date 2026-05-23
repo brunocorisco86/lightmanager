@@ -1,8 +1,21 @@
 # Crontab para Light Manager
-# Localizacao sugerida: /etc/crontabs/bruno (ou rodar crontab -e)
+# Diretorio do Projeto: /home/bruno/lightmanager
 
-# 1. Gerar relatorio diario de consumo (Todo dia as 23:55)
-55 23 * * * /home/bruno/Documentos/4_HOMELAB/9_LIGHT_MANAGER/reports/generate_daily.sh >> /home/bruno/Documentos/4_HOMELAB/9_LIGHT_MANAGER/logs/cron.log 2>&1
+# --- PROCESSOS PERSISTENTES (REBOOT) ---
 
-# 2. Backup semanal para Cloudflare R2 (Todo domingo as 03:00 da manha)
-00 03 * * 0 /home/bruno/Documentos/4_HOMELAB/9_LIGHT_MANAGER/scripts/backup_r2.sh >> /home/bruno/Documentos/4_HOMELAB/9_LIGHT_MANAGER/logs/backup.log 2>&1
+# 1. Web API (Porta 8000)
+@reboot cd /home/bruno/lightmanager && /home/bruno/lightmanager/.venv/bin/python3 web_api/main.py >> /home/bruno/lightmanager/logs/api.log 2>&1
+
+# 2. Solar Worker & Event Logger
+@reboot cd /home/bruno/lightmanager && /home/bruno/lightmanager/.venv/bin/python3 scripts/solar_worker.py >> /home/bruno/lightmanager/logs/solar.log 2>&1
+
+# 3. Telegram Bot
+@reboot cd /home/bruno/lightmanager && /home/bruno/lightmanager/.venv/bin/python3 bot/bot.py >> /home/bruno/lightmanager/logs/bot.log 2>&1
+
+# --- TAREFAS AGENDADAS ---
+
+# 4. Gerar relatorio diario de consumo (Todo dia as 23:55)
+55 23 * * * cd /home/bruno/lightmanager && /bin/bash reports/generate_daily.sh >> /home/bruno/lightmanager/logs/cron.log 2>&1
+
+# 5. Backup semanal para Cloudflare R2 (Todo domingo as 03:00 da manha)
+00 03 * * 0 cd /home/bruno/lightmanager && /bin/bash scripts/backup_r2.sh >> /home/bruno/lightmanager/logs/backup.log 2>&1
