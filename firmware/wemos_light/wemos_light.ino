@@ -32,6 +32,7 @@ const char* set_fundos = "home/outdoor/fundos/set";
 const char* state_fundos = "home/outdoor/fundos/state";
 const int pinFundos = D2;
 
+const char* system_reboot = "home/outdoor/system/reboot";
 const char* status_topic = "home/outdoor/status";
 
 WiFiClient espClient;
@@ -118,6 +119,13 @@ void callback(char* topic, byte* payload, unsigned int length) {
       client.publish(state_fundos, "OFF", true);
     }
   }
+  else if (String(topic) == system_reboot) {
+    if (messageTemp == "REBOOT") {
+      Serial.println("Comando REBOOT recebido via MQTT!");
+      delay(500);
+      ESP.restart();
+    }
+  }
 }
 
 boolean reconnect() {
@@ -128,6 +136,7 @@ boolean reconnect() {
     Serial.println("CONECTADO!");
     client.subscribe(set_frente);
     client.subscribe(set_fundos);
+    client.subscribe(system_reboot);
     // Publica estado atual ao reconectar para sincronizar site
     client.publish(state_frente, (digitalRead(pinFrente) == RELAY_ON ? "ON" : "OFF"), true);
     client.publish(state_fundos, (digitalRead(pinFundos) == RELAY_ON ? "ON" : "OFF"), true);
