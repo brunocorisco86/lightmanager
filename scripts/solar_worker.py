@@ -30,12 +30,16 @@ current_states = {}
 last_hour_logged = -1
 
 def get_db_conn():
-    return psycopg2.connect(
+    conn = psycopg2.connect(
         host=os.getenv("POSTGRES_HOST", "localhost"),
         database=os.getenv("POSTGRES_DB", "light_manager"),
         user=os.getenv("POSTGRES_USER", "brunoconter"),
         password=os.getenv("POSTGRES_PASSWORD", "blurbang")
     )
+    # Garante que a sessão do banco use o fuso horário correto
+    with conn.cursor() as cur:
+        cur.execute("SET timezone TO 'America/Sao_Paulo';")
+    return conn
 
 def log_event_to_db(topic, state, source="mqtt_capture"):
     """Salva um evento de estado no banco de dados com fonte e timestamp correto."""
@@ -44,7 +48,7 @@ def log_event_to_db(topic, state, source="mqtt_capture"):
         cur = conn.cursor()
         base_topic = topic.replace("/state", "").replace("/set", "")
         
-        # Timestamp atual em GMT-3
+        # Timestamp atual em GMT-3 (Aware object)
         now_br = datetime.now(BR_TZ)
         
         cur.execute("SELECT id FROM light_points WHERE mqtt_topic = %s", (base_topic,))
@@ -64,14 +68,12 @@ def log_event_to_db(topic, state, source="mqtt_capture"):
 
 def on_connect(client, userdata, flags, rc, properties):
     logging.info(f"Conectado ao Broker com resultado: {rc}")
-    # Inscreve para capturar mudanças de estado de qualquer dispositivo
     client.subscribe("home/outdoor/+/state")
 
 def on_message(client, userdata, msg):
     topic = msg.topic.replace("/state", "")
     state = msg.payload.decode()
     
-    # Se o estado mudou em relação ao que temos em memória, logamos como captura MQTT
     if current_states.get(topic) != state:
         current_states[topic] = state
         log_event_to_db(topic, state, source="mqtt_capture")
@@ -105,11 +107,9 @@ def run_automation_cycle(client):
     sun_results = get_today_sun_data()
     if not sun_results: return
 
-    # API retorna UTC
     sunrise_utc = datetime.fromisoformat(sun_results["sunrise"])
     sunset_utc = datetime.fromisoformat(sun_results["sunset"])
     
-    # Converte tudo para o fuso do Brasil (GMT-3)
     now_br = datetime.now(BR_TZ)
     sunrise_br = sunrise_utc.astimezone(BR_TZ)
     sunset_br = sunset_utc.astimezone(BR_TZ)
@@ -117,14 +117,12 @@ def run_automation_cycle(client):
     current_time_str = now_br.strftime("%H:%M")
     current_hour = now_br.hour
 
-    # 1. Registro Horário (Snapshot) - Fonte: "hourly_snapshot"
     if current_hour != last_hour_logged:
         logging.info(f"⏰ Verificação Horária: {current_hour}:00")
         for topic, state in current_states.items():
             log_event_to_db(topic, state, source="hourly_snapshot")
         last_hour_logged = current_hour
 
-    # 2. Lógica Solar
     try:
         conn = get_db_conn()
         cur = conn.cursor()
@@ -140,12 +138,10 @@ def run_automation_cycle(client):
             if current_time_str == target_on:
                 logging.info(f"🌑 Gatilho Solar: LIGANDO {topic}")
                 client.publish(f"{topic}/set", "ON")
-                # Logamos aqui com fonte "solar_trigger"
                 log_event_to_db(topic, "ON", source="solar_trigger")
             elif current_time_str == target_off:
                 logging.info(f"🌅 Gatilho Solar: DESLIGANDO {topic}")
                 client.publish(f"{topic}/set", "OFF")
-                # Logamos aqui com fonte "solar_trigger"
                 log_event_to_db(topic, "OFF", source="solar_trigger")
     except Exception as e:
         logging.error(f"Erro no ciclo: {e}")
