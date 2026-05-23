@@ -1,21 +1,29 @@
 # Crontab para Light Manager
 # Diretorio do Projeto: /home/bruno/lightmanager
 
+# --- MANUTENÇÃO DO SISTEMA ---
+
+# 0. Garante permissões do Mosquitto no Boot
+@reboot sudo chown mosquitto:mosquitto /etc/mosquitto/passwd && sudo chmod 600 /etc/mosquitto/passwd && sudo mkdir -p /var/log/mosquitto && sudo chown mosquitto:mosquitto /var/log/mosquitto
+
+# 1. Watchdog: Garante que o Mosquitto esteja sempre de pé (a cada 5 min)
+*/5 * * * * pgrep -x mosquitto > /dev/null || sudo rc-service mosquitto start
+
 # --- PROCESSOS PERSISTENTES (REBOOT COM DELAY PARA ESTABILIDADE) ---
 
-# 1. Web API (Espera 10s)
-@reboot sleep 10 && cd /home/bruno/lightmanager && /home/bruno/lightmanager/.venv/bin/python3 web_api/main.py >> /home/bruno/lightmanager/logs/api.log 2>&1
+# 2. Web API (Espera 15s)
+@reboot sleep 15 && cd /home/bruno/lightmanager && /home/bruno/lightmanager/.venv/bin/python3 web_api/main.py >> /home/bruno/lightmanager/logs/api.log 2>&1
 
-# 2. Solar Worker & Event Logger (Espera 20s)
-@reboot sleep 20 && cd /home/bruno/lightmanager && /home/bruno/lightmanager/.venv/bin/python3 scripts/solar_worker.py >> /home/bruno/lightmanager/logs/solar.log 2>&1
+# 3. Solar Worker & Event Logger (Espera 25s)
+@reboot sleep 25 && cd /home/bruno/lightmanager && /home/bruno/lightmanager/.venv/bin/python3 scripts/solar_worker.py >> /home/bruno/lightmanager/logs/solar.log 2>&1
 
-# 3. Telegram Bot (Espera 30s)
-@reboot sleep 30 && cd /home/bruno/lightmanager && /home/bruno/lightmanager/.venv/bin/python3 bot/bot.py >> /home/bruno/lightmanager/logs/bot.log 2>&1
+# 4. Telegram Bot (Espera 35s)
+@reboot sleep 35 && cd /home/bruno/lightmanager && /home/bruno/lightmanager/.venv/bin/python3 bot/bot.py >> /home/bruno/lightmanager/logs/bot.log 2>&1
 
 # --- TAREFAS AGENDADAS ---
 
-# 4. Gerar relatorio diario de consumo (Todo dia as 23:55)
+# 5. Gerar relatorio diario de consumo (Todo dia as 23:55)
 55 23 * * * cd /home/bruno/lightmanager && /bin/bash reports/generate_daily.sh >> /home/bruno/lightmanager/logs/cron.log 2>&1
 
-# 5. Backup semanal para Cloudflare R2 (Todo domingo as 03:00 da manha)
+# 6. Backup semanal para Cloudflare R2 (Todo domingo as 03:00 da manha)
 00 03 * * 0 cd /home/bruno/lightmanager && /bin/bash scripts/backup_r2.sh >> /home/bruno/lightmanager/logs/backup.log 2>&1
