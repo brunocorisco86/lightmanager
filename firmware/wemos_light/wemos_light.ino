@@ -32,6 +32,7 @@ PubSubClient client(espClient);
 
 unsigned long lastMsg = 0;
 unsigned long lastReconnectAttempt = 0;
+unsigned long lastHealthCheck = 0;
 
 void setup_time() {
   configTime(-3 * 3600, 0, "pool.ntp.org", "time.nist.gov");
@@ -147,15 +148,35 @@ void setup() {
 }
 
 void loop() {
+  unsigned long now = millis();
+
   // 1. Mantém Wi-Fi vivo
   if (WiFi.status() != WL_CONNECTED) {
     setup_wifi();
   }
 
-  // 2. Mantém MQTT vivo (tentativa não-bloqueante a cada 5 segundos)
+  // 2. Política de Verificação de Conexão (Broker)
   if (WiFi.status() == WL_CONNECTED) {
+    
+    // Check de Saúde a cada 5 minutos (Força reconexão se houver dúvida)
+    if (now - lastHealthCheck > 300000) {
+      lastHealthCheck = now;
+      Serial.println("\n[HealthCheck] Verificando conexao com Broker...");
+      if (!client.connected()) {
+        Serial.println("[HealthCheck] Broker offline. Reiniciando tentativa...");
+      } else {
+        // Ping de teste para o Broker
+        if (!client.publish("home/outdoor/heartbeat", "check")) {
+          Serial.println("[HealthCheck] Falha no ping. Forcando reconexao...");
+          client.disconnect();
+        } else {
+          Serial.println("[HealthCheck] Broker OK.");
+        }
+      }
+    }
+
+    // Tentativa não-bloqueante a cada 5 segundos se estiver desconectado
     if (!client.connected()) {
-      unsigned long now = millis();
       if (now - lastReconnectAttempt > 5000) {
         lastReconnectAttempt = now;
         if (reconnect()) {
@@ -168,12 +189,10 @@ void loop() {
   }
 
   // 3. Heartbeat e Status (a cada 60s)
-  unsigned long now = millis();
   if (now - lastMsg > 60000) {
     lastMsg = now;
     
     // Fallback de Segurança: Se o NTP sincronizou e virou dia, garante desligamento
-    // (Útil caso o broker caia e o solar_worker não mande o comando)
     if (WiFi.status() == WL_CONNECTED && !isNightTime() && time(nullptr) > 1000000) {
        if (digitalRead(pinFrente) == RELAY_ON) digitalWrite(pinFrente, RELAY_OFF);
        if (digitalRead(pinFundos) == RELAY_ON) digitalWrite(pinFundos, RELAY_OFF);
