@@ -1,26 +1,28 @@
 # Stack do Sistema - Light Manager
 
 ## Arquitetura e Hardware
-- **Cérebro:** Raspberry Pi 3B
-- **SO Principal:** Alpine Linux (escolhido por seu minimalismo, usando musl e BusyBox).
-- **Atuadores:** Wemos D1 (ESP8266) com módulos Relé.
+- **Cérebro:** Raspberry Pi 3B.
+- **SO Principal:** Alpine Linux (escolhido por seu minimalismo, focado em rodar na RAM).
+- **Atuadores:** Wemos D1 R1 (ESP8266) com Relé de 2 canais (Active Low).
 
 ## Software e Comunicação
-- **Broker MQTT:** Eclipse Mosquitto (Instalado de forma nativa no Alpine via `apk` para máxima economia de RAM, sem uso de Docker para este serviço).
-- **Protocolo IoT:** MQTT (Publisher/Subscriber).
+- **Broker MQTT:** Eclipse Mosquitto 2.0+ (Instalação nativa via `apk`).
+- **Protocolo IoT:** MQTT com autenticação por senha e persistência local `/var/lib/mosquitto/`.
+- **DNS/Rede:** DNS local via Unbound (opcional) e IP Estático configurado no firmware.
 
 ## Persistência de Dados
-- **Banco de Dados:** PostgreSQL 15 (Rodando via Docker).
-- **Esquema Inicial:** Duas tabelas principais (`light_points` para configurações de hardware e auto_mode; `light_events` para o registro temporal da iluminação).
+- **Banco de Dados:** PostgreSQL 15+ (Rodando via Docker).
+- **Tipagem Temporal:** Uso de `TIMESTAMPTZ` para garantir integridade de fuso horário (GMT-3).
+- **Esquema:** Tabelas `light_points` e `light_events` com metadados de fonte (`source`).
 
-## Lógica, Interface e Automação
-Toda a lógica está contida no ambiente virtual Python (`.venv`):
-1. **Bot do Telegram (`bot.py`):** Feito com `aiogram` assíncrono. Interface de linha de comando remota para gerenciar o sistema e checar a saúde (`psutil`).
-2. **Web API (`main.py`):** Feito com `FastAPI`. Servidor estático e de endpoints extremamente leve e rápido.
-3. **Frontend (`index.html`, `script.js`):** Vanilla Javascript + Chart.js via CDN. Sem frameworks pesados ou processos de build.
-4. **Autômato Solar (`solar_worker.py`):** Script em Python que faz fetch diário da API (com retenção em `sun_cache.json`), calcula os offsets do banco e envia sinais ao MQTT.
+## Lógica e Automação (Python 3.11+)
+Ambiente virtualizado (`.venv`) contendo:
+1. **Solar Worker & Event Logger:** Gerencia gatilhos solares e centraliza o log de todos os eventos MQTT no PostgreSQL.
+2. **FastAPI Web API:** Serve o painel de controle e endpoints de status.
+3. **Telegram Bot (Aiogram):** Interface móvel para controle e monitoramento (em desenvolvimento).
+4. **Network Watchdog:** Script Bash para auto-recuperação do enlace MQTT/Rede.
 
 ## Infraestrutura de Backups
-- **Armazenamento Secundário:** Cloudflare R2 (Compatível com S3 e sem custo de Egress/Saída).
-- **Sincronizador:** `rclone` (Instalação via Alpine apk).
-- **Política de Retenção:** Mantém sempre as últimas 3 cópias no bucket via script (`scripts/backup_r2.sh`).
+- **Armazenamento:** Cloudflare R2 (Object Storage).
+- **Sincronizador:** `rclone`.
+- **Backup:** Dumps SQL comprimidos e rotacionados automaticamente.
