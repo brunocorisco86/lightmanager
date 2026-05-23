@@ -16,5 +16,5 @@ Consulte a pasta `docs/` para aprofundar seu conhecimento na estrutura do projet
 
 ## Como começar
 1. Copie o arquivo `.env.example` para `.env` e ajuste suas senhas/tokens e latitude/longitude.
-2. Siga os scripts enumerados na pasta `scripts/` (em ordem) para provisionar os pacotes do Linux e dependências do Python.
+2. Siga os scripts enumerados na pasta `scripts/` (em ordem numérica: 00, 01, 02, etc.) para provisionar o ambiente Python, pacotes do Linux e dependências.
 3. Use o `crontab_template.txt` para configurar os gatilhos no seu SO.

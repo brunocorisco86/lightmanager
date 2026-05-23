@@ -15,10 +15,11 @@
 ## 2. Next Steps (Para Comissionamento) 🚧
 - [ ] Gravar a imagem do Alpine Linux no Raspberry Pi 3B.
 - [ ] Clonar este repositório no Pi.
-- [ ] Rodar os scripts de instalação (`scripts/02_install_alpine_deps.sh`).
-- [ ] Preencher o `.env` de produção.
-- [ ] Rodar `./scripts/setup.sh`.
-- [ ] Iniciar o Docker (Postgres) e rodar `./scripts/04_register_lights.py` para popular o banco.
+- [ ] Rodar `./scripts/00_setup_python.sh` para preparar o ambiente.
+- [ ] Rodar `./scripts/01_setup_env.sh` para criar o `.env` (edite-o depois).
+- [ ] Rodar `./scripts/02_install_alpine_deps.sh`.
+- [ ] Iniciar o Docker (Postgres) com `./scripts/05_docker_management.sh up`.
+- [ ] Rodar `./scripts/04_register_lights.py` para popular o banco.
 - [ ] Registrar as cronjobs (usando o `crontab_template.txt`).
 - [ ] Gravar o Firmware (`firmware/wemos_light.ino`) nas placas Wemos D1/ESP8266.
 
