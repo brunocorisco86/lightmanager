@@ -2,12 +2,14 @@
 #include <PubSubClient.h>
 
 // Configurações de Wi-Fi
-const char* ssid = "SEU_SSID";
-const char* password = "SUA_SENHA_WIFI";
+const char* ssid = "quarto";
+const char* password = "veracruz";
 
 // Configurações de MQTT
-const char* mqtt_server = "IP_DO_RASPBERRY";
+const char* mqtt_server = "192.168.1.7";
 const int mqtt_port = 1883;
+const char* mqtt_user = "bruno";
+const char* mqtt_password = "blurbang";
 
 // ATENÇÃO: Ajuste o tópico base para cada Wemos (Ex: home/outdoor/frente ou home/outdoor/fundos)
 const char* base_topic = "home/outdoor/frente"; 
@@ -59,7 +61,7 @@ void reconnect() {
     String clientId = "WemosClient-";
     clientId += String(random(0xffff), HEX);
     
-    if (client.connect(clientId.c_str())) {
+    if (client.connect(clientId.c_str(), mqtt_user, mqtt_password)) {
       Serial.println("Conectado");
       client.subscribe(topic_set.c_str());
     } else {
@@ -88,7 +90,22 @@ void loop() {
   unsigned long now = millis();
   if (now - lastMsg > 60000) {
     lastMsg = now;
-    // Opcional: Publicar um ping para monitoramento (ex: online)
-    client.publish((String(base_topic) + "/status").c_str(), "online");
+    
+    // Construir payload (JSON simples)
+    int rssi = WiFi.RSSI();
+    String quality;
+    if (rssi > -50) quality = "Excellent";
+    else if (rssi > -60) quality = "Good";
+    else if (rssi > -70) quality = "Fair";
+    else quality = "Poor";
+
+    String payload = "{";
+    payload += "\"status\": \"online\",";
+    payload += "\"rssi\": " + String(rssi) + ",";
+    payload += "\"signal_quality\": \"" + quality + "\",";
+    payload += "\"ip\": \"" + WiFi.localIP().toString() + "\"";
+    payload += "}";
+    
+    client.publish((String(base_topic) + "/status").c_str(), payload.c_str());
   }
 }
