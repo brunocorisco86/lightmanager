@@ -1,11 +1,16 @@
 #!/bin/bash
 # scripts/setup.sh
 
+# Definir raiz do projeto independentemente de onde o script é chamado
+DIR="$(cd "$(dirname "$0")" && pwd)"
+PROJECT_ROOT="$DIR/.."
+cd "$PROJECT_ROOT"
+
 # Cores para o terminal
 GREEN='\033[0;32m'
 NC='\033[0m' # No Color
 
-echo -e "${GREEN}==> Iniciando configuração do ambiente Python...${NC}"
+echo -e "${GREEN}==> Iniciando configuração do ambiente Python na raiz...${NC}"
 
 # Verifica se o Python está instalado
 if ! command -v python3 &> /dev/null; then
@@ -13,9 +18,9 @@ if ! command -v python3 &> /dev/null; then
     exit 1
 fi
 
-# Cria o ambiente virtual se não existir
+# Cria o ambiente virtual na RAIZ do projeto
 if [ ! -d ".venv" ]; then
-    echo -e "${GREEN}==> Criando ambiente virtual (.venv)...${NC}"
+    echo -e "${GREEN}==> Criando ambiente virtual (.venv) em $PROJECT_ROOT...${NC}"
     python3 -m venv .venv
 fi
 
