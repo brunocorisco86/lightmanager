@@ -9,6 +9,9 @@
 # 1. Watchdog: Garante que o Mosquitto esteja sempre de pé (a cada 5 min)
 */5 * * * * pgrep -x mosquitto > /dev/null || sudo rc-service mosquitto start
 
+# 2. Watchdog de Rede: Verifica Wemos e força reboot se necessário (a cada 10 min)
+*/10 * * * * /bin/bash /home/bruno/lightmanager/scripts/network_watchdog.sh
+
 # --- PROCESSOS PERSISTENTES (REBOOT COM DELAY) ---
 
 # Usa /bin/bash explicitamente para evitar problemas com o shell padrao do cron
