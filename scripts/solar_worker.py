@@ -5,7 +5,7 @@ import requests
 import psycopg2
 import logging
 import paho.mqtt.client as mqtt
-from datetime import datetime, timedelta, date
+from datetime import datetime, timedelta, date, timezone
 from dotenv import load_dotenv
 
 # Carrega configurações
@@ -22,8 +22,11 @@ MQTT_USER = os.getenv("MQTT_USER", "bruno")
 MQTT_PASS = os.getenv("MQTT_PASSWORD", "blurbang")
 CACHE_FILE = os.path.join(os.path.dirname(__file__), "sun_cache.json")
 
+# Fuso Horário Brasil (GMT-3)
+BR_TZ = timezone(timedelta(hours=-3))
+
 # Estado global em memória
-current_states = {} # { "home/outdoor/frente": "OFF", ... }
+current_states = {} 
 last_hour_logged = -1
 
 def get_db_conn():
@@ -39,7 +42,6 @@ def log_event_to_db(topic, state):
     try:
         conn = get_db_conn()
         cur = conn.cursor()
-        # Remove '/state' ou '/set' se houver
         base_topic = topic.replace("/state", "").replace("/set", "")
         
         cur.execute("SELECT id FROM light_points WHERE mqtt_topic = %s", (base_topic,))
@@ -59,14 +61,12 @@ def log_event_to_db(topic, state):
 
 def on_connect(client, userdata, flags, rc, properties):
     logging.info(f"Conectado ao Broker com resultado: {rc}")
-    # Assina os tópicos de estado para monitoramento em tempo real
     client.subscribe("home/outdoor/+/state")
 
 def on_message(client, userdata, msg):
     topic = msg.topic.replace("/state", "")
     state = msg.payload.decode()
     current_states[topic] = state
-    # Sempre que o estado mudar via MQTT, registramos no histórico
     log_event_to_db(topic, state)
 
 def fetch_sun_data_with_retry(max_retries=5):
@@ -78,7 +78,7 @@ def fetch_sun_data_with_retry(max_retries=5):
                 with open(CACHE_FILE, 'w') as f:
                     json.dump({"date": str(date.today()), "results": res["results"]}, f)
                 return res["results"]
-        except Exception as e:
+        except:
             time.sleep(2 ** i)
     return None
 
@@ -98,12 +98,17 @@ def run_automation_cycle(client):
     sun_results = get_today_sun_data()
     if not sun_results: return
 
+    # API retorna UTC
     sunrise_utc = datetime.fromisoformat(sun_results["sunrise"])
     sunset_utc = datetime.fromisoformat(sun_results["sunset"])
     
-    now = datetime.now(sunrise_utc.tzinfo)
-    current_time_str = now.strftime("%H:%M")
-    current_hour = now.hour
+    # Converte tudo para o fuso do Brasil (GMT-3)
+    now_br = datetime.now(BR_TZ)
+    sunrise_br = sunrise_utc.astimezone(BR_TZ)
+    sunset_br = sunset_utc.astimezone(BR_TZ)
+    
+    current_time_str = now_br.strftime("%H:%M")
+    current_hour = now_br.hour
 
     # 1. Registro Horário (Snapshot)
     if current_hour != last_hour_logged:
@@ -122,8 +127,10 @@ def run_automation_cycle(client):
         conn.close()
         
         for topic, off_on, off_off in points:
-            target_on = (sunset_utc + timedelta(minutes=off_on)).strftime("%H:%M")
-            target_off = (sunrise_utc + timedelta(minutes=off_off)).strftime("%H:%M")
+            # target_on é sunset + offset
+            target_on = (sunset_br + timedelta(minutes=off_on)).strftime("%H:%M")
+            # target_off é sunrise + offset
+            target_off = (sunrise_br + timedelta(minutes=off_off)).strftime("%H:%M")
 
             if current_time_str == target_on:
                 logging.info(f"🌑 Gatilho Solar: LIGANDO {topic}")
@@ -145,7 +152,7 @@ if __name__ == "__main__":
     client.connect(MQTT_BROKER, MQTT_PORT, 60)
     client.loop_start()
 
-    logging.info("Serviço Solar & Event Logger iniciado.")
+    logging.info(f"Serviço Solar & Event Logger iniciado (Fuso: GMT-3)")
     
     while True:
         run_automation_cycle(client)
