@@ -25,9 +25,19 @@ CACHE_FILE = os.path.join(os.path.dirname(__file__), "sun_cache.json")
 # Fuso Horário Brasil (GMT-3)
 BR_TZ = timezone(timedelta(hours=-3))
 
+LAST_SEEN_FILE = "/tmp/wemos_last_seen"
+
 # Estado global em memória
 current_states = {} 
 last_hour_logged = -1
+
+def touch_last_seen():
+    """Atualiza o timestamp local de última atividade do Wemos."""
+    try:
+        with open(LAST_SEEN_FILE, 'w') as f:
+            f.write(str(time.time()))
+    except Exception as e:
+        logging.error(f"Erro ao atualizar last_seen: {e}")
 
 def get_db_conn():
     conn = psycopg2.connect(
@@ -69,8 +79,14 @@ def log_event_to_db(topic, state, source="mqtt_capture"):
 def on_connect(client, userdata, flags, rc, properties):
     logging.info(f"Conectado ao Broker com resultado: {rc}")
     client.subscribe("home/outdoor/+/state")
+    client.subscribe("home/outdoor/status")
 
 def on_message(client, userdata, msg):
+    touch_last_seen()
+    
+    if "/status" in msg.topic:
+        return # Heartbeat apenas atualiza o arquivo, não vai pro DB
+        
     topic = msg.topic.replace("/state", "")
     state = msg.payload.decode()
     
