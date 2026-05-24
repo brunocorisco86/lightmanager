@@ -4,6 +4,7 @@ import json
 import requests
 import psycopg2
 import logging
+import threading
 import paho.mqtt.client as mqtt
 from datetime import datetime, timedelta, date, timezone
 from dotenv import load_dotenv
@@ -30,6 +31,8 @@ LAST_SEEN_FILE = "/tmp/wemos_last_seen"
 # Estado global em memória
 current_states = {} 
 last_hour_logged = -1
+db_conn = None
+db_lock = threading.Lock()
 
 def touch_last_seen():
     """Atualiza o timestamp local de última atividade do Wemos."""
@@ -40,22 +43,35 @@ def touch_last_seen():
         logging.error(f"Erro ao atualizar last_seen: {e}")
 
 def get_db_conn():
-    conn = psycopg2.connect(
-        host=os.getenv("POSTGRES_HOST", "localhost"),
-        database=os.getenv("POSTGRES_DB", "light_manager"),
-        user=os.getenv("POSTGRES_USER", "brunoconter"),
-        password=os.getenv("POSTGRES_PASSWORD")
-    )
-    # Garante que a sessão do banco use o fuso horário correto
-    with conn.cursor() as cur:
-        cur.execute("SET timezone TO 'America/Sao_Paulo';")
-    return conn
+    global db_conn
+    with db_lock:
+        try:
+            if db_conn is None or db_conn.closed:
+                db_conn = psycopg2.connect(
+                    host=os.getenv("POSTGRES_HOST", "localhost"),
+                    database=os.getenv("POSTGRES_DB", "light_manager"),
+                    user=os.getenv("POSTGRES_USER", "brunoconter"),
+                    password=os.getenv("POSTGRES_PASSWORD")
+                )
+                # Garante que a sessão do banco use o fuso horário correto
+                with db_conn.cursor() as cur:
+                    cur.execute("SET timezone TO 'America/Sao_Paulo';")
+            return db_conn
+        except Exception as e:
+            logging.error(f"Erro ao conectar ao banco: {e}")
+            db_conn = None
+            return None
 
-def log_event_to_db(topic, state, source="mqtt_capture"):
+def log_event_to_db(topic, state, source="mqtt_capture", cursor=None):
     """Salva um evento de estado no banco de dados com fonte e timestamp correto."""
+    local_cur = None
     try:
         conn = get_db_conn()
-        cur = conn.cursor()
+        if not conn: return
+
+        cur = cursor if cursor else conn.cursor()
+        if not cursor: local_cur = cur
+
         base_topic = topic.replace("/state", "").replace("/set", "")
         
         # Timestamp atual em GMT-3 (Aware object)
@@ -69,12 +85,19 @@ def log_event_to_db(topic, state, source="mqtt_capture"):
                 "INSERT INTO light_events (point_id, event_type, source, timestamp) VALUES (%s, %s, %s, %s)",
                 (point_id, state, source, now_br)
             )
+            # Commit after each event to maintain independence and avoid transaction poisoning
             conn.commit()
             logging.info(f"💾 Registrado no DB [{source}]: {base_topic} -> {state}")
-        cur.close()
-        conn.close()
+
     except Exception as e:
         logging.error(f"❌ Erro ao logar no DB: {e}")
+        try:
+            conn = get_db_conn()
+            if conn: conn.rollback()
+        except: pass
+    finally:
+        if local_cur:
+            local_cur.close()
 
 def on_connect(client, userdata, flags, rc, properties):
     logging.info(f"Conectado ao Broker com resultado: {rc}")
@@ -133,19 +156,20 @@ def run_automation_cycle(client):
     current_time_str = now_br.strftime("%H:%M")
     current_hour = now_br.hour
 
-    if current_hour != last_hour_logged:
-        logging.info(f"⏰ Verificação Horária: {current_hour}:00")
-        for topic, state in current_states.items():
-            log_event_to_db(topic, state, source="hourly_snapshot")
-        last_hour_logged = current_hour
-
+    cur = None
     try:
         conn = get_db_conn()
+        if not conn: return
         cur = conn.cursor()
+
+        if current_hour != last_hour_logged:
+            logging.info(f"⏰ Verificação Horária: {current_hour}:00")
+            for topic, state in current_states.items():
+                log_event_to_db(topic, state, source="hourly_snapshot", cursor=cur)
+            last_hour_logged = current_hour
+
         cur.execute("SELECT mqtt_topic, offset_on_minutes, offset_off_minutes FROM light_points WHERE auto_mode = TRUE")
         points = cur.fetchall()
-        cur.close()
-        conn.close()
         
         for topic, off_on, off_off in points:
             target_on = (sunset_br + timedelta(minutes=off_on)).strftime("%H:%M")
@@ -154,13 +178,21 @@ def run_automation_cycle(client):
             if current_time_str == target_on:
                 logging.info(f"🌑 Gatilho Solar: LIGANDO {topic}")
                 client.publish(f"{topic}/set", "ON")
-                log_event_to_db(topic, "ON", source="solar_trigger")
+                log_event_to_db(topic, "ON", source="solar_trigger", cursor=cur)
             elif current_time_str == target_off:
                 logging.info(f"🌅 Gatilho Solar: DESLIGANDO {topic}")
                 client.publish(f"{topic}/set", "OFF")
-                log_event_to_db(topic, "OFF", source="solar_trigger")
+                log_event_to_db(topic, "OFF", source="solar_trigger", cursor=cur)
+
     except Exception as e:
         logging.error(f"Erro no ciclo: {e}")
+        try:
+            conn = get_db_conn()
+            if conn: conn.rollback()
+        except: pass
+    finally:
+        if cur:
+            cur.close()
 
 if __name__ == "__main__":
     client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
