@@ -17,12 +17,14 @@ TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 ALLOWED_USER_ID = int(os.getenv("TELEGRAM_ALLOWED_USER_ID", 0))
 MQTT_BROKER = os.getenv("MQTT_BROKER", "localhost")
 MQTT_PORT = int(os.getenv("MQTT_PORT", 1883))
+MQTT_USER = os.getenv("MQTT_USER")
+MQTT_PASS = os.getenv("MQTT_PASSWORD")
 
 # DB Config
 DB_HOST = os.getenv("POSTGRES_HOST", "localhost")
 DB_NAME = os.getenv("POSTGRES_DB", "light_manager")
 DB_USER = os.getenv("POSTGRES_USER", "postgres")
-DB_PASS = os.getenv("POSTGRES_PASSWORD", "secret")
+DB_PASS = os.getenv("POSTGRES_PASSWORD")
 DB_PORT = os.getenv("POSTGRES_PORT", "5432")
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - BOT - %(message)s')
@@ -174,6 +176,9 @@ async def cmd_relatorio(message: types.Message):
     await message.answer(msg, parse_mode="Markdown")
 
 async def main():
+    if MQTT_USER and MQTT_PASS:
+        mqtt_client.username_pw_set(MQTT_USER, MQTT_PASS)
+
     mqtt_client.connect(MQTT_BROKER, MQTT_PORT, 60)
     mqtt_client.loop_start()
     logging.info("Bot iniciado...")

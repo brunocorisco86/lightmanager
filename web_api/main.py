@@ -25,8 +25,8 @@ app.add_middleware(
 # Configurações
 MQTT_BROKER = os.getenv("MQTT_BROKER", "192.168.1.7")
 MQTT_PORT = int(os.getenv("MQTT_PORT", 1883))
-MQTT_USER = os.getenv("MQTT_USER", "bruno")
-MQTT_PASS = os.getenv("MQTT_PASSWORD", "blurbang")
+MQTT_USER = os.getenv("MQTT_USER")
+MQTT_PASS = os.getenv("MQTT_PASSWORD")
 
 LAT = os.getenv("LATITUDE", "0")
 LONG = os.getenv("LONGITUDE", "0")
@@ -68,7 +68,7 @@ def get_db_conn():
         host=os.getenv("POSTGRES_HOST", "localhost"),
         database=os.getenv("POSTGRES_DB", "light_manager"),
         user=os.getenv("POSTGRES_USER", "postgres"),
-        password=os.getenv("POSTGRES_PASSWORD", "secret")
+        password=os.getenv("POSTGRES_PASSWORD")
     )
 
 class CommandRequest(BaseModel):
