@@ -2,6 +2,12 @@
 # scripts/03_setup_mosquitto.sh
 # Este script configura o Mosquitto no Alpine Linux (Raspberry Pi)
 
+# Carrega o .env
+DIR="$(cd "$(dirname "$0")" && pwd)"
+if [ -f "$DIR/../.env" ]; then
+    source "$DIR/../.env"
+fi
+
 echo "==> Configurando o Eclipse Mosquitto..."
 
 # 1. Garante permissão na pasta de configs
@@ -17,9 +23,14 @@ persistence_location /var/lib/mosquitto/
 log_dest file /var/log/mosquitto/mosquitto.log
 CONF
 
-# 3. Criar arquivo de senhas para o usuário bruno/blurbang
+# 3. Criar arquivo de senhas para o usuário definido no .env
 # Nota: mosquitto_passwd -b cria o arquivo se não existir (-c) ou adiciona
-mosquitto_passwd -b -c /etc/mosquitto/passwd bruno blurbang
+if [ -n "$MQTT_USER" ] && [ -n "$MQTT_PASSWORD" ]; then
+    echo "==> Criando arquivo de senhas para o usuario $MQTT_USER..."
+    mosquitto_passwd -b -c /etc/mosquitto/passwd "$MQTT_USER" "$MQTT_PASSWORD"
+else
+    echo "==> AVISO: MQTT_USER ou MQTT_PASSWORD nao definidos no .env. Ignorando criacao de passwd."
+fi
 
 echo "==> Ativando mosquitto no boot (OpenRC)..."
 rc-update add mosquitto default
@@ -30,4 +41,4 @@ rc-service mosquitto restart
 echo "==> Verificando status..."
 rc-service mosquitto status
 
-echo "==> Mosquitto configurado com sucesso para o usuário 'bruno'!"
+echo "==> Mosquitto configurado com sucesso!"

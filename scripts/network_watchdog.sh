@@ -8,8 +8,8 @@ source "$PROJECT_ROOT/.env"
 
 WEMOS_IP=${WEMOS_IP:-"192.168.1.111"}
 MQTT_HOST=${MQTT_BROKER:-"localhost"}
-MQTT_USER=${MQTT_USER:-"bruno"}
-MQTT_PASS=${MQTT_PASSWORD:-"blurbang"}
+MQTT_USER=${MQTT_USER}
+MQTT_PASS=${MQTT_PASSWORD}
 LOG_FILE="$PROJECT_ROOT/logs/watchdog.log"
 LAST_SEEN_FILE="/tmp/wemos_last_seen"
 

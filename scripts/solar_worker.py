@@ -18,8 +18,8 @@ LAT = os.getenv("LATITUDE")
 LONG = os.getenv("LONGITUDE")
 MQTT_BROKER = os.getenv("MQTT_BROKER", "192.168.1.7")
 MQTT_PORT = int(os.getenv("MQTT_PORT", 1883))
-MQTT_USER = os.getenv("MQTT_USER", "bruno")
-MQTT_PASS = os.getenv("MQTT_PASSWORD", "blurbang")
+MQTT_USER = os.getenv("MQTT_USER")
+MQTT_PASS = os.getenv("MQTT_PASSWORD")
 CACHE_FILE = os.path.join(os.path.dirname(__file__), "sun_cache.json")
 
 # Fuso Horário Brasil (GMT-3)
@@ -44,7 +44,7 @@ def get_db_conn():
         host=os.getenv("POSTGRES_HOST", "localhost"),
         database=os.getenv("POSTGRES_DB", "light_manager"),
         user=os.getenv("POSTGRES_USER", "brunoconter"),
-        password=os.getenv("POSTGRES_PASSWORD", "blurbang")
+        password=os.getenv("POSTGRES_PASSWORD")
     )
     # Garante que a sessão do banco use o fuso horário correto
     with conn.cursor() as cur:

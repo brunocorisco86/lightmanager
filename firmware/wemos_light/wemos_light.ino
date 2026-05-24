@@ -16,8 +16,8 @@ IPAddress secondaryDNS(1, 1, 1, 1); // Cloudflare fallback
 // Configurações de MQTT
 const char* mqtt_server = "192.168.1.7";
 const int mqtt_port = 1883;
-const char* mqtt_user = "bruno";
-const char* mqtt_password = "blurbang";
+const char* mqtt_user     = "SEU_USUARIO_AQUI";
+const char* mqtt_password = "SUA_SENHA_AQUI";
 
 // Lógica Invertida (Active Low)
 #define RELAY_ON LOW
