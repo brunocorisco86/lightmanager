@@ -11,13 +11,10 @@
     <div class="container">
         <header>
             <h1>💡 Light Manager</h1>
-            <div class="header-actions">
-                <button onclick="loadStatus()" class="btn-icon" title="Atualizar">🔄</button>
-                <button onclick="openConfigModal()" class="btn-icon" title="Configurações">⚙️</button>
-            </div>
             <div id="sun-info" class="sun-card">
                 Carregando dados do sol...
             </div>
+            <button onclick="openConfigModal()" class="btn-config-trigger" title="Configurações">⚙️</button>
         </header>
 
         <!-- Modal de Configurações -->
@@ -25,6 +22,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h2>Configurações do Sistema</h2>
+                    <button onclick="loadStatus()" class="btn-refresh-mini" title="Sincronizar">🔄</button>
                     <span class="close" onclick="closeConfigModal()">&times;</span>
                 </div>
                 <div class="modal-body">

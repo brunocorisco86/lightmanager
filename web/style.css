@@ -29,17 +29,28 @@ header {
     gap: 15px;
 }
 
-.header-actions {
-    display: flex;
-    gap: 10px;
+.btn-config-trigger {
+    background: transparent;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    opacity: 0.5;
+    transition: opacity 0.3s;
+    padding: 10px;
 }
 
-.btn-icon {
-    background: var(--card);
-    font-size: 1.5em;
-    padding: 8px;
-    border: 1px solid #334155;
-    border-radius: 50%;
+.btn-config-trigger:hover {
+    opacity: 1;
+}
+
+.btn-refresh-mini {
+    background: #334155;
+    border: none;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-right: 15px;
 }
 
 /* Modal Styles */
