@@ -124,7 +124,7 @@ def test_send_command_success():
 
     assert response.status_code == 200
     assert response.json()["status"] == "sent"
-    mqtt_client.publish.assert_called_with("home/outdoor/garden/set", "ON")
+    mqtt_client.publish.assert_called_with("home/outdoor/garden/set", "ON", qos=1)
 
 def test_send_command_mqtt_offline():
     mqtt_client.is_connected.return_value = False
