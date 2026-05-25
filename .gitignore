@@ -1,7 +1,7 @@
 .gemini/
 gha-creds-*.json
 logs/*.log
-.gitkeep
+!logs/.gitkeep
 
 # Python
 __pycache__/

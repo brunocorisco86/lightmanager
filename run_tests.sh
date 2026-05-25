@@ -22,14 +22,14 @@ export PYTHONPATH=$PYTHONPATH:.
 
 # 1. Testes Unitários e de Integração (Pytest)
 echo -e "\n${GREEN}1. Executando Pytest (API, Web, Timezone)...${NC}"
-pytest tests/test_api.py tests/test_web_api.py tests/test_timezone.py -v
+pytest tests/test_api.py tests/test_web_api.py tests/test_timezone.py -v | tee logs/tests.log
 
-# Captura o status do pytest
-PYTEST_RES=$?
+# Captura o status do pytest (temos que pegar o status do pytest, não do tee. PIPESTATUS[0] funciona no bash)
+PYTEST_RES=${PIPESTATUS[0]}
 
 # 2. Testes de Benchmark e Integridade do Worker
 echo -e "\n${GREEN}2. Executando Benchmark do Solar Worker...${NC}"
-python3 tests/benchmark_solar_worker.py
+python3 tests/benchmark_solar_worker.py 2>&1 | tee -a logs/tests.log
 
 BENCH_RES=$?
 

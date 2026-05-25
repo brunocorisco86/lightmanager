@@ -33,12 +33,15 @@ Consulte a pasta `docs/` para aprofundar seu conhecimento na estrutura do projet
 4. Utilize o `crontab_template.txt` para configurar a persistência e os watchdogs no sistema.
 5. **Firmware:** O código em `firmware/wemos_light/` deve ser compilado e carregado no Wemos.
 
-## 🧪 Testes
+## 🧪 Testes e Logs
 Para garantir a integridade do sistema após alterações:
 ```bash
 ./run_tests.sh
 ```
-O script valida a API solar, endpoints web, integridade de fuso horário (GMT-3) e a lógica do worker.
+O script valida a API solar, endpoints web, integridade de fuso horário (GMT-3) e a lógica do worker. 
+**Nota:** O resultado completo dos testes fica armazenado em `logs/tests.log`.
+
+Outros logs do sistema previstos na arquitetura (como o watchdog e rotinas do crontab) também são armazenados na pasta `logs/`.
 
 
 ---
