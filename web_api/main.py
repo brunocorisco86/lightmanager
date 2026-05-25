@@ -1,6 +1,8 @@
 import os
 import requests
 import psycopg2
+import json
+from datetime import date
 from fastapi import FastAPI, HTTPException
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
@@ -33,6 +35,8 @@ LONG = os.getenv("LONGITUDE", "0")
 
 # Cache de estados
 light_states = {}
+SUN_CACHE_FILE = os.path.join(os.path.dirname(__file__), 'sun_cache.json')
+sun_cache = {"date": None, "results": None}
 
 # MQTT Setup
 mqtt_client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
@@ -77,12 +81,30 @@ class CommandRequest(BaseModel):
 
 @app.get("/api/sun")
 def get_sun_times():
+    today = str(date.today())
+    if sun_cache["date"] == today: return sun_cache["results"]
+    try:
+        if os.path.exists(SUN_CACHE_FILE):
+            with open(SUN_CACHE_FILE, "r") as f:
+                data = json.load(f)
+                if data.get("date") == today:
+                    sun_cache.update(data)
+                    return sun_cache["results"]
+                if not sun_cache["results"]: sun_cache.update(data)
+    except Exception:
+        pass
     try:
         url = f"https://api.sunrise-sunset.org/json?lat={LAT}&lng={LONG}&formatted=0"
-        res = requests.get(url).json()
-        return res["results"]
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        res = requests.get(url, timeout=5).json()
+        if res.get("status") == "OK":
+            sun_cache.update({"date": today, "results": res["results"]})
+            with open(SUN_CACHE_FILE, "w") as f:
+                json.dump(sun_cache, f)
+            return res["results"]
+    except Exception:
+        pass
+    if sun_cache["results"]: return sun_cache["results"]
+    raise HTTPException(status_code=500, detail="Sun data unavailable")
 
 @app.get("/api/status")
 def get_status():
