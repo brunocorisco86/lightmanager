@@ -94,30 +94,39 @@ function showTab(tabName) {
 
 /* Config CRUD Functions */
 async function loadConfigList() {
+    const list = document.getElementById('config-list');
     try {
+        console.log("Buscando pontos de configuração...");
         const points = await fetchData('config/points');
-        const list = document.getElementById('config-list');
-        list.innerHTML = '';
+        console.log("Pontos recebidos:", points);
         
+        if (!points || points.length === 0) {
+            list.innerHTML = '<p style="color: #94a3b8;">Nenhum ponto cadastrado.</p>';
+            return;
+        }
+
+        list.innerHTML = '';
         points.forEach(p => {
             const item = document.createElement('div');
             item.className = 'config-item';
             item.innerHTML = `
-                <strong>${p.name}</strong> <small>(${p.topic})</small>
+                <div style="margin-bottom: 5px;"><strong>${p.name}</strong></div>
+                <div style="font-size: 0.8em; color: #94a3b8; margin-bottom: 10px;">${p.topic}</div>
                 <div class="config-row">
                     <div>
-                        Ligar: <input type="number" id="on-${p.id}" value="${p.offset_on}"> min
+                        Ligar: <input type="number" id="on-${p.id}" value="${p.offset_on}" style="width: 50px;"> <small>min</small>
                     </div>
                     <div>
-                        Desligar: <input type="number" id="off-${p.id}" value="${p.offset_off}"> min
+                        Desligar: <input type="number" id="off-${p.id}" value="${p.offset_off}" style="width: 50px;"> <small>min</small>
                     </div>
-                    <button class="btn-on" style="padding: 5px 10px;" onclick="saveConfig(${p.id})">💾</button>
+                    <button class="btn-on" style="padding: 5px 12px;" onclick="saveConfig(${p.id})" title="Salvar">💾</button>
                 </div>
             `;
             list.appendChild(item);
         });
     } catch (e) {
-        document.getElementById('config-list').innerText = "Erro ao carregar configurações.";
+        console.error("Erro ao carregar lista de configuração:", e);
+        list.innerHTML = `<p style="color: #ef4444;">Erro: ${e.message}</p>`;
     }
 }
 
@@ -129,12 +138,15 @@ async function saveConfig(id) {
         const res = await fetch(`/api/config/points/${id}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ offset_on_minutes: parseInt(offset_on), offset_off_minutes: parseInt(offset_off) })
+            body: JSON.stringify({ 
+                offset_on_minutes: parseInt(offset_on), 
+                offset_off_minutes: parseInt(offset_off) 
+            })
         });
-        if (res.ok) alert("Configuração salva!");
-        else alert("Erro ao salvar.");
+        if (res.ok) alert("✅ Configuração salva!");
+        else alert("❌ Erro ao salvar.");
     } catch (e) {
-        alert("Erro de conexão.");
+        alert("❌ Erro de conexão.");
     }
 }
 
@@ -152,38 +164,46 @@ async function createNewPoint(event) {
         });
         
         if (res.ok) {
-            alert("Ponto cadastrado!");
+            alert("✅ Ponto cadastrado!");
             document.getElementById('new-point-form').reset();
             showTab('manage');
             updateStatus();
         } else {
             const err = await res.json();
-            alert(`Erro: ${err.detail}`);
+            alert(`❌ Erro: ${err.detail}`);
         }
     } catch (e) {
-        alert("Erro ao cadastrar.");
+        alert("❌ Erro ao cadastrar.");
     }
 }
 
 async function loadSolarHistory() {
+    const body = document.getElementById('solar-history-body');
     try {
+        console.log("Buscando histórico solar...");
+        body.innerHTML = '<tr><td colspan="3">Carregando...</td></tr>';
         const history = await fetchData('config/solar_history');
-        const body = document.getElementById('solar-history-body');
+        console.log("Histórico solar recebido:", history);
+        
         body.innerHTML = '';
+        if (!history || history.length === 0) {
+            body.innerHTML = '<tr><td colspan="3" style="text-align: center; color: #94a3b8;">Nenhum registro.</td></tr>';
+            return;
+        }
         
         history.forEach(h => {
             const date = new Date(h.timestamp);
-            const row = `
-                <tr>
-                    <td>${date.toLocaleString('pt-BR')}</td>
-                    <td>${h.name}</td>
-                    <td style="color: ${h.event === 'ON' ? '#34d399' : '#f87171'}">${h.event}</td>
-                </tr>
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${date.toLocaleString('pt-BR')}</td>
+                <td>${h.name}</td>
+                <td style="color: ${h.event === 'ON' ? '#34d399' : '#f87171'}; font-weight: bold;">${h.event}</td>
             `;
-            body.innerHTML += row;
+            body.appendChild(row);
         });
     } catch (e) {
         console.error("Erro ao carregar histórico solar:", e);
+        body.innerHTML = `<tr><td colspan="3" style="color: #ef4444;">Erro: ${e.message}</td></tr>`;
     }
 }
 
