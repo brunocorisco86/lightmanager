@@ -89,6 +89,16 @@ class PointCreate(BaseModel):
     mqtt_topic: str
     power_w: float
 
+class PasswordCheck(BaseModel):
+    password: str
+
+@app.post("/api/config/check_password")
+def check_password(req: PasswordCheck):
+    admin_pass = os.getenv("ADMIN_PASSWORD", "admin123")
+    if req.password == admin_pass:
+        return {"status": "ok"}
+    raise HTTPException(status_code=401, detail="Invalid password")
+
 @app.get("/api/config/points")
 def get_points_config():
     try:

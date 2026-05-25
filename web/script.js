@@ -155,19 +155,21 @@ async function deletePoint(id, name) {
     const password = prompt(`Para excluir "${name}", digite a senha de administrador:`);
     if (password === null) return; // Cancelado
 
-    // Aqui usamos a senha configurada no sistema (admin pass)
-    // Para simplificar, o sistema verifica se a senha confere com a padrão ou configurada
-    // Em um sistema real, isso seria um desafio no backend, mas aqui faremos a validação
-    // baseada no que o usuário definiu no .env (password123 por padrão nos testes)
-    
-    if (password !== 'password123') {
-        alert("❌ Senha incorreta.");
-        return;
-    }
-
-    if (!confirm(`Tem certeza absoluta que deseja remover "${name}"? Esta ação não pode ser desfeita.`)) return;
-
     try {
+        // Valida a senha no backend
+        const checkRes = await fetch('/api/config/check_password', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ password })
+        });
+
+        if (!checkRes.ok) {
+            alert("❌ Senha incorreta.");
+            return;
+        }
+
+        if (!confirm(`Tem certeza absoluta que deseja remover "${name}"? Esta ação não pode ser desfeita.`)) return;
+
         const res = await fetch(`/api/config/points/${id}`, { method: 'DELETE' });
         if (res.ok) {
             alert("✅ Ponto removido com sucesso!");
