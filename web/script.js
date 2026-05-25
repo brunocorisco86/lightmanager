@@ -1,8 +1,27 @@
 async function fetchData(endpoint) {
+    const user = localStorage.getItem('light_manager_user');
+    if (!user && !window.location.pathname.includes('login.html')) {
+        window.location.href = '/login.html';
+        return;
+    }
+
     const response = await fetch(`/api/${endpoint}`);
+    if (response.status === 401) {
+        localStorage.removeItem('light_manager_user');
+        window.location.href = '/login.html';
+        return;
+    }
     if (!response.ok) throw new Error(`Erro ao buscar ${endpoint}`);
     return await response.json();
 }
+
+// Verifica login imediatamente ao carregar o script
+(function() {
+    const user = localStorage.getItem('light_manager_user');
+    if (!user && !window.location.pathname.includes('login.html')) {
+        window.location.href = '/login.html';
+    }
+})();
 
 async function sendCommand(topic, action) {
     try {

@@ -9,12 +9,15 @@ from pydantic import BaseModel
 from dotenv import load_dotenv
 import paho.mqtt.client as mqtt
 from fastapi.middleware.cors import CORSMiddleware
+from passlib.context import CryptContext
 import time
 
 # Carrega o .env da raiz do projeto
 load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), '..', '.env'))
 
 app = FastAPI()
+
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 # Permite que o frontend acesse a API
 app.add_middleware(
@@ -91,6 +94,28 @@ class PointCreate(BaseModel):
 
 class PasswordCheck(BaseModel):
     password: str
+
+class LoginRequest(BaseModel):
+    username: str
+    password: str
+
+@app.post("/api/login")
+def login(req: LoginRequest):
+    try:
+        conn = get_db_conn()
+        cur = conn.cursor()
+        cur.execute("SELECT hashed_password, username FROM users WHERE username = %s", (req.username,))
+        user = cur.fetchone()
+        cur.close()
+        conn.close()
+
+        if user and pwd_context.verify(req.password, user[0]):
+            return {"status": "ok", "username": user[1]}
+        
+        raise HTTPException(status_code=401, detail="Invalid credentials")
+    except Exception as e:
+        if isinstance(e, HTTPException): raise e
+        raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/api/config/check_password")
 def check_password(req: PasswordCheck):
