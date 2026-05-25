@@ -164,7 +164,8 @@ def run_automation_cycle(client):
 
         if current_hour != last_hour_logged:
             logging.info(f"⏰ Verificação Horária: {current_hour}:00")
-            for topic, state in current_states.items():
+            # Usa .copy() para evitar erro de 'dictionary changed size during iteration'
+            for topic, state in current_states.copy().items():
                 log_event_to_db(topic, state, source="hourly_snapshot", cursor=cur)
             last_hour_logged = current_hour
 

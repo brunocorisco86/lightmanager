@@ -28,6 +28,22 @@ function logout() {
     window.location.href = '/login.html';
 }
 
+async function sendCommand(topic, action) {
+    try {
+        const res = await fetch('/api/command', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ topic, action })
+        });
+        if (!res.ok) throw new Error("Falha na API");
+        // Feedback visual imediato
+        setTimeout(updateStatus, 800);
+    } catch (e) {
+        console.error("Erro ao enviar comando:", e);
+        alert("Erro ao enviar comando");
+    }
+}
+
 async function updateSunInfo() {
     // Atualiza o nome do usuário na tela
     const user = localStorage.getItem('light_manager_user');
@@ -35,21 +51,6 @@ async function updateSunInfo() {
         document.getElementById('user-display').innerText = `👤 ${user}`;
     }
 
-    try {
-
-        await fetch('/api/command', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ topic, action })
-        });
-        // Feedback visual imediato
-        setTimeout(updateStatus, 800);
-    } catch (e) {
-        alert("Erro ao enviar comando");
-    }
-}
-
-async function updateSunInfo() {
     try {
         const sun = await fetchData('sun');
         // Converter ISO UTC para Objeto Date Local
@@ -72,6 +73,7 @@ async function updateStatus() {
     try {
         const status = await fetchData('status');
         const container = document.getElementById('light-cards');
+        if (!container) return;
         container.innerHTML = '';
 
         status.forEach(light => {
@@ -104,16 +106,19 @@ function loadStatus() {
 
 /* Modal and Tabs Logic */
 function openConfigModal() {
-    document.getElementById('configModal').style.display = 'block';
-    loadConfigList();
+    const modal = document.getElementById('configModal');
+    if (modal) {
+        modal.style.display = 'block';
+        loadConfigList();
+    }
 }
 
 function closeConfigModal() {
-    document.getElementById('configModal').style.display = 'none';
+    const modal = document.getElementById('configModal');
+    if (modal) modal.style.display = 'none';
 }
 
 function showTab(event, tabName) {
-    // Se o primeiro parâmetro for string, significa que foi chamado sem o objeto event
     if (typeof event === 'string') {
         tabName = event;
         event = null;
@@ -128,11 +133,10 @@ function showTab(event, tabName) {
     if (event && event.currentTarget) {
         event.currentTarget.classList.add('active');
     } else {
-        // Se não houver evento, tenta encontrar o botão correspondente pelo texto ou ordem
         const buttons = document.querySelectorAll('.tab-btn');
-        if (tabName === 'manage') buttons[0].classList.add('active');
-        if (tabName === 'new') buttons[1].classList.add('active');
-        if (tabName === 'solar') buttons[2].classList.add('active');
+        if (tabName === 'manage' && buttons[0]) buttons[0].classList.add('active');
+        if (tabName === 'new' && buttons[1]) buttons[1].classList.add('active');
+        if (tabName === 'solar' && buttons[2]) buttons[2].classList.add('active');
     }
     
     if (tabName === 'solar') loadSolarHistory();
@@ -142,10 +146,9 @@ function showTab(event, tabName) {
 /* Config CRUD Functions */
 async function loadConfigList() {
     const list = document.getElementById('config-list');
+    if (!list) return;
     try {
-        console.log("Buscando pontos de configuração...");
         const points = await fetchData('config/points');
-        console.log("Pontos recebidos:", points);
         
         if (!points || points.length === 0) {
             list.innerHTML = '<p style="color: #94a3b8;">Nenhum ponto cadastrado.</p>';
@@ -177,17 +180,15 @@ async function loadConfigList() {
             list.appendChild(item);
         });
     } catch (e) {
-        console.error("Erro ao carregar lista de configuração:", e);
         list.innerHTML = `<p style="color: #ef4444;">Erro: ${e.message}</p>`;
     }
 }
 
 async function deletePoint(id, name) {
     const password = prompt(`Para excluir "${name}", digite a senha de administrador:`);
-    if (password === null) return; // Cancelado
+    if (password === null) return;
 
     try {
-        // Valida a senha no backend
         const checkRes = await fetch('/api/config/check_password', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -263,11 +264,10 @@ async function createNewPoint(event) {
 
 async function loadSolarHistory() {
     const body = document.getElementById('solar-history-body');
+    if (!body) return;
     try {
-        console.log("Buscando histórico solar...");
         body.innerHTML = '<tr><td colspan="3">Carregando...</td></tr>';
         const history = await fetchData('config/solar_history');
-        console.log("Histórico solar recebido:", history);
         
         body.innerHTML = '';
         if (!history || history.length === 0) {
@@ -286,7 +286,6 @@ async function loadSolarHistory() {
             body.appendChild(row);
         });
     } catch (e) {
-        console.error("Erro ao carregar histórico solar:", e);
         body.innerHTML = `<tr><td colspan="3" style="color: #ef4444;">Erro: ${e.message}</td></tr>`;
     }
 }
@@ -298,11 +297,13 @@ window.onclick = function(event) {
 }
 
 async function loadChart() {
+    const chartEl = document.getElementById('usageChart');
+    if (!chartEl) return;
     try {
         const history = await fetchData('history');
         if (history.length === 0) return;
 
-        const ctx = document.getElementById('usageChart').getContext('2d');
+        const ctx = chartEl.getContext('2d');
         new Chart(ctx, {
             type: 'bar',
             data: {
