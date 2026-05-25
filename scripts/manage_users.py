@@ -1,12 +1,10 @@
 import os
 import psycopg2
-from passlib.context import CryptContext
+import bcrypt
 from dotenv import load_dotenv
 
 # Carrega variáveis
 load_dotenv()
-
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 def get_db_connection():
     return psycopg2.connect(
@@ -34,7 +32,10 @@ def init_users_table():
     conn.close()
 
 def create_user(username, password, full_name="Admin"):
-    hashed = pwd_context.hash(password)
+    # Gera o hash usando bcrypt diretamente
+    salt = bcrypt.gensalt()
+    hashed = bcrypt.hashpw(password.encode('utf-8'), salt).decode('utf-8')
+    
     conn = get_db_connection()
     cur = conn.cursor()
     try:

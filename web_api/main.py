@@ -9,15 +9,13 @@ from pydantic import BaseModel
 from dotenv import load_dotenv
 import paho.mqtt.client as mqtt
 from fastapi.middleware.cors import CORSMiddleware
-from passlib.context import CryptContext
+import bcrypt
 import time
 
 # Carrega o .env da raiz do projeto
 load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), '..', '.env'))
 
 app = FastAPI()
-
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 # Permite que o frontend acesse a API
 app.add_middleware(
@@ -109,8 +107,11 @@ def login(req: LoginRequest):
         cur.close()
         conn.close()
 
-        if user and pwd_context.verify(req.password, user[0]):
-            return {"status": "ok", "username": user[1]}
+        if user:
+            hashed_password = user[0]
+            # Verifica a senha usando bcrypt diretamente
+            if bcrypt.checkpw(req.password.encode('utf-8'), hashed_password.encode('utf-8')):
+                return {"status": "ok", "username": user[1]}
         
         raise HTTPException(status_code=401, detail="Invalid credentials")
     except Exception as e:
