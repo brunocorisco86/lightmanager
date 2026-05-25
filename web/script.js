@@ -23,8 +23,20 @@ async function fetchData(endpoint) {
     }
 })();
 
-async function sendCommand(topic, action) {
+function logout() {
+    localStorage.removeItem('light_manager_user');
+    window.location.href = '/login.html';
+}
+
+async function updateSunInfo() {
+    // Atualiza o nome do usuário na tela
+    const user = localStorage.getItem('light_manager_user');
+    if (user && document.getElementById('user-display')) {
+        document.getElementById('user-display').innerText = `👤 ${user}`;
+    }
+
     try {
+
         await fetch('/api/command', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
