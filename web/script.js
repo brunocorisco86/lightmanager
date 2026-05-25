@@ -29,6 +29,18 @@ function logout() {
 }
 
 async function sendCommand(topic, action) {
+    // Busca o card correspondente para feedback visual imediato
+    const buttons = document.querySelectorAll(`button[onclick*="${topic}"]`);
+    const card = buttons[0]?.closest('.card');
+    const badge = card?.querySelector('.status-badge');
+    
+    // Estado Otimista: Assume que vai funcionar
+    if (badge) {
+        badge.innerText = action;
+        badge.className = `status-badge ${action === 'ON' ? 'status-on' : 'status-off'} pending`;
+    }
+    buttons.forEach(b => b.disabled = true);
+
     try {
         const res = await fetch('/api/command', {
             method: 'POST',
@@ -36,11 +48,15 @@ async function sendCommand(topic, action) {
             body: JSON.stringify({ topic, action })
         });
         if (!res.ok) throw new Error("Falha na API");
-        // Feedback visual imediato
-        setTimeout(updateStatus, 800);
+        
+        // Mantém desabilitado por um breve momento para evitar race condition no polling
+        setTimeout(() => {
+            updateStatus();
+        }, 1500);
     } catch (e) {
         console.error("Erro ao enviar comando:", e);
-        alert("Erro ao enviar comando");
+        alert("Erro ao enviar comando. Verifique a conexão com o servidor.");
+        updateStatus(); // Reverte para o estado real
     }
 }
 

@@ -297,7 +297,9 @@ def get_history():
 def send_command(req: CommandRequest):
     topic_set = f"{req.topic}/set"
     if mqtt_client.is_connected():
-        mqtt_client.publish(topic_set, req.action)
+        # Publica com QoS 1 para garantir a entrega ao broker
+        info = mqtt_client.publish(topic_set, req.action, qos=1)
+        info.wait_for_publish(timeout=1.0) # Espera confirmação breve
         return {"status": "sent", "topic": topic_set, "action": req.action}
     else:
         raise HTTPException(status_code=503, detail="MQTT Broker offline")

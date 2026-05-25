@@ -230,6 +230,22 @@ th { color: #94a3b8; font-weight: normal; }
     gap: 20px;
 }
 
+.status-badge.pending {
+    opacity: 0.7;
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
 .card {
     background: var(--card);
     padding: 20px;
