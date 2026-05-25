@@ -9,3 +9,5 @@ pytest
 boto3
 aiohttp
 psutil
+httpx
+

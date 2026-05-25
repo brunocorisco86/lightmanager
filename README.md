@@ -26,9 +26,20 @@ Consulte a pasta `docs/` para aprofundar seu conhecimento na estrutura do projet
 
 ## ⚙️ Como começar
 1. Copie o arquivo `.env.example` para `.env` e ajuste suas senhas, coordenadas e o `WEMOS_IP`.
-2. Siga os scripts enumerados na pasta `scripts/` para provisionar o ambiente.
-3. Utilize o `crontab_template.txt` para configurar a persistência e os watchdogs no sistema.
-4. **Firmware:** O código em `firmware/wemos_light/` deve ser compilado e carregado no Wemos.
+2. Execute `bash scripts/setup.sh` para configurar o ambiente Python.
+3. **Comissionamento:**
+    - Suba o banco: `bash scripts/04_docker_management.sh up`
+    - Registre as luzes: `bash scripts/05_register_lights.py` (dentro do venv)
+4. Utilize o `crontab_template.txt` para configurar a persistência e os watchdogs no sistema.
+5. **Firmware:** O código em `firmware/wemos_light/` deve ser compilado e carregado no Wemos.
+
+## 🧪 Testes
+Para garantir a integridade do sistema após alterações:
+```bash
+./run_tests.sh
+```
+O script valida a API solar, endpoints web, integridade de fuso horário (GMT-3) e a lógica do worker.
+
 
 ---
 **Nota de Resiliência:** O sistema utiliza `scripts/entrypoint.sh` para garantir que todos os serviços subam no boot do Raspberry Pi com os delays necessários para a rede estar pronta.
