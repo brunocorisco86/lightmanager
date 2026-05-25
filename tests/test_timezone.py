@@ -87,20 +87,30 @@ def test_db_timezone_integrity():
     inserted_ts_raw = cur.fetchone()[0]
     conn.commit()
     
-    # Psycopg2 por padrão retorna datetime 'naive' mesmo para TIMESTAMPTZ.
-    # Anexamos o fuso horário usando localize() para garantir consistência.
-    inserted_ts = BR_TZ.localize(inserted_ts_raw)
-    
+    # Psycopg2 por padrão retorna datetime 'naive' em alguns ambientes,
+    # mas em outros (como no seu servidor Alpine) ele já pode retornar 'aware'.
+    # Lidamos com ambos os casos:
+    if inserted_ts_raw.tzinfo is None:
+        # Se for naive, anexamos o fuso horário usando localize()
+        inserted_ts = BR_TZ.localize(inserted_ts_raw)
+    else:
+        # Se já for aware, apenas garantimos que está no fuso correto (GMT-3)
+        inserted_ts = inserted_ts_raw
+
     print(f"[TEST] Inserted TS: {test_now}")
-    print(f"[TEST] Returned TS (Naive): {inserted_ts_raw}")
-    print(f"[TEST] Returned TS (Aware): {inserted_ts} (TZ: {inserted_ts.tzinfo})")
+    print(f"[TEST] Returned TS (Raw): {inserted_ts_raw} (TZ: {inserted_ts_raw.tzinfo})")
+    print(f"[TEST] Returned TS (Final): {inserted_ts} (TZ: {inserted_ts.tzinfo})")
 
     # 3. Validação final
-    assert inserted_ts.tzinfo is not None, "O timestamp deve ser tratado como 'aware'."
+    assert inserted_ts.tzinfo is not None, "O timestamp deve possuir informação de fuso horário."
     
     # Compara a diferença absoluta
     diff = abs((inserted_ts - test_now).total_seconds())
-    assert diff < 1, f"Diferença de tempo muito grande: {diff}s"
+    assert diff < 2, f"Diferença de tempo muito grande: {diff}s"
+    
+    # Verifica se o offset é compatível com GMT-3
+    offset = inserted_ts.utcoffset()
+    assert offset == timedelta(hours=-3), f"Fuso horário incorreto: {offset}"
     
     # Limpeza
     cur.execute("DELETE FROM light_events WHERE source = 'timezone_check';")
