@@ -140,6 +140,19 @@ def create_point(point: PointCreate):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+@app.delete("/api/config/points/{point_id}")
+def delete_point(point_id: int):
+    try:
+        conn = get_db_conn()
+        cur = conn.cursor()
+        cur.execute("DELETE FROM light_points WHERE id = %s", (point_id,))
+        conn.commit()
+        cur.close()
+        conn.close()
+        return {"status": "deleted"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 @app.get("/api/config/solar_history")
 def get_solar_history():
     try:
