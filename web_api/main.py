@@ -79,6 +79,95 @@ class CommandRequest(BaseModel):
     topic: str
     action: str
 
+class PointConfigUpdate(BaseModel):
+    offset_on_minutes: int
+    offset_off_minutes: int
+
+class PointCreate(BaseModel):
+    name: str
+    mqtt_topic: str
+    power_w: float
+
+@app.get("/api/config/points")
+def get_points_config():
+    try:
+        conn = get_db_conn()
+        cur = conn.cursor()
+        cur.execute("SELECT id, name, mqtt_topic, offset_on_minutes, offset_off_minutes, power_w FROM light_points ORDER BY name")
+        points = cur.fetchall()
+        cur.close()
+        conn.close()
+        return [{
+            "id": p[0], "name": p[1], "topic": p[2], 
+            "offset_on": p[3], "offset_off": p[4], "power": float(p[5])
+        } for p in points]
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.put("/api/config/points/{point_id}")
+def update_point_config(point_id: int, config: PointConfigUpdate):
+    try:
+        conn = get_db_conn()
+        cur = conn.cursor()
+        cur.execute(
+            "UPDATE light_points SET offset_on_minutes = %s, offset_off_minutes = %s WHERE id = %s",
+            (config.offset_on_minutes, config.offset_off_minutes, point_id)
+        )
+        conn.commit()
+        cur.close()
+        conn.close()
+        return {"status": "updated"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/config/points")
+def create_point(point: PointCreate):
+    try:
+        conn = get_db_conn()
+        cur = conn.cursor()
+        cur.execute(
+            "INSERT INTO light_points (name, mqtt_topic, power_w) VALUES (%s, %s, %s) RETURNING id",
+            (point.name, point.mqtt_topic, point.power_w)
+        )
+        new_id = cur.fetchone()[0]
+        conn.commit()
+        cur.close()
+        conn.close()
+        return {"id": new_id, "status": "created"}
+    except psycopg2.IntegrityError:
+        raise HTTPException(status_code=400, detail="MQTT Topic already exists")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/config/solar_history")
+def get_solar_history():
+    try:
+        conn = get_db_conn()
+        cur = conn.cursor()
+        # Busca acionamentos da última semana filtrando por solar_trigger
+        query = """
+            SELECT le.timestamp, lp.name, le.event_type 
+            FROM light_events le
+            JOIN light_points lp ON le.point_id = lp.id
+            WHERE le.source = 'solar_trigger' 
+            AND le.timestamp > CURRENT_DATE - INTERVAL '7 days'
+            ORDER BY le.timestamp DESC
+            LIMIT 50;
+        """
+        cur.execute(query)
+        rows = cur.fetchall()
+        cur.close()
+        conn.close()
+        # Formata o timestamp (considerando que o banco já está em America/Sao_Paulo na sessão)
+        return [{
+            "timestamp": r[0].isoformat() if r[0] else None,
+            "name": r[1],
+            "event": r[2]
+        } for r in rows]
+    except Exception as e:
+        print(f"Erro Histórico Solar: {e}")
+        return []
+
 @app.get("/api/sun")
 def get_sun_times():
     today = str(date.today())
