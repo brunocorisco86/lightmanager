@@ -82,11 +82,27 @@ function closeConfigModal() {
 }
 
 function showTab(event, tabName) {
+    // Se o primeiro parâmetro for string, significa que foi chamado sem o objeto event
+    if (typeof event === 'string') {
+        tabName = event;
+        event = null;
+    }
+
     document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
     
-    document.getElementById(`tab-${tabName}`).classList.add('active');
-    event.currentTarget.classList.add('active');
+    const targetTab = document.getElementById(`tab-${tabName}`);
+    if (targetTab) targetTab.classList.add('active');
+    
+    if (event && event.currentTarget) {
+        event.currentTarget.classList.add('active');
+    } else {
+        // Se não houver evento, tenta encontrar o botão correspondente pelo texto ou ordem
+        const buttons = document.querySelectorAll('.tab-btn');
+        if (tabName === 'manage') buttons[0].classList.add('active');
+        if (tabName === 'new') buttons[1].classList.add('active');
+        if (tabName === 'solar') buttons[2].classList.add('active');
+    }
     
     if (tabName === 'solar') loadSolarHistory();
     if (tabName === 'manage') loadConfigList();
