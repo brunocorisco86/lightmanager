@@ -3,46 +3,40 @@
 Este repositório contém a solução completa para o controle inteligente de iluminação externa residencial, projetado para operar com foco no minimalismo de recursos (RAM/CPU) em um Raspberry Pi 3B com Alpine Linux.
 
 ## 🚀 Funcionalidades
-- 💡 **Controle Remoto:** Acione suas luzes pela Interface Web ou via Bot do Telegram (em desenvolvimento).
+- 💡 **Controle Remoto:** Acione suas luzes pela Interface Web ou via Bot do Telegram.
 - 🌅 **Automação Solar Inteligente:** Ciclo circadiano baseado em latitude/longitude com GMT-3 (Brasília).
-- 🛡️ **Resiliência Industrial:** 
-    - **Watchdog de Rede:** Monitoramento via Ping e Banco de Dados; força reboot do Wemos se a conexão MQTT travar.
-    - **NTP Fallback:** O firmware mantém o ciclo (18:00-05:00) mesmo sem conexão com o servidor.
-    - **IP Estático:** Configuração direta no firmware para evitar dependência de DHCP.
-- 📊 **Monitoramento:** Registro de eventos com metadados de origem (`mqtt_capture`, `solar_trigger`, `hourly_snapshot`).
-- ☁️ **Backups Resilientes:** Dumps automáticos do PostgreSQL para o Cloudflare R2.
+- ⚙️ **Gerenciamento Web:** Interface administrativa protegida por senha para cadastrar pontos, ajustar offsets de tempo e auditar o histórico solar.
+- 🛡️ **Segurança & Resiliência:** 
+    - **Login Seguro:** Autenticação via BCrypt com usuários persistidos no PostgreSQL.
+    - **Watchdog de Rede:** Monitoramento via Ping e Banco de Dados; força reboot do Wemos se necessário.
+    - **NTP Fallback:** O firmware mantém o ciclo mesmo sem conexão com o servidor.
+- 📊 **Monitoramento:** Registro detalhado de eventos e gráfico de consumo semanal.
+- ☁️ **Backups Cloud:** Dumps automáticos para Cloudflare R2 com política de retenção.
 
 ## 🛠️ Arquitetura
 - **Hardware:** Wemos D1 R1 (ESP8266) + Relé 2 canais (Active Low).
 - **Servidor:** Raspberry Pi 3B rodando Alpine Linux.
-- **Protocolo:** MQTT (Mosquitto 2.0) com autenticação obrigatória.
-- **Banco de Dados:** PostgreSQL 15+ com colunas `TIMESTAMPTZ` para precisão temporal.
+- **Backend:** FastAPI (Python 3.12) + Mosquitto MQTT.
+- **Banco de Dados:** PostgreSQL 15+ (Porta 5433) com integridade de fuso horário.
 
-## 📂 Organização do Repositório
-Consulte a pasta `docs/` para aprofundar seu conhecimento na estrutura do projeto:
-- `docs/STACK.md`: Tecnologias utilizadas.
-- `docs/ROADMAP.md`: Próximos passos e status atual.
-- `docs/BACKUP_MANUAL.md`: Instruções sobre os backups na nuvem.
+## ⚙️ Gestão e Manutenção
+O sistema possui scripts dedicados para operação contínua:
+- **Reiniciar Serviços:** `bash scripts/restart_api.sh` e `bash scripts/restart_solar.sh`.
+- **Gestão de Usuários:** `python3 scripts/manage_users.py` (para criar/gerenciar acessos web).
+- **Comissionamento:** `bash scripts/setup.sh` seguido da configuração do `.env`.
 
-## ⚙️ Como começar
-1. Copie o arquivo `.env.example` para `.env` e ajuste suas senhas, coordenadas e o `WEMOS_IP`.
-2. Execute `bash scripts/setup.sh` para configurar o ambiente Python.
-3. **Comissionamento:**
-    - Suba o banco: `bash scripts/04_docker_management.sh up`
-    - Registre as luzes: `bash scripts/05_register_lights.py` (dentro do venv)
-4. Utilize o `crontab_template.txt` para configurar a persistência e os watchdogs no sistema.
-5. **Firmware:** O código em `firmware/wemos_light/` deve ser compilado e carregado no Wemos.
-
-## 🧪 Testes e Logs
-Para garantir a integridade do sistema após alterações:
+## 🧪 Testes de Integridade
+Para validar toda a infraestrutura (API, Banco, Auth, MQTT):
 ```bash
 ./run_tests.sh
 ```
-O script valida a API solar, endpoints web, integridade de fuso horário (GMT-3) e a lógica do worker. 
-**Nota:** O resultado completo dos testes fica armazenado em `logs/tests.log`.
+O script executa 19 testes automatizados que garantem que nenhuma alteração quebrou o fluxo de segurança ou automação.
 
-Outros logs do sistema previstos na arquitetura (como o watchdog e rotinas do crontab) também são armazenados na pasta `logs/`.
-
+## 📂 Organização
+- `docs/R2_BACKUP_SETUP.md`: Configuração do Cloudflare R2.
+- `web/`: Interface frontend (HTML/CSS/JS).
+- `web_api/`: Servidor de API e rotas administrativas.
+- `requirements.txt`: Dependências consolidadas do projeto.
 
 ---
-**Nota de Resiliência:** O sistema utiliza `scripts/entrypoint.sh` para garantir que todos os serviços subam no boot do Raspberry Pi com os delays necessários para a rede estar pronta.
+**Nota Técnica:** O sistema utiliza `TIMESTAMPTZ` no PostgreSQL para garantir que todos os eventos sejam registrados com a precisão de Brasília (GMT-3), evitando desvios em relatórios de consumo.
