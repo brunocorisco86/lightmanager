@@ -33,6 +33,9 @@ bot = Bot(token=TOKEN)
 dp = Dispatcher()
 mqtt_client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
 
+# Dicionário global para rastrear o estado das luzes em tempo real
+light_states = {}
+
 # --- Auxiliares ---
 
 def get_db_connection():
@@ -83,8 +86,8 @@ def on_mqtt_connect(client, userdata, flags, reason_code, properties):
 def on_mqtt_message(client, userdata, msg):
     state = msg.payload.decode()
     topic = msg.topic.replace("/state", "")
-    # Aqui poderíamos salvar o evento no banco se desejado, 
-    # mas o solar_worker ou o próprio hardware já lidam com isso.
+    # Atualiza o estado em memória para o comando /status
+    light_states[topic] = state
     logging.info(f"Status MQTT: {topic} -> {state}")
 
 mqtt_client.on_connect = on_mqtt_connect
@@ -119,7 +122,10 @@ async def cmd_status(message: types.Message):
     light_status = ""
     for pt in points:
         mode = "🤖 Auto" if pt[3] else "Manual"
-        light_status += f"• {pt[1]}: [{mode}]\n"
+        # Busca o estado atual no dicionário de memória (atualizado via MQTT)
+        raw_state = light_states.get(pt[2], "DESCONHECIDO")
+        icon = "💡 ON" if raw_state == "ON" else "🌑 OFF"
+        light_status += f"• {pt[1]}: {icon} [{mode}]\n"
 
     status_msg = (
         f"🖥 *Status do Raspberry Pi*\n"
