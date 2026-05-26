@@ -49,8 +49,9 @@ rclone copy "$BACKUP_TEMP/$SQL_FILE.tar.gz" "R2:$R2_BUCKET_NAME/backups/" --prog
 
 # 7. Manter apenas os 5 últimos backups no R2 (Política de Retenção Mensal)
 echo "--> Verificando retenção (mantendo apenas os 5 mais recentes)..."
-# Lista arquivos ordenados por nome, pega todos exceto os 5 mais recentes (os últimos da lista)
-OLD_BACKUPS=$(rclone lsf "R2:$R2_BUCKET_NAME/backups/" --sort name | head -n -5)
+# Lista arquivos (lsf retorna em ordem lexicográfica por padrão, o que funciona bem com timestamps)
+# Pega todos exceto os 5 mais recentes (os últimos da lista)
+OLD_BACKUPS=$(rclone lsf "R2:$R2_BUCKET_NAME/backups/" | sort | head -n -5)
 
 if [ -n "$OLD_BACKUPS" ]; then
     for file in $OLD_BACKUPS; do
