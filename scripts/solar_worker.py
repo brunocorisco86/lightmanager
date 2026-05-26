@@ -23,6 +23,10 @@ MQTT_USER = os.getenv("MQTT_USER")
 MQTT_PASS = os.getenv("MQTT_PASSWORD")
 CACHE_FILE = os.path.join(os.path.dirname(__file__), "sun_cache.json")
 
+# Telegram
+TG_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
+TG_USER_ID = os.getenv("TELEGRAM_ALLOWED_USER_ID")
+
 # Fuso Horário Brasil (GMT-3)
 BR_TZ = timezone(timedelta(hours=-3))
 
@@ -33,6 +37,25 @@ current_states = {}
 last_hour_logged = -1
 db_conn = None
 db_lock = threading.Lock()
+
+def send_telegram_message(text):
+    """Envia uma notificação para o Telegram via requisição HTTP direta."""
+    if not TG_TOKEN or not TG_USER_ID:
+        return
+
+    url = f"https://api.telegram.org/bot{TG_TOKEN}/sendMessage"
+    payload = {
+        "chat_id": TG_USER_ID,
+        "text": text,
+        "parse_mode": "Markdown"
+    }
+    try:
+        # Timeout curto para não atrasar o ciclo principal do worker
+        response = requests.post(url, json=payload, timeout=5)
+        if response.status_code != 200:
+            logging.error(f"Erro ao enviar Telegram: {response.text}")
+    except Exception as e:
+        logging.error(f"Falha na conexão com Telegram: {e}")
 
 def touch_last_seen():
     """Atualiza o timestamp local de última atividade do Wemos."""
@@ -180,10 +203,12 @@ def run_automation_cycle(client):
                 logging.info(f"🌑 Gatilho Solar: LIGANDO {topic}")
                 client.publish(f"{topic}/set", "ON")
                 log_event_to_db(topic, "ON", source="solar_trigger", cursor=cur)
+                send_telegram_message(f"🌑 *Gatilho Solar*\nLuz: `{topic}`\nAção: `LIGAR` 💡")
             elif current_time_str == target_off:
                 logging.info(f"🌅 Gatilho Solar: DESLIGANDO {topic}")
                 client.publish(f"{topic}/set", "OFF")
                 log_event_to_db(topic, "OFF", source="solar_trigger", cursor=cur)
+                send_telegram_message(f"🌅 *Gatilho Solar*\nLuz: `{topic}`\nAção: `DESLIGAR` 🌑")
 
     except Exception as e:
         logging.error(f"Erro no ciclo: {e}")
