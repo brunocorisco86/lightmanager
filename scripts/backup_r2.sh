@@ -26,8 +26,11 @@ export RCLONE_CONFIG_R2_TYPE=s3
 export RCLONE_CONFIG_R2_PROVIDER=Cloudflare
 export RCLONE_CONFIG_R2_ACCESS_KEY_ID=$R2_ACCESS_KEY_ID
 export RCLONE_CONFIG_R2_SECRET_ACCESS_KEY=$R2_SECRET_ACCESS_KEY
-# Usa a URL configurada no .env (Endpoint S3 compatível do Cloudflare R2)
-export RCLONE_CONFIG_R2_ENDPOINT=$R2_ENDPOINT_URL
+
+# Tratamento da URL: O Cloudflare R2 espera o endpoint BASE (sem o bucket no final)
+# Se a URL fornecida termina com o nome do bucket, nós removemos para o rclone
+R2_BASE_URL=$(echo "$R2_ENDPOINT_URL" | sed "s/\/$R2_BUCKET_NAME//")
+export RCLONE_CONFIG_R2_ENDPOINT=$R2_BASE_URL
 export RCLONE_CONFIG_R2_ACL=private
 
 # 3. Preparar diretório temporário
