@@ -19,6 +19,11 @@
 @reboot sleep 50 && /bin/bash /home/bruno/lightmanager/scripts/entrypoint.sh solar
 @reboot sleep 60 && /bin/bash /home/bruno/lightmanager/scripts/entrypoint.sh bot
 
+# --- WATCHDOGS (GARANTIA DE UPTIME) ---
+
+# 6. Bot Watchdog: Garante que o Bot esteja sempre rodando (a cada 15 min)
+*/15 * * * * pgrep -f "bot/bot.py" > /dev/null || /bin/bash /home/bruno/lightmanager/scripts/restart_bot.sh
+
 # --- TAREFAS AGENDADAS ---
 
 # 4. Gerar relatorio diario de consumo (Todo dia as 23:55)

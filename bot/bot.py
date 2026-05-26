@@ -155,7 +155,8 @@ async def cmd_desliga(message: types.Message):
 async def process_mqtt_callback(callback: types.CallbackQuery):
     if not check_auth(callback.from_user.id): return
     _, action, topic = callback.data.split("_")
-    mqtt_client.publish(f"{topic}/set", action)
+    # Garante a entrega do comando via QoS 1
+    mqtt_client.publish(f"{topic}/set", action, qos=1)
     await callback.answer(f"Enviado: {action} para {topic}")
     await callback.message.edit_text(f"✅ Comando {action} enviado com sucesso!")
 
@@ -179,10 +180,15 @@ async def main():
     if MQTT_USER and MQTT_PASS:
         mqtt_client.username_pw_set(MQTT_USER, MQTT_PASS)
 
-    mqtt_client.connect(MQTT_BROKER, MQTT_PORT, 60)
-    mqtt_client.loop_start()
-    logging.info("Bot iniciado...")
-    await dp.start_polling(bot)
+    try:
+        mqtt_client.connect(MQTT_BROKER, MQTT_PORT, 60)
+        mqtt_client.loop_start()
+        logging.info("🚀 Bot do Telegram iniciado em modo Long Polling...")
+        await dp.start_polling(bot)
+    except Exception as e:
+        logging.error(f"❌ Erro fatal no Bot: {e}")
+        await asyncio.sleep(10) # Aguarda antes de deixar o processo morrer para o watchdog agir
+        raise e
 
 if __name__ == "__main__":
     asyncio.run(main())
