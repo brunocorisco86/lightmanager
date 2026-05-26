@@ -1,6 +1,10 @@
 import os
+import sys
 import pytest
 from unittest.mock import patch, MagicMock
+
+# Adiciona o diretório raiz ao path para localizar o pacote scripts
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 from scripts.solar_worker import send_telegram_message
 
 @patch("scripts.solar_worker.requests.post")
