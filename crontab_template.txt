@@ -24,5 +24,5 @@
 # 4. Gerar relatorio diario de consumo (Todo dia as 23:55)
 55 23 * * * /bin/bash /home/bruno/lightmanager/reports/generate_daily.sh >> /home/bruno/lightmanager/logs/cron.log 2>&1
 
-# 5. Backup semanal para Cloudflare R2 (Todo domingo as 03:00 da manha)
-00 03 * * 0 /bin/bash /home/bruno/lightmanager/scripts/backup_r2.sh >> /home/bruno/lightmanager/logs/backup.log 2>&1
+# 5. Backup mensal para Cloudflare R2 (Todo dia 1 as 03:00 da manha)
+00 03 1 * * /bin/bash /home/bruno/lightmanager/scripts/backup_r2.sh >> /home/bruno/lightmanager/logs/backup.log 2>&1
