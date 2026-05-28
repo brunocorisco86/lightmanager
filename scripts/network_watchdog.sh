@@ -3,7 +3,11 @@
 # Verifica se o Wemos está vivo na rede e se está comunicando via MQTT.
 # Se estiver na rede (Ping OK) mas sem enviar Heartbeat (arquivo local), força um Reboot.
 
-PROJECT_ROOT="/home/bruno/lightmanager"
+# Definir raiz do projeto independentemente de onde o script é chamado
+DIR="$(cd "$(dirname "$0")" && pwd)"
+PROJECT_ROOT="$DIR/.."
+cd "$PROJECT_ROOT"
+
 source "$PROJECT_ROOT/.env"
 
 WEMOS_IP=${WEMOS_IP:-"192.168.1.111"}

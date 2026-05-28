@@ -2,7 +2,11 @@
 # scripts/restart_bot.sh
 # Mata instâncias antigas do bot e inicia uma nova em background
 
-PROJECT_ROOT="/home/bruno/lightmanager"
+# Definir raiz do projeto independentemente de onde o script é chamado
+DIR="$(cd "$(dirname "$0")" && pwd)"
+PROJECT_ROOT="$DIR/.."
+cd "$PROJECT_ROOT"
+
 LOG_FILE="$PROJECT_ROOT/logs/bot.log"
 
 echo "[$(date)] 🔄 Reiniciando Telegram Bot..." >> "$LOG_FILE"

@@ -2,7 +2,11 @@
 # scripts/entrypoint.sh
 # Script centralizador para iniciar os serviços no boot
 
-PROJECT_ROOT="/home/bruno/lightmanager"
+# Definir raiz do projeto independentemente de onde o script é chamado
+DIR="$(cd "$(dirname "$0")" && pwd)"
+PROJECT_ROOT="$DIR/.."
+cd "$PROJECT_ROOT"
+
 PYTHON_BIN="$PROJECT_ROOT/.venv/bin/python3"
 LOG_DIR="$PROJECT_ROOT/logs"
 
