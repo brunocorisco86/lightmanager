@@ -196,19 +196,42 @@ def run_automation_cycle(client):
         points = cur.fetchall()
         
         for topic, off_on, off_off in points:
-            target_on = (sunset_br + timedelta(minutes=off_on)).strftime("%H:%M")
-            target_off = (sunrise_br + timedelta(minutes=off_off)).strftime("%H:%M")
+            # Calcula horários exatos de hoje para este ponto
+            on_dt = sunset_br + timedelta(minutes=off_on)
+            off_dt = sunrise_br + timedelta(minutes=off_off)
+            
+            # Formatação para comparação de minuto exato (gatilho de log/notificação)
+            target_on_str = on_dt.strftime("%H:%M")
+            target_off_str = off_dt.strftime("%H:%M")
+            
+            # Lógica de determinação do estado desejado (entre ON e OFF)
+            # Se off_dt for antes de on_dt (ex: 06:00 e 18:00), estamos ON se: agora > on_dt OU agora < off_dt
+            is_night = False
+            if on_dt < off_dt: # Caso raro dependendo dos offsets
+                is_night = on_dt <= now_br < off_dt
+            else: # Caso comum: liga fim do dia, desliga começo do outro
+                is_night = now_br >= on_dt or now_br < off_dt
 
-            if current_time_str == target_on:
+            desired_state = "ON" if is_night else "OFF"
+            current_state = current_states.get(topic)
+
+            # 1. Gatilho de Minuto Exato (Log e Telegram)
+            if current_time_str == target_on_str:
                 logging.info(f"🌑 Gatilho Solar: LIGANDO {topic}")
-                client.publish(f"{topic}/set", "ON")
+                client.publish(f"{topic}/set", "ON", retain=True)
                 log_event_to_db(topic, "ON", source="solar_trigger", cursor=cur)
                 send_telegram_message(f"🌑 *Gatilho Solar*\nLuz: `{topic}`\nAção: `LIGAR` 💡")
-            elif current_time_str == target_off:
+            elif current_time_str == target_off_str:
                 logging.info(f"🌅 Gatilho Solar: DESLIGANDO {topic}")
-                client.publish(f"{topic}/set", "OFF")
+                client.publish(f"{topic}/set", "OFF", retain=True)
                 log_event_to_db(topic, "OFF", source="solar_trigger", cursor=cur)
                 send_telegram_message(f"🌅 *Gatilho Solar*\nLuz: `{topic}`\nAção: `DESLIGAR` 🌑")
+            
+            # 2. Reforço de Estado (Fallback para queda de energia ou hardware offline)
+            # Se o estado atual conhecido é diferente do desejado, reforçamos o comando
+            if current_state and current_state != desired_state:
+                logging.warning(f"⚠️ Desvio detectado em {topic}: Atual={current_state}, Desejado={desired_state}. Reforçando...")
+                client.publish(f"{topic}/set", desired_state, retain=True)
 
     except Exception as e:
         logging.error(f"Erro no ciclo: {e}")
