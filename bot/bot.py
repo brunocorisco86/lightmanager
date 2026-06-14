@@ -7,6 +7,7 @@ from datetime import datetime, timedelta
 from aiogram import Bot, Dispatcher, types, F
 from aiogram.filters import Command
 from aiogram.utils.keyboard import InlineKeyboardBuilder
+from psycopg2 import pool
 from dotenv import load_dotenv
 import paho.mqtt.client as mqtt
 
@@ -36,44 +37,60 @@ mqtt_client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
 # Dicionário global para rastrear o estado das luzes em tempo real
 light_states = {}
 
-# --- Auxiliares ---
+# --- DB Pooling ---
 
-def get_db_connection():
-    return psycopg2.connect(
-        host=DB_HOST, database=DB_NAME, user=DB_USER, password=DB_PASS, port=DB_PORT
-    )
+db_pool = pool.ThreadedConnectionPool(
+    1, 10,
+    host=DB_HOST,
+    database=DB_NAME,
+    user=DB_USER,
+    password=DB_PASS,
+    port=DB_PORT
+)
+
+def get_db_conn():
+    return db_pool.getconn()
+
+def release_db_conn(conn):
+    db_pool.putconn(conn)
+
+# --- Auxiliares ---
 
 def check_auth(user_id):
     return user_id == ALLOWED_USER_ID
 
 def get_light_points():
-    conn = get_db_connection()
-    cur = conn.cursor()
-    cur.execute("SELECT id, name, mqtt_topic, auto_mode FROM light_points;")
-    points = cur.fetchall()
-    cur.close()
-    conn.close()
-    return points
+    conn = get_db_conn()
+    try:
+        cur = conn.cursor()
+        cur.execute("SELECT id, name, mqtt_topic, auto_mode FROM light_points;")
+        points = cur.fetchall()
+        cur.close()
+        return points
+    finally:
+        release_db_conn(conn)
 
 def get_consumption_report(days):
-    conn = get_db_connection()
-    cur = conn.cursor()
-    query = """
-        SELECT p.name, COALESCE(SUM(EXTRACT(EPOCH FROM (next_t - timestamp))/3600), 0) as hours
-        FROM (
-            SELECT point_id, timestamp, event_type, 
-            LEAD(timestamp) OVER (PARTITION BY point_id ORDER BY timestamp) as next_t
-            FROM light_events
-        ) t
-        JOIN light_points p ON p.id = t.point_id
-        WHERE t.event_type = 'ON' AND t.timestamp > CURRENT_DATE - INTERVAL '%s days'
-        GROUP BY p.name;
-    """
-    cur.execute(query, (days,))
-    rows = cur.fetchall()
-    cur.close()
-    conn.close()
-    return rows
+    conn = get_db_conn()
+    try:
+        cur = conn.cursor()
+        query = """
+            SELECT p.name, COALESCE(SUM(EXTRACT(EPOCH FROM (next_t - timestamp))/3600), 0) as hours
+            FROM (
+                SELECT point_id, timestamp, event_type,
+                LEAD(timestamp) OVER (PARTITION BY point_id ORDER BY timestamp) as next_t
+                FROM light_events
+            ) t
+            JOIN light_points p ON p.id = t.point_id
+            WHERE t.event_type = 'ON' AND t.timestamp > CURRENT_DATE - INTERVAL '%s days'
+            GROUP BY p.name;
+        """
+        cur.execute(query, (days,))
+        rows = cur.fetchall()
+        cur.close()
+        return rows
+    finally:
+        release_db_conn(conn)
 
 # --- MQTT ---
 
