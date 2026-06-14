@@ -16,7 +16,7 @@
 - [ ] Configurar o Raspberry Pi 3B com Alpine Linux e clonar este repositório.
 - [ ] Rodar a sequência de scripts `./scripts/00_...` até `./scripts/05_...` no Raspberry.
 - [ ] Configurar o Crontab no Raspberry Pi para ativação automática.
-- [ ] Finalizar e testar o Bot Telegram (`bot/bot.py`).
+- [x] Finalizar e testar o Bot Telegram (`bot/bot.py`).
 
 ## 3. To-Do (Melhorias Futuras) 🛠️
 - Implementar monitoramento de "saúde" do Raspberry Pi no Bot (CPU/Temp/RAM).

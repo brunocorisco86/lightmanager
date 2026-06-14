@@ -2,47 +2,26 @@
 # Diretorio do Projeto: /home/bruno/lightmanager
 
 # --- MANUTENÇÃO DO SISTEMA ---
-
-# 0. Garante permissões do Mosquitto no Boot
 @reboot sudo chown mosquitto:mosquitto /etc/mosquitto/passwd && sudo chmod 600 /etc/mosquitto/passwd && sudo mkdir -p /var/log/mosquitto && sudo chown mosquitto:mosquitto /var/log/mosquitto
-
-# 1. Watchdog: Garante que o Mosquitto esteja sempre de pé (a cada 5 min)
 */5 * * * * pgrep -x mosquitto > /dev/null || sudo rc-service mosquitto start
-
-# 2. Watchdog de Rede: Verifica Wemos e força reboot se necessário (a cada 10 min)
 */10 * * * * /bin/bash /home/bruno/lightmanager/scripts/network_watchdog.sh
 
 # --- PROCESSOS PERSISTENTES (REBOOT COM DELAY) ---
-
-# Usa /bin/bash explicitamente para evitar problemas com o shell padrao do cron
 @reboot sleep 40 && /bin/bash /home/bruno/lightmanager/scripts/entrypoint.sh api
 @reboot sleep 50 && /bin/bash /home/bruno/lightmanager/scripts/entrypoint.sh solar
 @reboot sleep 60 && /bin/bash /home/bruno/lightmanager/scripts/entrypoint.sh bot
 
 # --- WATCHDOGS (GARANTIA DE UPTIME) ---
-
-# 6. Bot Watchdog: Garante que o Bot esteja sempre rodando (a cada 15 min)
+*/15 * * * * pgrep -f "web_api/main.py" > /dev/null || (/bin/bash /home/bruno/lightmanager/scripts/restart_api.sh >> /home/bruno/lightmanager/logs/cron.log 2>&1)
+*/15 * * * * pgrep -f "scripts/solar_worker.py" > /dev/null || (/bin/bash /home/bruno/lightmanager/scripts/restart_solar.sh >> /home/bruno/lightmanager/logs/cron.log 2>&1)
 */15 * * * * pgrep -f "bot/bot.py" > /dev/null || /bin/bash /home/bruno/lightmanager/scripts/restart_bot.sh
 
-# 7. API Watchdog: Garante que a API esteja sempre rodando (a cada 15 min)
-*/15 * * * * pgrep -f "web_api/main.py" > /dev/null || (/bin/bash /home/bruno/lightmanager/scripts/restart_api.sh >> /home/bruno/lightmanager/logs/cron.log 2>&1)
-
-# 8. Solar Watchdog: Garante que o Solar Worker esteja sempre rodando (a cada 15 min)
-*/15 * * * * pgrep -f "scripts/solar_worker.py" > /dev/null || (/bin/bash /home/bruno/lightmanager/scripts/restart_solar.sh >> /home/bruno/lightmanager/logs/cron.log 2>&1)
-
 # --- TAREFAS AGENDADAS ---
-
-# 4. Gerar relatorio diario de consumo (Todo dia as 23:55)
 55 23 * * * /bin/bash /home/bruno/lightmanager/reports/generate_daily.sh >> /home/bruno/lightmanager/logs/cron.log 2>&1
-
-# 5. Backup mensal para Cloudflare R2 (Todo dia 1 as 03:00 da manha)
 00 03 1 * * /bin/bash /home/bruno/lightmanager/scripts/backup_r2.sh >> /home/bruno/lightmanager/logs/backup.log 2>&1
 
-# --- RESILIÊNCIA NTP ---
-# Sincroniza o relógio no boot (após rede subir) e diariamente às 04:00
-@reboot sleep 60 && /usr/local/bin/ntp-resync.sh
+# --- RESILIÊNCIA NTP E DIAGNÓSTICO ---
+@reboot sleep 50 && /bin/bash /usr/local/bin/ntp-resync.sh
 0 4 * * * /bin/bash /usr/local/bin/ntp-resync.sh
-
-# Teste diário do servidor DNS (após sincronização NTP)
 30 4 * * * /bin/bash /usr/local/bin/dns-test.sh
 0 1 * * * /bin/bash /usr/local/bin/unbound-diag.sh

@@ -9,10 +9,24 @@ Este repositório contém a solução completa para o controle inteligente de il
 - ⚙️ **Gerenciamento Web:** Interface administrativa protegida por senha para cadastrar pontos, ajustar offsets de tempo e auditar o histórico solar.
 - 🛡️ **Segurança & Resiliência:** 
     - **Login Seguro:** Autenticação via BCrypt com usuários persistidos no PostgreSQL.
-    - **Watchdogs (Autocura):** Monitoramento automático do Bot, API e Rede via Crontab.
-    - **NTP Fallback:** O firmware mantém o ciclo mesmo sem conexão com o servidor.
+    - **Watchdogs (Autocura):** Monitoramento triplo (API, Solar e Bot) a cada 15 min via Crontab.
+    - **Persistência Pós-Reboot:** Escalonamento de boot via `@reboot` para garantir ordem de serviços.
+    - **NTP & DNS Watchdogs:** Sincronização horária e diagnósticos de rede automáticos.
 - 📊 **Monitoramento:** Registro detalhado de eventos e gráfico de consumo semanal.
 - ☁️ **Backups Cloud:** Dumps automáticos para Cloudflare R2 (Mensal) com política de retenção.
+
+## 🚀 Operação em Produção (Alpine Linux)
+Para garantir que o sistema opere de forma resiliente no Raspberry Pi:
+
+1. **Configurar Resiliência:** 
+   ```bash
+   # Aplica o template de crontab otimizado
+   crontab crontab_template.txt
+   ```
+2. **Gerenciar Serviços Manualmente:**
+   - Reiniciar tudo: `bash scripts/restart_api.sh && bash scripts/restart_solar.sh && bash scripts/restart_bot.sh`
+   - Verificar Status: `pgrep -af python`
+   - Logs em Tempo Real: `tail -f logs/*.log`
 
 ## 🛠️ Arquitetura
 - **Hardware:** Wemos D1 R1 (ESP8266) + Relé 2 canais (Active Low).
