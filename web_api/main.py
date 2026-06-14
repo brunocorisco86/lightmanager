@@ -1,6 +1,7 @@
 import os
 import requests
 import psycopg2
+from psycopg2 import pool
 import json
 from datetime import date
 from fastapi import FastAPI, HTTPException
@@ -67,15 +68,21 @@ except Exception as e:
     print(f"Erro ao conectar no MQTT: {e}")
     # Não travamos a inicialização da API, mas o MQTT ficará offline
 
-# DB Helper
+# DB Pooling
+db_pool = pool.ThreadedConnectionPool(
+    1, 10,
+    host=os.getenv("POSTGRES_HOST", "localhost"),
+    database=os.getenv("POSTGRES_DB", "light_manager"),
+    user=os.getenv("POSTGRES_USER", "postgres"),
+    password=os.getenv("POSTGRES_PASSWORD"),
+    port=os.getenv("POSTGRES_PORT", "5433")
+)
+
 def get_db_conn():
-    return psycopg2.connect(
-        host=os.getenv("POSTGRES_HOST", "localhost"),
-        database=os.getenv("POSTGRES_DB", "light_manager"),
-        user=os.getenv("POSTGRES_USER", "postgres"),
-        password=os.getenv("POSTGRES_PASSWORD"),
-        port=os.getenv("POSTGRES_PORT", "5433")
-    )
+    return db_pool.getconn()
+
+def release_db_conn(conn):
+    db_pool.putconn(conn)
 
 class CommandRequest(BaseModel):
     topic: str
@@ -99,13 +106,12 @@ class LoginRequest(BaseModel):
 
 @app.post("/api/login")
 def login(req: LoginRequest):
+    conn = get_db_conn()
     try:
-        conn = get_db_conn()
         cur = conn.cursor()
         cur.execute("SELECT hashed_password, username FROM users WHERE username = %s", (req.username,))
         user = cur.fetchone()
         cur.close()
-        conn.close()
 
         if user:
             hashed_password = user[0]
@@ -117,6 +123,8 @@ def login(req: LoginRequest):
     except Exception as e:
         if isinstance(e, HTTPException): raise e
         raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        release_db_conn(conn)
 
 @app.post("/api/config/check_password")
 def check_password(req: PasswordCheck):
@@ -127,24 +135,25 @@ def check_password(req: PasswordCheck):
 
 @app.get("/api/config/points")
 def get_points_config():
+    conn = get_db_conn()
     try:
-        conn = get_db_conn()
         cur = conn.cursor()
         cur.execute("SELECT id, name, mqtt_topic, offset_on_minutes, offset_off_minutes, power_w FROM light_points ORDER BY name")
         points = cur.fetchall()
         cur.close()
-        conn.close()
         return [{
             "id": p[0], "name": p[1], "topic": p[2], 
             "offset_on": p[3], "offset_off": p[4], "power": float(p[5])
         } for p in points]
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        release_db_conn(conn)
 
 @app.put("/api/config/points/{point_id}")
 def update_point_config(point_id: int, config: PointConfigUpdate):
+    conn = get_db_conn()
     try:
-        conn = get_db_conn()
         cur = conn.cursor()
         cur.execute(
             "UPDATE light_points SET offset_on_minutes = %s, offset_off_minutes = %s WHERE id = %s",
@@ -152,15 +161,16 @@ def update_point_config(point_id: int, config: PointConfigUpdate):
         )
         conn.commit()
         cur.close()
-        conn.close()
         return {"status": "updated"}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        release_db_conn(conn)
 
 @app.post("/api/config/points")
 def create_point(point: PointCreate):
+    conn = get_db_conn()
     try:
-        conn = get_db_conn()
         cur = conn.cursor()
         cur.execute(
             "INSERT INTO light_points (name, mqtt_topic, power_w) VALUES (%s, %s, %s) RETURNING id",
@@ -169,30 +179,32 @@ def create_point(point: PointCreate):
         new_id = cur.fetchone()[0]
         conn.commit()
         cur.close()
-        conn.close()
         return {"id": new_id, "status": "created"}
     except psycopg2.IntegrityError:
         raise HTTPException(status_code=400, detail="MQTT Topic already exists")
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        release_db_conn(conn)
 
 @app.delete("/api/config/points/{point_id}")
 def delete_point(point_id: int):
+    conn = get_db_conn()
     try:
-        conn = get_db_conn()
         cur = conn.cursor()
         cur.execute("DELETE FROM light_points WHERE id = %s", (point_id,))
         conn.commit()
         cur.close()
-        conn.close()
         return {"status": "deleted"}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        release_db_conn(conn)
 
 @app.get("/api/config/solar_history")
 def get_solar_history():
+    conn = get_db_conn()
     try:
-        conn = get_db_conn()
         cur = conn.cursor()
         # Busca acionamentos da última semana filtrando por solar_trigger
         query = """
@@ -207,7 +219,6 @@ def get_solar_history():
         cur.execute(query)
         rows = cur.fetchall()
         cur.close()
-        conn.close()
         # Formata o timestamp (considerando que o banco já está em America/Sao_Paulo na sessão)
         return [{
             "timestamp": r[0].isoformat() if r[0] else None,
@@ -217,6 +228,8 @@ def get_solar_history():
     except Exception as e:
         print(f"Erro Histórico Solar: {e}")
         return []
+    finally:
+        release_db_conn(conn)
 
 @app.get("/api/sun")
 def get_sun_times():
@@ -247,8 +260,8 @@ def get_sun_times():
 
 @app.get("/api/status")
 def get_status():
+    conn = get_db_conn()
     try:
-        conn = get_db_conn()
         cur = conn.cursor()
         cur.execute("SELECT id, name, mqtt_topic FROM light_points")
         points = cur.fetchall()
@@ -262,16 +275,17 @@ def get_status():
                 "state": light_states.get(f"{p[2]}/state", "UNKNOWN")
             })
         cur.close()
-        conn.close()
         return results
     except Exception as e:
         print(f"Erro DB: {e}")
         return []
+    finally:
+        release_db_conn(conn)
 
 @app.get("/api/history")
 def get_history():
+    conn = get_db_conn()
     try:
-        conn = get_db_conn()
         cur = conn.cursor()
         query = """
             SELECT DATE(timestamp), SUM(EXTRACT(EPOCH FROM (next_t - timestamp))/3600) as hours
@@ -287,11 +301,12 @@ def get_history():
         cur.execute(query)
         rows = cur.fetchall()
         cur.close()
-        conn.close()
         return [{"date": str(r[0]), "hours": round(float(r[1]), 2)} for r in rows]
     except Exception as e:
         print(f"Erro DB History: {e}")
         return []
+    finally:
+        release_db_conn(conn)
 
 @app.post("/api/command")
 def send_command(req: CommandRequest):

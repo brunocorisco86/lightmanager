@@ -3,6 +3,7 @@ import time
 import json
 import requests
 import psycopg2
+from psycopg2 import pool
 import logging
 import threading
 import paho.mqtt.client as mqtt
@@ -35,8 +36,6 @@ LAST_SEEN_FILE = "/tmp/wemos_last_seen"
 # Estado global em memória
 current_states = {} 
 last_hour_logged = -1
-db_conn = None
-db_lock = threading.Lock()
 
 def send_telegram_message(text):
     """Envia uma notificação para o Telegram via requisição HTTP direta."""
@@ -65,35 +64,41 @@ def touch_last_seen():
     except Exception as e:
         logging.error(f"Erro ao atualizar last_seen: {e}")
 
+# DB Pooling
+db_pool = pool.ThreadedConnectionPool(
+    1, 10,
+    host=os.getenv("POSTGRES_HOST", "localhost"),
+    database=os.getenv("POSTGRES_DB", "light_manager"),
+    user=os.getenv("POSTGRES_USER", "brunoconter"),
+    password=os.getenv("POSTGRES_PASSWORD")
+)
+
 def get_db_conn():
-    global db_conn
-    with db_lock:
-        try:
-            if db_conn is None or db_conn.closed:
-                db_conn = psycopg2.connect(
-                    host=os.getenv("POSTGRES_HOST", "localhost"),
-                    database=os.getenv("POSTGRES_DB", "light_manager"),
-                    user=os.getenv("POSTGRES_USER", "brunoconter"),
-                    password=os.getenv("POSTGRES_PASSWORD")
-                )
-                # Garante que a sessão do banco use o fuso horário correto
-                with db_conn.cursor() as cur:
-                    cur.execute("SET timezone TO 'America/Sao_Paulo';")
-            return db_conn
-        except Exception as e:
-            logging.error(f"Erro ao conectar ao banco: {e}")
-            db_conn = None
-            return None
+    try:
+        conn = db_pool.getconn()
+        # Garante que a sessão do banco use o fuso horário correto
+        with conn.cursor() as cur:
+            cur.execute("SET timezone TO 'America/Sao_Paulo';")
+        return conn
+    except Exception as e:
+        logging.error(f"Erro ao obter conexão do pool: {e}")
+        return None
+
+def release_db_conn(conn):
+    db_pool.putconn(conn)
 
 def log_event_to_db(topic, state, source="mqtt_capture", cursor=None):
     """Salva um evento de estado no banco de dados com fonte e timestamp correto."""
     local_cur = None
+    conn = None
     try:
-        conn = get_db_conn()
-        if not conn: return
-
-        cur = cursor if cursor else conn.cursor()
-        if not cursor: local_cur = cur
+        if cursor:
+            cur = cursor
+        else:
+            conn = get_db_conn()
+            if not conn: return
+            cur = conn.cursor()
+            local_cur = cur
 
         base_topic = topic.replace("/state", "").replace("/set", "")
         
@@ -109,18 +114,24 @@ def log_event_to_db(topic, state, source="mqtt_capture", cursor=None):
                 (point_id, state, source, now_br)
             )
             # Commit after each event to maintain independence and avoid transaction poisoning
-            conn.commit()
+            if cursor:
+                # Se recebemos um cursor externo, o commit deve ser feito na conexão associada
+                cur.connection.commit()
+            else:
+                conn.commit()
             logging.info(f"💾 Registrado no DB [{source}]: {base_topic} -> {state}")
 
     except Exception as e:
         logging.error(f"❌ Erro ao logar no DB: {e}")
         try:
-            conn = get_db_conn()
-            if conn: conn.rollback()
+            target_conn = cursor.connection if cursor else conn
+            if target_conn: target_conn.rollback()
         except: pass
     finally:
         if local_cur:
             local_cur.close()
+        if conn:
+            release_db_conn(conn)
 
 def on_connect(client, userdata, flags, rc, properties):
     logging.info(f"Conectado ao Broker com resultado: {rc}")
@@ -180,6 +191,7 @@ def run_automation_cycle(client):
     current_hour = now_br.hour
 
     cur = None
+    conn = None
     try:
         conn = get_db_conn()
         if not conn: return
@@ -242,6 +254,8 @@ def run_automation_cycle(client):
     finally:
         if cur:
             cur.close()
+        if conn:
+            release_db_conn(conn)
 
 if __name__ == "__main__":
     client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
