@@ -28,15 +28,16 @@ class TestSolarWorkerPerformance(unittest.TestCase):
         mock_cur = MagicMock()
         mock_connect.return_value = mock_conn
         mock_conn.cursor.return_value = mock_cur
+        mock_cur.connection = mock_conn
         mock_cur.__enter__.return_value = mock_cur
         # Simulate psycopg2 context manager behavior: __exit__ calls close()
         mock_cur.__exit__.side_effect = lambda *args: mock_cur.close()
         return mock_conn, mock_cur
 
-    @patch('solar_worker.psycopg2.connect')
+    @patch('solar_worker.get_db_conn')
     @patch('solar_worker.get_today_sun_data')
-    def test_connection_and_cursor_management(self, mock_sun_data, mock_connect):
-        mock_conn, mock_cur = self.setup_mocks(mock_connect)
+    def test_connection_and_cursor_management(self, mock_sun_data, mock_get_db_conn):
+        mock_conn, mock_cur = self.setup_mocks(mock_get_db_conn)
 
         mock_sun_data.return_value = {
             "sunrise": "2023-10-27T06:00:00+00:00",
@@ -54,24 +55,23 @@ class TestSolarWorkerPerformance(unittest.TestCase):
             "home/outdoor/fundos": "OFF",
         }
 
+        from datetime import datetime as dt_real
         with patch('solar_worker.datetime') as mock_datetime:
-            mock_now = MagicMock()
-            mock_now.hour = 10
-            mock_now.strftime.return_value = "10:00"
+            mock_now = dt_real(2023, 10, 27, 10, 0, 0, tzinfo=solar_worker.BR_TZ)
             mock_datetime.now.return_value = mock_now
-            mock_datetime.fromisoformat = MagicMock(side_effect=lambda x: MagicMock())
+            mock_datetime.fromisoformat = MagicMock(side_effect=lambda x: dt_real.fromisoformat(x))
 
             client = MagicMock()
             solar_worker.run_automation_cycle(client)
 
-        self.assertEqual(mock_connect.call_count, 1)
-        self.assertEqual(mock_conn.cursor.call_count, 2)
-        self.assertEqual(mock_cur.close.call_count, 2)
+        self.assertEqual(mock_get_db_conn.call_count, 1)
+        self.assertEqual(mock_conn.cursor.call_count, 1)
+        self.assertEqual(mock_cur.close.call_count, 1)
         self.assertEqual(mock_conn.commit.call_count, 2)
 
-    @patch('solar_worker.psycopg2.connect')
-    def test_on_message_cursor_management(self, mock_connect):
-        mock_conn, mock_cur = self.setup_mocks(mock_connect)
+    @patch('solar_worker.get_db_conn')
+    def test_on_message_cursor_management(self, mock_get_db_conn):
+        mock_conn, mock_cur = self.setup_mocks(mock_get_db_conn)
         mock_cur.fetchone.return_value = [1]
 
         solar_worker.current_states = {}
@@ -82,36 +82,35 @@ class TestSolarWorkerPerformance(unittest.TestCase):
 
         solar_worker.on_message(client, None, msg)
 
-        self.assertEqual(mock_connect.call_count, 1)
-        self.assertEqual(mock_conn.cursor.call_count, 2)
-        self.assertEqual(mock_cur.close.call_count, 2)
+        self.assertEqual(mock_get_db_conn.call_count, 1)
+        self.assertEqual(mock_conn.cursor.call_count, 1)
+        self.assertEqual(mock_cur.close.call_count, 1)
         self.assertEqual(mock_conn.commit.call_count, 1)
 
-    @patch('solar_worker.psycopg2.connect')
+    @patch('solar_worker.get_db_conn')
     @patch('solar_worker.get_today_sun_data')
-    def test_error_handling_rollback(self, mock_sun_data, mock_connect):
-        mock_conn, mock_cur = self.setup_mocks(mock_connect)
+    def test_error_handling_rollback(self, mock_sun_data, mock_get_db_conn):
+        mock_conn, mock_cur = self.setup_mocks(mock_get_db_conn)
         mock_sun_data.return_value = {
             "sunrise": "2023-10-27T06:00:00+00:00",
             "sunset": "2023-10-27T18:00:00+00:00"
         }
 
         # Trigger an error during execution of light_points fetch
-        mock_cur.execute.side_effect = [None, Exception("DB Error")]
+        mock_cur.execute.side_effect = Exception("DB Error")
 
         solar_worker.current_states = {} # Empty to skip hourly log and go straight to points fetch
+        from datetime import datetime as dt_real
         with patch('solar_worker.datetime') as mock_datetime:
-            mock_now = MagicMock()
-            mock_now.hour = 10
-            mock_now.strftime.return_value = "10:00"
+            mock_now = dt_real(2023, 10, 27, 10, 0, 0, tzinfo=solar_worker.BR_TZ)
             mock_datetime.now.return_value = mock_now
-            mock_datetime.fromisoformat = MagicMock(side_effect=lambda x: MagicMock())
+            mock_datetime.fromisoformat = MagicMock(side_effect=lambda x: dt_real.fromisoformat(x))
 
             client = MagicMock()
             solar_worker.run_automation_cycle(client)
 
         self.assertGreaterEqual(mock_conn.rollback.call_count, 1)
-        self.assertEqual(mock_cur.close.call_count, 2)
+        self.assertEqual(mock_cur.close.call_count, 1)
 
 if __name__ == '__main__':
     unittest.main()

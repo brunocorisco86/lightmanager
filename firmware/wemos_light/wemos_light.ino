@@ -102,19 +102,19 @@ void callback(char* topic, byte* payload, unsigned int length) {
   messageTemp.trim();
   
   if (String(topic) == set_frente) {
-    if (messageTemp == "ON" && digitalRead(pinFrente) == RELAY_OFF) {
+    if (messageTemp == "ON") {
       digitalWrite(pinFrente, RELAY_ON);
       client.publish(state_frente, "ON", true);
-    } else if (messageTemp == "OFF" && digitalRead(pinFrente) == RELAY_ON) {
+    } else if (messageTemp == "OFF") {
       digitalWrite(pinFrente, RELAY_OFF);
       client.publish(state_frente, "OFF", true);
     }
   }
   else if (String(topic) == set_fundos) {
-    if (messageTemp == "ON" && digitalRead(pinFundos) == RELAY_OFF) {
+    if (messageTemp == "ON") {
       digitalWrite(pinFundos, RELAY_ON);
       client.publish(state_fundos, "ON", true);
-    } else if (messageTemp == "OFF" && digitalRead(pinFundos) == RELAY_ON) {
+    } else if (messageTemp == "OFF") {
       digitalWrite(pinFundos, RELAY_OFF);
       client.publish(state_fundos, "OFF", true);
     }
@@ -217,8 +217,8 @@ void loop() {
     
     // Fallback de Segurança: Se o NTP sincronizou e virou dia, garante desligamento
     if (WiFi.status() == WL_CONNECTED && !isNightTime() && time(nullptr) > 1000000) {
-       if (digitalRead(pinFrente) == RELAY_ON) digitalWrite(pinFrente, RELAY_OFF);
-       if (digitalRead(pinFundos) == RELAY_ON) digitalWrite(pinFundos, RELAY_OFF);
+       digitalWrite(pinFrente, RELAY_OFF);
+       digitalWrite(pinFundos, RELAY_OFF);
     }
 
     if (client.connected()) {

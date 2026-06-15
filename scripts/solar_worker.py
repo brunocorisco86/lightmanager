@@ -134,21 +134,27 @@ def log_event_to_db(topic, state, source="mqtt_capture", cursor=None):
             release_db_conn(conn)
 
 def on_connect(client, userdata, flags, rc, properties):
-    logging.info(f"Conectado ao Broker com resultado: {rc}")
-    client.subscribe("home/outdoor/+/state")
-    client.subscribe("home/outdoor/status")
+    logging.info(f"Conectado ao Broker MQTT. Resultado (rc): {rc}")
+    client.subscribe("home/outdoor/+/state", qos=1)
+    client.subscribe("home/outdoor/status", qos=1)
 
 def on_message(client, userdata, msg):
     touch_last_seen()
     
+    payload_str = msg.payload.decode()
     if "/status" in msg.topic:
+        logging.info(f"💓 Heartbeat recebido do embarcado: {payload_str}")
         return # Heartbeat apenas atualiza o arquivo, não vai pro DB
         
     topic = msg.topic.replace("/state", "")
-    state = msg.payload.decode()
+    state = payload_str
+    
+    logging.info(f"📥 Mensagem MQTT recebida no tópico {msg.topic}: {state}")
     
     if current_states.get(topic) != state:
+        old_state = current_states.get(topic, "DESCONHECIDO")
         current_states[topic] = state
+        logging.info(f"🔄 Transição de estado em {topic}: {old_state} -> {state}")
         log_event_to_db(topic, state, source="mqtt_capture")
 
 def fetch_sun_data_with_retry(max_retries=5):
@@ -197,12 +203,12 @@ def run_automation_cycle(client):
         if not conn: return
         cur = conn.cursor()
 
-        if current_hour != last_hour_logged:
+        is_hourly_check = (current_hour != last_hour_logged)
+        if is_hourly_check:
             logging.info(f"⏰ Verificação Horária: {current_hour}:00")
             # Usa .copy() para evitar erro de 'dictionary changed size during iteration'
             for topic, state in current_states.copy().items():
                 log_event_to_db(topic, state, source="hourly_snapshot", cursor=cur)
-            last_hour_logged = current_hour
 
         cur.execute("SELECT mqtt_topic, offset_on_minutes, offset_off_minutes FROM light_points WHERE auto_mode = TRUE")
         points = cur.fetchall()
@@ -230,25 +236,62 @@ def run_automation_cycle(client):
             # 1. Gatilho de Minuto Exato (Log e Telegram)
             if current_time_str == target_on_str:
                 logging.info(f"🌑 Gatilho Solar: LIGANDO {topic}")
-                client.publish(f"{topic}/set", "ON", retain=True)
+                client.publish(f"{topic}/set", "ON", qos=1, retain=True)
                 log_event_to_db(topic, "ON", source="solar_trigger", cursor=cur)
                 send_telegram_message(f"🌑 *Gatilho Solar*\nLuz: `{topic}`\nAção: `LIGAR` 💡")
             elif current_time_str == target_off_str:
                 logging.info(f"🌅 Gatilho Solar: DESLIGANDO {topic}")
-                client.publish(f"{topic}/set", "OFF", retain=True)
+                client.publish(f"{topic}/set", "OFF", qos=1, retain=True)
                 log_event_to_db(topic, "OFF", source="solar_trigger", cursor=cur)
                 send_telegram_message(f"🌅 *Gatilho Solar*\nLuz: `{topic}`\nAção: `DESLIGAR` 🌑")
             
             # 2. Reforço de Estado (Fallback para queda de energia ou hardware offline)
-            # Se o estado atual conhecido é diferente do desejado, reforçamos o comando
-            if current_state and current_state != desired_state:
-                logging.warning(f"⚠️ Desvio detectado em {topic}: Atual={current_state}, Desejado={desired_state}. Reforçando...")
-                client.publish(f"{topic}/set", desired_state, retain=True)
+            # Se o estado atual conhecido é diferente do desejado, ou se for virada de hora, reforçamos o comando
+            if current_state is None or current_state != desired_state or is_hourly_check:
+                if current_state is None:
+                    logging.warning(f"❓ Estado desconhecido em {topic}. Forçando estado desejado={desired_state}")
+                elif is_hourly_check:
+                    logging.info(f"⏰ Reforço Horário em {topic}: Forçando estado desejado={desired_state}")
+                else:
+                    logging.warning(f"⚠️ Desvio detectado em {topic}: Atual={current_state}, Desejado={desired_state}. Reforçando...")
+                client.publish(f"{topic}/set", desired_state, qos=1, retain=True)
+
+            # 3. Verificação Preventiva de Saúde (5 minutos antes do offset)
+            check_time_on = (on_dt - timedelta(minutes=5)).strftime("%H:%M")
+            check_time_off = (off_dt - timedelta(minutes=5)).strftime("%H:%M")
+            
+            if current_time_str == check_time_on or current_time_str == check_time_off:
+                action_type = "LIGAR" if current_time_str == check_time_on else "DESLIGAR"
+                logging.info(f"🔍 Verificação preventiva de saúde: 5 minutos antes de {action_type} para {topic}")
+                
+                # Verifica há quanto tempo o embarcado não envia dados
+                last_seen = 0
+                if os.path.exists(LAST_SEEN_FILE):
+                    try:
+                        with open(LAST_SEEN_FILE, 'r') as f:
+                            last_seen = float(f.read().strip())
+                    except Exception as e:
+                        logging.error(f"Erro ao ler last_seen: {e}")
+                
+                time_diff = time.time() - last_seen if last_seen > 0 else 0
+                if last_seen == 0 or time_diff > 180: # Mais de 3 minutos sem sinal
+                    alert_msg = (
+                        f"🚨 *ALERTA DE SAÚDE EMBARCADO*\n"
+                        f"O dispositivo Wemos está offline ou sem comunicação!\n"
+                        f"Último sinal recebido: {'Nunca' if last_seen == 0 else f'{int(time_diff)} segundos atrás'}\n"
+                        f"Gatilho planejado: `{action_type}` para `{topic}` em 5 minutos."
+                    )
+                    logging.error(f"❌ {alert_msg.replace('*', '')}")
+                    send_telegram_message(alert_msg)
+                else:
+                    logging.info(f"✅ Dispositivo saudável. Último sinal há {int(time_diff)}s.")
+
+        if is_hourly_check:
+            last_hour_logged = current_hour
 
     except Exception as e:
         logging.error(f"Erro no ciclo: {e}")
         try:
-            conn = get_db_conn()
             if conn: conn.rollback()
         except: pass
     finally:
