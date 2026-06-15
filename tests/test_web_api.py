@@ -62,11 +62,13 @@ def test_get_sun_times_failure():
 
 # --- /api/status tests ---
 
-@patch('web_api.main.get_db_conn')
-def test_get_status_success(mock_get_conn):
+@patch('web_api.main.get_db_pool')
+def test_get_status_success(mock_get_pool):
+    mock_pool = MagicMock()
+    mock_get_pool.return_value = mock_pool
     mock_conn = MagicMock()
     mock_cur = MagicMock()
-    mock_get_conn.return_value = mock_conn
+    mock_pool.getconn.return_value = mock_conn
     mock_conn.cursor.return_value = mock_cur
 
     # Mock DB data: (id, name, mqtt_topic)
@@ -86,19 +88,22 @@ def test_get_status_success(mock_get_conn):
         assert data[1]["name"] == "Pool"
         assert data[1]["state"] == "UNKNOWN"
 
-@patch('web_api.main.get_db_conn', side_effect=Exception("DB Connection Error"))
-def test_get_status_db_error(mock_get_conn):
+@patch('web_api.main.get_db_pool')
+def test_get_status_db_error(mock_get_pool):
+    mock_get_pool.side_effect = Exception("DB Connection Error")
     response = client.get("/api/status")
     assert response.status_code == 200
     assert response.json() == []
 
 # --- /api/history tests ---
 
-@patch('web_api.main.get_db_conn')
-def test_get_history_success(mock_get_conn):
+@patch('web_api.main.get_db_pool')
+def test_get_history_success(mock_get_pool):
+    mock_pool = MagicMock()
+    mock_get_pool.return_value = mock_pool
     mock_conn = MagicMock()
     mock_cur = MagicMock()
-    mock_get_conn.return_value = mock_conn
+    mock_pool.getconn.return_value = mock_conn
     mock_conn.cursor.return_value = mock_cur
 
     # Mock DB data: (date, hours)
@@ -116,18 +121,20 @@ def test_get_history_success(mock_get_conn):
 
 # --- /api/command tests ---
 
-def test_send_command_success():
-    mqtt_client.is_connected.return_value = True
+@patch('web_api.main.mqtt_client')
+def test_send_command_success(mock_mqtt):
+    mock_mqtt.is_connected.return_value = True
 
     payload = {"topic": "home/outdoor/garden", "action": "ON"}
     response = client.post("/api/command", json=payload)
 
     assert response.status_code == 200
     assert response.json()["status"] == "sent"
-    mqtt_client.publish.assert_called_with("home/outdoor/garden/set", "ON", qos=1)
+    mock_mqtt.publish.assert_called_with("home/outdoor/garden/set", "ON", qos=1)
 
-def test_send_command_mqtt_offline():
-    mqtt_client.is_connected.return_value = False
+@patch('web_api.main.mqtt_client')
+def test_send_command_mqtt_offline(mock_mqtt):
+    mock_mqtt.is_connected.return_value = False
 
     payload = {"topic": "home/outdoor/garden", "action": "OFF"}
     response = client.post("/api/command", json=payload)

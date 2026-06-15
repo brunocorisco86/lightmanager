@@ -68,21 +68,27 @@ except Exception as e:
     print(f"Erro ao conectar no MQTT: {e}")
     # Não travamos a inicialização da API, mas o MQTT ficará offline
 
-# DB Pooling
-db_pool = pool.ThreadedConnectionPool(
-    1, 10,
-    host=os.getenv("POSTGRES_HOST", "localhost"),
-    database=os.getenv("POSTGRES_DB", "light_manager"),
-    user=os.getenv("POSTGRES_USER", "postgres"),
-    password=os.getenv("POSTGRES_PASSWORD"),
-    port=os.getenv("POSTGRES_PORT", "5433")
-)
+# DB Pooling (Lazy Initialization)
+db_pool = None
+
+def get_db_pool():
+    global db_pool
+    if db_pool is None:
+        db_pool = pool.ThreadedConnectionPool(
+            1, 10,
+            host=os.getenv("POSTGRES_HOST", "localhost"),
+            database=os.getenv("POSTGRES_DB", "light_manager"),
+            user=os.getenv("POSTGRES_USER", "postgres"),
+            password=os.getenv("POSTGRES_PASSWORD"),
+            port=os.getenv("POSTGRES_PORT", "5433")
+        )
+    return db_pool
 
 def get_db_conn():
-    return db_pool.getconn()
+    return get_db_pool().getconn()
 
 def release_db_conn(conn):
-    db_pool.putconn(conn)
+    get_db_pool().putconn(conn)
 
 class CommandRequest(BaseModel):
     topic: str
@@ -260,8 +266,9 @@ def get_sun_times():
 
 @app.get("/api/status")
 def get_status():
-    conn = get_db_conn()
+    conn = None
     try:
+        conn = get_db_conn()
         cur = conn.cursor()
         cur.execute("SELECT id, name, mqtt_topic FROM light_points")
         points = cur.fetchall()
@@ -280,12 +287,14 @@ def get_status():
         print(f"Erro DB: {e}")
         return []
     finally:
-        release_db_conn(conn)
+        if conn:
+            release_db_conn(conn)
 
 @app.get("/api/history")
 def get_history():
-    conn = get_db_conn()
+    conn = None
     try:
+        conn = get_db_conn()
         cur = conn.cursor()
         query = """
             SELECT DATE(timestamp), SUM(EXTRACT(EPOCH FROM (next_t - timestamp))/3600) as hours
@@ -306,7 +315,8 @@ def get_history():
         print(f"Erro DB History: {e}")
         return []
     finally:
-        release_db_conn(conn)
+        if conn:
+            release_db_conn(conn)
 
 @app.post("/api/command")
 def send_command(req: CommandRequest):

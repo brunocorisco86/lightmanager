@@ -64,18 +64,26 @@ def touch_last_seen():
     except Exception as e:
         logging.error(f"Erro ao atualizar last_seen: {e}")
 
-# DB Pooling
-db_pool = pool.ThreadedConnectionPool(
-    1, 10,
-    host=os.getenv("POSTGRES_HOST", "localhost"),
-    database=os.getenv("POSTGRES_DB", "light_manager"),
-    user=os.getenv("POSTGRES_USER", "brunoconter"),
-    password=os.getenv("POSTGRES_PASSWORD")
-)
+# DB Pooling (Lazy Initialization)
+db_pool = None
+
+def get_db_pool():
+    global db_pool
+    if db_pool is None:
+        db_pool = pool.ThreadedConnectionPool(
+            1, 10,
+            host=os.getenv("POSTGRES_HOST", "localhost"),
+            database=os.getenv("POSTGRES_DB", "light_manager"),
+            user=os.getenv("POSTGRES_USER", "brunoconter"),
+            password=os.getenv("POSTGRES_PASSWORD")
+        )
+    return db_pool
 
 def get_db_conn():
     try:
-        conn = db_pool.getconn()
+        pool_obj = get_db_pool()
+        if not pool_obj: return None
+        conn = pool_obj.getconn()
         # Garante que a sessão do banco use o fuso horário correto
         with conn.cursor() as cur:
             cur.execute("SET timezone TO 'America/Sao_Paulo';")
@@ -85,7 +93,9 @@ def get_db_conn():
         return None
 
 def release_db_conn(conn):
-    db_pool.putconn(conn)
+    pool_obj = get_db_pool()
+    if pool_obj and conn:
+        pool_obj.putconn(conn)
 
 def log_event_to_db(topic, state, source="mqtt_capture", cursor=None):
     """Salva um evento de estado no banco de dados com fonte e timestamp correto."""
