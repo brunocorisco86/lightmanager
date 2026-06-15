@@ -47,6 +47,33 @@ Para validar toda a infraestrutura (API, Banco, Auth, MQTT, Telegram, Backup):
 ```
 O script executa **27 testes automatizados** que garantem que nenhuma alteração quebrou o fluxo de segurança ou automação.
 
+## 🛡️ Mecanismos de Confiabilidade & Testes Locais
+
+Para garantir a operação contínua do sistema e facilitar o desenvolvimento de novas features, o Light Manager dispõe de mecanismos de confiabilidade de hardware e testes locais avançados.
+
+### 🧪 Como Rodar a Suíte de Testes Localmente
+Os testes de integração necessitam de uma instância do banco PostgreSQL disponível para validação real dos fluxos de banco de dados e autenticação:
+
+1. **Suba a infraestrutura do banco de testes local (Docker)**:
+   ```bash
+   docker-compose up -d
+   ```
+2. **Inicialize as tabelas do banco de dados local**:
+   ```bash
+   .venv/bin/python3 -c "import importlib; rl = importlib.import_module('scripts.05_register_lights'); rl.init_db(); import scripts.manage_users as mu; mu.init_users_table()"
+   ```
+3. **Execute os testes**:
+   ```bash
+   ./run_tests.sh
+   ```
+   *Nota: O script de testes detecta se ferramentas acessórias como o `rclone` ou o `docker` estão ausentes no PATH e pula testes relacionados a eles de forma limpa.*
+
+### ⚙️ Funcionalidades de Resiliência de Automação
+* **Acionamento Físico Direto (Firmware)**: O código embarcado do Wemos [wemos_light.ino](file:///media/brunoconter/DOCUMENTOS3/10_LIGHT_MANAGER/lightmanager/firmware/wemos_light/wemos_light.ino) força o estado elétrico dos relés de forma incondicional em cada comando MQTT de entrada. Isso evita que ruídos físicos façam a leitura lógica de `digitalRead` impedir acionamentos corretos.
+* **Reforço de Estado Horário (Lazy & Thread-safe)**: O script [solar_worker.py](file:///media/brunoconter/DOCUMENTOS3/10_LIGHT_MANAGER/lightmanager/scripts/solar_worker.py) envia o estado solar desejado (com QoS 1 e Retain) de forma proativa a cada virada de hora e na inicialização do serviço, servindo de fallback para quedas de energia no ESP8266. A inicialização preguiçosa do pool de conexões é protegida contra concorrência por Locks.
+* **Checagem Preventiva de Saúde (Telegram Alertas)**: O `solar_worker` confere se o Wemos está comunicando com o broker Mosquitto exatamente **5 minutos antes** de cada pôr ou nascer do sol. Caso o Wemos esteja offline há mais de 3 minutos, um alerta urgente com tag `🚨 ALERTA DE SAÚDE EMBARCADO` é disparado via Telegram.
+* **Logs Enriquecidos**: Todas as transições de status capturadas via broker MQTT são armazenadas em disco sob a pasta `/logs/` de forma explícita com o payload correspondente para diagnósticos simplificados.
+
 ## 📂 Organização
 - `docs/R2_BACKUP_SETUP.md`: Configuração do Cloudflare R2.
 - `web/`: Interface frontend (HTML/CSS/JS).
