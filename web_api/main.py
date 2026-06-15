@@ -12,6 +12,7 @@ import paho.mqtt.client as mqtt
 from fastapi.middleware.cors import CORSMiddleware
 import bcrypt
 import time
+import threading
 
 # Carrega o .env da raiz do projeto
 load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), '..', '.env'))
@@ -68,20 +69,23 @@ except Exception as e:
     print(f"Erro ao conectar no MQTT: {e}")
     # Não travamos a inicialização da API, mas o MQTT ficará offline
 
-# DB Pooling (Lazy Initialization)
+# DB Pooling (Lazy Initialization - Thread-Safe)
 db_pool = None
+db_pool_lock = threading.Lock()
 
 def get_db_pool():
     global db_pool
     if db_pool is None:
-        db_pool = pool.ThreadedConnectionPool(
-            1, 10,
-            host=os.getenv("POSTGRES_HOST", "localhost"),
-            database=os.getenv("POSTGRES_DB", "light_manager"),
-            user=os.getenv("POSTGRES_USER", "postgres"),
-            password=os.getenv("POSTGRES_PASSWORD"),
-            port=os.getenv("POSTGRES_PORT", "5433")
-        )
+        with db_pool_lock:
+            if db_pool is None:
+                db_pool = pool.ThreadedConnectionPool(
+                    1, 10,
+                    host=os.getenv("POSTGRES_HOST", "localhost"),
+                    database=os.getenv("POSTGRES_DB", "light_manager"),
+                    user=os.getenv("POSTGRES_USER", "postgres"),
+                    password=os.getenv("POSTGRES_PASSWORD"),
+                    port=os.getenv("POSTGRES_PORT", "5433")
+                )
     return db_pool
 
 def get_db_conn():

@@ -64,19 +64,22 @@ def touch_last_seen():
     except Exception as e:
         logging.error(f"Erro ao atualizar last_seen: {e}")
 
-# DB Pooling (Lazy Initialization)
+# DB Pooling (Lazy Initialization - Thread-Safe)
 db_pool = None
+db_pool_lock = threading.Lock()
 
 def get_db_pool():
     global db_pool
     if db_pool is None:
-        db_pool = pool.ThreadedConnectionPool(
-            1, 10,
-            host=os.getenv("POSTGRES_HOST", "localhost"),
-            database=os.getenv("POSTGRES_DB", "light_manager"),
-            user=os.getenv("POSTGRES_USER", "brunoconter"),
-            password=os.getenv("POSTGRES_PASSWORD")
-        )
+        with db_pool_lock:
+            if db_pool is None:
+                db_pool = pool.ThreadedConnectionPool(
+                    1, 10,
+                    host=os.getenv("POSTGRES_HOST", "localhost"),
+                    database=os.getenv("POSTGRES_DB", "light_manager"),
+                    user=os.getenv("POSTGRES_USER", "brunoconter"),
+                    password=os.getenv("POSTGRES_PASSWORD")
+                )
     return db_pool
 
 def get_db_conn():
