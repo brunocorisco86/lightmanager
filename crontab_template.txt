@@ -14,7 +14,7 @@
 # --- WATCHDOGS (GARANTIA DE UPTIME) ---
 */15 * * * * pgrep -f "web_api/main.py" > /dev/null || (/bin/bash /home/bruno/lightmanager/scripts/restart_api.sh >> /home/bruno/lightmanager/logs/cron.log 2>&1)
 */15 * * * * pgrep -f "scripts/solar_worker.py" > /dev/null || (/bin/bash /home/bruno/lightmanager/scripts/restart_solar.sh >> /home/bruno/lightmanager/logs/cron.log 2>&1)
-*/15 * * * * pgrep -f "bot/bot.py" > /dev/null || /bin/bash /home/bruno/lightmanager/scripts/restart_bot.sh
+*/15 * * * * pgrep -f "bot/bot.py" > /dev/null || (/bin/bash /home/bruno/lightmanager/scripts/restart_bot.sh >> /home/bruno/lightmanager/logs/cron.log 2>&1)
 
 # --- TAREFAS AGENDADAS ---
 55 23 * * * /bin/bash /home/bruno/lightmanager/reports/generate_daily.sh >> /home/bruno/lightmanager/logs/cron.log 2>&1
