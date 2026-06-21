@@ -3,7 +3,7 @@
 #include <time.h>
 
 // Configurações de Wi-Fi
-const char* ssid = "quarto";
+const char* ssid = "ZN-BRUNO_CONTER";
 const char* password = "veracruz";
 
 // Configuração de IP Estático
