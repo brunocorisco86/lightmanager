@@ -10,14 +10,14 @@ const char* password = "veracruz";
 IPAddress local_IP(192, 168, 1, 111);
 IPAddress gateway(192, 168, 1, 1);
 IPAddress subnet(255, 255, 255, 0);
-IPAddress primaryDNS(192, 168, 1, 7);   // unbound localserver
-IPAddress secondaryDNS(1, 1, 1, 1); // Cloudflare fallback
+IPAddress primaryDNS(192, 168, 1, 7);  // unbound localserver
+IPAddress secondaryDNS(1, 1, 1, 1);    // Cloudflare fallback
 
 // Configurações de MQTT
 const char* mqtt_server = "192.168.1.7";
 const int mqtt_port = 1883;
-const char* mqtt_user     = "SEU_USUARIO_AQUI";
-const char* mqtt_password = "SUA_SENHA_AQUI";
+const char* mqtt_user = "bruno";
+const char* mqtt_password = "blurbang";
 
 // Lógica Invertida (Active Low)
 #define RELAY_ON LOW
@@ -26,7 +26,7 @@ const char* mqtt_password = "SUA_SENHA_AQUI";
 // Definições de Tópicos e Pinos
 const char* set_frente = "home/outdoor/frente/set";
 const char* state_frente = "home/outdoor/frente/state";
-const int pinFrente = D1; 
+const int pinFrente = D1;
 
 const char* set_fundos = "home/outdoor/fundos/set";
 const char* state_fundos = "home/outdoor/fundos/state";
@@ -47,7 +47,7 @@ unsigned long lastWiFiConnected = 0;
 void setup_time() {
   configTime(-3 * 3600, 0, "pool.ntp.org", "time.nist.gov");
   Serial.print("Sincronizando NTP...");
-  
+
   int retries = 0;
   time_t now = time(nullptr);
   while (now < 8 * 3600 * 2 && retries < 15) {
@@ -56,7 +56,7 @@ void setup_time() {
     now = time(nullptr);
     retries++;
   }
-  
+
   if (now >= 8 * 3600 * 2) {
     Serial.println("\nTempo sincronizado!");
   } else {
@@ -66,14 +66,14 @@ void setup_time() {
 
 bool isNightTime() {
   time_t now = time(nullptr);
-  if (now < 8 * 3600 * 2) return false; 
-  struct tm *timeinfo = localtime(&now);
+  if (now < 8 * 3600 * 2) return false;
+  struct tm* timeinfo = localtime(&now);
   return (timeinfo->tm_hour >= 18 || timeinfo->tm_hour < 5);
 }
 
 void setup_wifi() {
   if (WiFi.status() == WL_CONNECTED) return;
-  
+
   Serial.print("\nConfigurando IP Estatico: ");
   Serial.println(local_IP);
 
@@ -85,14 +85,14 @@ void setup_wifi() {
   Serial.println(ssid);
   WiFi.mode(WIFI_STA);
   WiFi.begin(ssid, password);
-  
+
   int retries = 0;
   while (WiFi.status() != WL_CONNECTED && retries < 20) {
     delay(500);
     Serial.print(".");
     retries++;
   }
-  
+
   if (WiFi.status() == WL_CONNECTED) {
     Serial.println("\nWiFi OK! IP: " + WiFi.localIP().toString());
   }
@@ -102,7 +102,7 @@ void callback(char* topic, byte* payload, unsigned int length) {
   String messageTemp = "";
   for (int i = 0; i < length; i++) messageTemp += (char)payload[i];
   messageTemp.trim();
-  
+
   if (String(topic) == set_frente) {
     if (messageTemp == "ON") {
       digitalWrite(pinFrente, RELAY_ON);
@@ -111,8 +111,7 @@ void callback(char* topic, byte* payload, unsigned int length) {
       digitalWrite(pinFrente, RELAY_OFF);
       client.publish(state_frente, "OFF", true);
     }
-  }
-  else if (String(topic) == set_fundos) {
+  } else if (String(topic) == set_fundos) {
     if (messageTemp == "ON") {
       digitalWrite(pinFundos, RELAY_ON);
       client.publish(state_fundos, "ON", true);
@@ -120,8 +119,7 @@ void callback(char* topic, byte* payload, unsigned int length) {
       digitalWrite(pinFundos, RELAY_OFF);
       client.publish(state_fundos, "OFF", true);
     }
-  }
-  else if (String(topic) == system_reboot) {
+  } else if (String(topic) == system_reboot) {
     if (messageTemp == "REBOOT") {
       Serial.println("Comando REBOOT recebido via MQTT!");
       delay(500);
@@ -133,7 +131,7 @@ void callback(char* topic, byte* payload, unsigned int length) {
 boolean reconnect() {
   Serial.print("Tentando MQTT... ");
   String clientId = "WemosLight-" + String(random(0xffff), HEX);
-  
+
   if (client.connect(clientId.c_str(), mqtt_user, mqtt_password)) {
     Serial.println("CONECTADO!");
     client.subscribe(set_frente);
@@ -151,17 +149,17 @@ boolean reconnect() {
 
 void setup() {
   Serial.begin(115200);
-  
+
   digitalWrite(pinFrente, RELAY_OFF);
   digitalWrite(pinFundos, RELAY_OFF);
   pinMode(pinFrente, OUTPUT);
   pinMode(pinFundos, OUTPUT);
-  
+
   setup_wifi();
-  
+
   client.setServer(mqtt_server, mqtt_port);
   client.setCallback(callback);
-  
+
   if (WiFi.status() == WL_CONNECTED) {
     setup_time();
     // Se for noite no boot, liga as luzes imediatamente mesmo sem MQTT
@@ -187,7 +185,7 @@ void loop() {
 
   // 2. Política de Verificação de Conexão (Broker)
   if (WiFi.status() == WL_CONNECTED) {
-    
+
     // Check de Saúde a cada 5 minutos (Força reconexão se houver dúvida)
     if (now - lastHealthCheck > 300000) {
       lastHealthCheck = now;
@@ -229,11 +227,11 @@ void loop() {
   // 3. Heartbeat e Status (a cada 60s)
   if (now - lastMsg > 60000) {
     lastMsg = now;
-    
+
     // Fallback de Segurança: Se o NTP sincronizou e virou dia, garante desligamento
     if (WiFi.status() == WL_CONNECTED && !isNightTime() && time(nullptr) > 1000000) {
-       digitalWrite(pinFrente, RELAY_OFF);
-       digitalWrite(pinFundos, RELAY_OFF);
+      digitalWrite(pinFrente, RELAY_OFF);
+      digitalWrite(pinFundos, RELAY_OFF);
     }
 
     if (client.connected()) {
