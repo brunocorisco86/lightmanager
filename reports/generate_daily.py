@@ -1,0 +1,100 @@
+import os
+import psycopg2
+import requests
+from datetime import datetime, date
+from dotenv import load_dotenv
+
+# Load environment variables
+PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+load_dotenv(dotenv_path=os.path.join(PROJECT_ROOT, ".env"))
+
+TG_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
+TG_USER_ID = os.getenv("TELEGRAM_ALLOWED_USER_ID")
+
+DB_HOST = os.getenv("POSTGRES_HOST", "localhost")
+DB_NAME = os.getenv("POSTGRES_DB", "light_manager")
+DB_USER = os.getenv("POSTGRES_USER", "postgres")
+DB_PASS = os.getenv("POSTGRES_PASSWORD")
+DB_PORT = os.getenv("POSTGRES_PORT", "5432")
+
+def main():
+    if not TG_TOKEN or not TG_USER_ID:
+        print("Configuration error: TELEGRAM_BOT_TOKEN or TELEGRAM_ALLOWED_USER_ID not found in environment.")
+        return
+
+    try:
+        conn = psycopg2.connect(
+            host=DB_HOST,
+            database=DB_NAME,
+            user=DB_USER,
+            password=DB_PASS,
+            port=DB_PORT
+        )
+        cur = conn.cursor()
+        
+        # Seta o timezone correto na sessão para que NOW() e CURRENT_DATE usem fuso horário local
+        cur.execute("SET timezone TO 'America/Sao_Paulo';")
+        
+        # Consulta avançada de sobreposição para calcular o tempo total ativo de cada lâmpada "hoje"
+        query = """
+            SELECT p.name, p.power_w,
+                   COALESCE(SUM(EXTRACT(EPOCH FROM (
+                       GREATEST(
+                           INTERVAL '0 seconds',
+                           LEAST(COALESCE(next_t, NOW()), NOW()) - GREATEST(timestamp, CURRENT_DATE)
+                       )
+                   ))/3600), 0) as hours
+            FROM (
+                SELECT point_id, timestamp, event_type,
+                LEAD(timestamp) OVER (PARTITION BY point_id ORDER BY timestamp) as next_t
+                FROM light_events
+            ) t
+            JOIN light_points p ON p.id = t.point_id
+            WHERE t.event_type = 'ON'
+              AND timestamp < NOW()
+              AND COALESCE(next_t, NOW()) >= CURRENT_DATE
+            GROUP BY p.name, p.power_w
+            ORDER BY p.name;
+        """
+        cur.execute(query)
+        rows = cur.fetchall()
+        cur.close()
+        conn.close()
+
+        today_str = date.today().strftime("%d/%m/%Y")
+        
+        if not rows or all(hours == 0 for _, _, hours in rows):
+            msg = f"📊 *Relatório Diário de Consumo* ({today_str})\n\nNenhuma lâmpada foi ligada hoje."
+        else:
+            msg = f"📊 *Relatório Diário de Consumo* ({today_str})\n\n"
+            total_kwh = 0.0
+            for name, power_w, hours in rows:
+                if hours <= 0.01:
+                    continue
+                kwh = (hours * float(power_w)) / 1000.0
+                total_kwh += kwh
+                msg += f"• *{name}*: {hours:.2f}h ligada (Est: {kwh:.3f} kWh)\n"
+            
+            if total_kwh > 0:
+                msg += f"\n🔋 *Total Geral Estimado*: {total_kwh:.3f} kWh"
+            else:
+                msg += "\n🔋 Nenhuma lâmpada ativa por tempo significativo."
+
+        # Envia a mensagem para o bot
+        url = f"https://api.telegram.org/bot{TG_TOKEN}/sendMessage"
+        payload = {
+            "chat_id": TG_USER_ID,
+            "text": msg,
+            "parse_mode": "Markdown"
+        }
+        res = requests.post(url, json=payload, timeout=10)
+        if res.status_code == 200:
+            print("Daily report sent successfully to Telegram.")
+        else:
+            print(f"Error sending report to Telegram: {res.status_code} - {res.text}")
+
+    except Exception as e:
+        print(f"Error executing daily report script: {e}")
+
+if __name__ == "__main__":
+    main()
