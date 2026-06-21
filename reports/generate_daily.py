@@ -69,11 +69,12 @@ def main():
             msg = f"📊 *Relatório Diário de Consumo* ({today_str})\n\n"
             total_kwh = 0.0
             for name, power_w, hours in rows:
-                if hours <= 0.01:
+                hours_f = float(hours)
+                if hours_f <= 0.01:
                     continue
-                kwh = (hours * float(power_w)) / 1000.0
+                kwh = (hours_f * float(power_w)) / 1000.0
                 total_kwh += kwh
-                msg += f"• *{name}*: {hours:.2f}h ligada (Est: {kwh:.3f} kWh)\n"
+                msg += f"• *{name}*: {hours_f:.2f}h ligada (Est: {kwh:.3f} kWh)\n"
             
             if total_kwh > 0:
                 msg += f"\n🔋 *Total Geral Estimado*: {total_kwh:.3f} kWh"
