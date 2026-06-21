@@ -152,7 +152,9 @@ def on_connect(client, userdata, flags, rc, properties):
     client.subscribe("home/outdoor/status", qos=1)
 
 def on_message(client, userdata, msg):
-    touch_last_seen()
+    # Ignora mensagens retidas (historicas) para evitar falsos positivos no watchdog
+    if not msg.retain:
+        touch_last_seen()
     
     payload_str = msg.payload.decode()
     if "/status" in msg.topic:

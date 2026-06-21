@@ -41,6 +41,8 @@ PubSubClient client(espClient);
 unsigned long lastMsg = 0;
 unsigned long lastReconnectAttempt = 0;
 unsigned long lastHealthCheck = 0;
+unsigned long lastMqttConnected = 0;
+unsigned long lastWiFiConnected = 0;
 
 void setup_time() {
   configTime(-3 * 3600, 0, "pool.ntp.org", "time.nist.gov");
@@ -168,6 +170,9 @@ void setup() {
       digitalWrite(pinFundos, RELAY_ON);
     }
   }
+
+  lastMqttConnected = millis();
+  lastWiFiConnected = millis();
 }
 
 void loop() {
@@ -176,6 +181,8 @@ void loop() {
   // 1. Mantém Wi-Fi vivo
   if (WiFi.status() != WL_CONNECTED) {
     setup_wifi();
+  } else {
+    lastWiFiConnected = now;
   }
 
   // 2. Política de Verificação de Conexão (Broker)
@@ -207,8 +214,16 @@ void loop() {
         }
       }
     } else {
+      lastMqttConnected = now;
       client.loop();
     }
+  }
+
+  // Watchdog local de Autocura (Se ficar sem WiFi ou MQTT por mais de 10 minutos, reinicia)
+  if (now - lastWiFiConnected > 600000 || now - lastMqttConnected > 600000) {
+    Serial.println("🚨 Watchdog local disparado! Sem conexao por mais de 10 min. Reiniciando...");
+    delay(1000);
+    ESP.restart();
   }
 
   // 3. Heartbeat e Status (a cada 60s)
