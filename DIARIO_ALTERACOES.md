@@ -37,3 +37,21 @@ Este documento registra as falhas diagnosticadas no ambiente de produção do **
   - [reports/generate_daily.py](file:///home/bruno/Documentos/4_HOMELAB/9_LIGHT_MANAGER/reports/generate_daily.py): Script Python que consulta o PostgreSQL e realiza um cálculo avançado de interseção de intervalos de tempo para somar as horas ativas de cada lâmpada no dia corrente. Também calcula a estimativa de consumo de energia em **kWh** (utilizando a potência nominal `power_w` configurada).
   - [reports/generate_daily.sh](file:///home/bruno/Documentos/4_HOMELAB/9_LIGHT_MANAGER/reports/generate_daily.sh): Wrapper em bash para ativar o `.venv` e executar o script Python.
 * **Status**: Implantado e testado em produção com sucesso (mensagem enviada com êxito via Telegram Bot API). Executará automaticamente às **23:55** diariamente.
+
+---
+
+## ⛅ 3. Implementações do Dia 22/06/2026 (Sincronização Meteorológica)
+
+### 🌧️ Sincronização Inteligente de Offsets baseada em Cobertura de Nuvens
+* **Demanda**: Ajustar dinamicamente os tempos de desvio (offsets) de ligar/desligar com base na cobertura de nuvens atual, para compensar a luminosidade natural reduzida em dias nublados/chuvosos.
+* **Solução**: 
+  - Desenvolvemos o script [scripts/weather_offset_sync.py](file:///home/bruno/Documentos/4_HOMELAB/9_LIGHT_MANAGER/scripts/weather_offset_sync.py), que consulta a API do Open-Meteo para a previsão horária de cobertura de nuvens (`cloud_cover`) em Palotina (coordenadas do `.env`).
+  - Implementamos interpolação linear dos desvios:
+    - 0% de nuvens $\implies$ Ligar: +10 min / Desligar: -10 min
+    - 100% de nuvens $\implies$ Ligar: -10 min / Desligar: +10 min
+  - Atualizamos a tabela `light_points` no PostgreSQL com os novos offsets inteiros arredondados.
+* **Testes e Comissionamento**:
+  - Criamos a suíte de testes unitários [tests/test_weather_sync.py](file:///home/bruno/Documentos/4_HOMELAB/9_LIGHT_MANAGER/tests/test_weather_sync.py) que roda com mocks do banco de dados e da API, garantindo robustez e permitindo rodar a suíte inteira localmente sem Docker (`pytest`).
+  - Adicionamos a tarefa ao [crontab_template.txt](file:///home/bruno/Documentos/4_HOMELAB/9_LIGHT_MANAGER/crontab_template.txt) para rodar automaticamente duas vezes ao dia (**05:00** e **17:00**).
+  - Incluímos as dependências do Open-Meteo e análise de dados (`openmeteo-requests`, `requests-cache`, `retry-requests`, `numpy`, `pandas`, `pytz`, `bcrypt`) no [bot/requirements.txt](file:///home/bruno/Documentos/4_HOMELAB/9_LIGHT_MANAGER/bot/requirements.txt) e nos scripts de setup ([setup.sh](file:///home/bruno/Documentos/4_HOMELAB/9_LIGHT_MANAGER/scripts/setup.sh) / [00_setup_python.sh](file:///home/bruno/Documentos/4_HOMELAB/9_LIGHT_MANAGER/scripts/00_setup_python.sh)).
+* **Status**: Todo o código foi testado localmente, sincronizado para o repositório remoto Git (`origin/main`), implantado no servidor de produção `alpine`, onde as novas dependências foram instaladas e a tarefa do cron foi ativada com sucesso.

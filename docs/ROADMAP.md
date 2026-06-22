@@ -22,3 +22,4 @@
 - Implementar monitoramento de "saúde" do Raspberry Pi no Bot (CPU/Temp/RAM).
 - Adicionar modo de "Simulação de Presença" (acendimento randômico em horários programados quando em férias).
 - Integração com Home Assistant via MQTT Discovery.
+- Criar uma tabela e lógica para registrar a duração de luz ativa (tempo ligada) e os kWh consumidos a cada transição para desligado (`OFF`) para posterior análise e relatórios.
