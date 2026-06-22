@@ -29,6 +29,9 @@ echo -e "${GREEN}==> Instalando/Atualizando dependências...${NC}"
 source .venv/bin/activate
 pip install --upgrade pip
 pip install -r bot/requirements.txt
+# Dependências adicionais para o sincronizador de offsets meteorológicos
+pip install openmeteo-requests
+pip install requests-cache retry-requests numpy pandas
 
 echo -e "${GREEN}✅ Ambiente configurado com sucesso!${NC}"
 echo -e "Para ativar, use: ${GREEN}source .venv/bin/activate${NC}"

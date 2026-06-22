@@ -10,4 +10,11 @@ boto3
 aiohttp
 psutil
 httpx
+openmeteo-requests
+requests-cache
+retry-requests
+numpy
+pandas
+pytz
+bcrypt
 
