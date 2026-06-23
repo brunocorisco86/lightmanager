@@ -30,4 +30,7 @@
   - Média de consumo por dia por tópico.
   - Horário mínimo e máximo de ligar e desligar.
 - Adicionar no site a exibição do SLA do sistema (disponibilidade dos dispositivos e serviços).
+- [ ] Implementar o somatório de consumo mensal acumulado no painel frontend e nos relatórios.
+- [ ] Integração com API para consultar o valor da tarifa do kWh diretamente na concessionária de energia para cálculo de custo real.
+
 
