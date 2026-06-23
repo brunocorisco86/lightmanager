@@ -387,12 +387,12 @@ async function loadCharts() {
                 maintainAspectRatio: false,
                 scales: {
                     x: {
-                        stacked: true,
+                        stacked: false,
                         grid: { display: false },
                         ticks: { color: textColor }
                     },
                     y: {
-                        stacked: true,
+                        stacked: false,
                         beginAtZero: true,
                         grid: { color: gridColor },
                         ticks: { color: textColor },
