@@ -122,6 +122,56 @@ def log_event_to_db(topic, state, source="mqtt_capture", cursor=None):
         res = cur.fetchone()
         if res:
             point_id = res[0]
+            
+            # Se o estado transicionar para OFF e for de mqtt_capture ou solar_trigger, calcula e registra o consumo
+            if state == "OFF" and source in ("mqtt_capture", "solar_trigger"):
+                # Busca o último evento ON e o último evento OFF para verificar se é uma transição real
+                cur.execute(
+                    "SELECT timestamp FROM light_events WHERE point_id = %s AND event_type = 'ON' ORDER BY timestamp DESC, id DESC LIMIT 1",
+                    (point_id,)
+                )
+                on_res = cur.fetchone()
+                
+                cur.execute(
+                    "SELECT timestamp FROM light_events WHERE point_id = %s AND event_type = 'OFF' ORDER BY timestamp DESC, id DESC LIMIT 1",
+                    (point_id,)
+                )
+                off_res = cur.fetchone()
+                
+                if on_res:
+                    on_timestamp = on_res[0]
+                    should_record = False
+                    if not off_res:
+                        should_record = True
+                    else:
+                        off_timestamp = off_res[0]
+                        if on_timestamp > off_timestamp:
+                            should_record = True
+                            
+                    if should_record:
+                        if on_timestamp.tzinfo is None:
+                            on_timestamp = on_timestamp.replace(tzinfo=BR_TZ)
+                        else:
+                            on_timestamp = on_timestamp.astimezone(BR_TZ)
+                            
+                        duration_seconds = int((now_br - on_timestamp).total_seconds())
+                        if duration_seconds > 0:
+                            cur.execute("SELECT power_w FROM light_points WHERE id = %s", (point_id,))
+                            power_w_res = cur.fetchone()
+                            if power_w_res:
+                                power_w = float(power_w_res[0])
+                                consumption_kwh = (duration_seconds / 3600.0) * (power_w / 1000.0)
+                                
+                                cur.execute(
+                                    """
+                                    INSERT INTO light_consumption 
+                                    (point_id, on_timestamp, off_timestamp, duration_seconds, consumption_kwh)
+                                    VALUES (%s, %s, %s, %s, %s)
+                                    """,
+                                    (point_id, on_timestamp, now_br, duration_seconds, consumption_kwh)
+                                )
+                                logging.info(f"⚡ Consumo registrado para point_id={point_id}: {duration_seconds}s, {consumption_kwh:.4f} kWh")
+
             cur.execute(
                 "INSERT INTO light_events (point_id, event_type, source, timestamp) VALUES (%s, %s, %s, %s)",
                 (point_id, state, source, now_br)
@@ -221,6 +271,17 @@ def run_automation_cycle(client):
         is_hourly_check = (current_hour != last_hour_logged)
         if is_hourly_check:
             logging.info(f"⏰ Verificação Horária: {current_hour}:00")
+            
+            # Envia horários de fallback (sunset + 15 min e sunrise + 15 min) para o broker MQTT com Retain
+            fallback_on_dt = sunset_br + timedelta(minutes=15)
+            fallback_off_dt = sunrise_br + timedelta(minutes=15)
+            fallback_on_str = fallback_on_dt.strftime("%H:%M")
+            fallback_off_str = fallback_off_dt.strftime("%H:%M")
+            
+            client.publish("home/outdoor/fallback/on", fallback_on_str, qos=1, retain=True)
+            client.publish("home/outdoor/fallback/off", fallback_off_str, qos=1, retain=True)
+            logging.info(f"📤 Horários de fallback enviados via MQTT: ON={fallback_on_str}, OFF={fallback_off_str}")
+
             # Usa .copy() para evitar erro de 'dictionary changed size during iteration'
             for topic, state in current_states.copy().items():
                 log_event_to_db(topic, state, source="hourly_snapshot", cursor=cur)

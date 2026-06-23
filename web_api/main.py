@@ -322,6 +322,58 @@ def get_history():
         if conn:
             release_db_conn(conn)
 
+@app.get("/api/history/consumption")
+def get_consumption_history():
+    conn = None
+    try:
+        conn = get_db_conn()
+        cur = conn.cursor()
+        cur.execute("SET timezone TO 'America/Sao_Paulo';")
+        query = """
+            SELECT 
+                DATE(lc.off_timestamp AT TIME ZONE 'America/Sao_Paulo') AS date_br,
+                lp.name,
+                SUM(lc.duration_seconds) AS total_seconds,
+                SUM(lc.consumption_kwh) AS total_kwh
+            FROM light_consumption lc
+            JOIN light_points lp ON lc.point_id = lp.id
+            WHERE lc.off_timestamp >= (CURRENT_DATE - INTERVAL '7 days') AT TIME ZONE 'America/Sao_Paulo'
+            GROUP BY date_br, lp.name
+            ORDER BY date_br DESC, lp.name ASC;
+        """
+        cur.execute(query)
+        rows = cur.fetchall()
+        cur.close()
+        
+        by_date = {}
+        for row in rows:
+            d_str = str(row[0])
+            name = row[1]
+            hours = round(float(row[2]) / 3600.0, 2)
+            kwh = round(float(row[3]), 4)
+            
+            if d_str not in by_date:
+                by_date[d_str] = []
+            by_date[d_str].append({
+                "name": name,
+                "hours": hours,
+                "kwh": kwh
+            })
+            
+        result = []
+        for d_str in sorted(by_date.keys(), reverse=True):
+            result.append({
+                "date": d_str,
+                "points": by_date[d_str]
+            })
+        return result
+    except Exception as e:
+        print(f"Erro DB History Consumption: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        if conn:
+            release_db_conn(conn)
+
 @app.post("/api/command")
 def send_command(req: CommandRequest):
     topic_set = f"{req.topic}/set"

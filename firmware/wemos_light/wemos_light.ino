@@ -34,6 +34,8 @@ const int pinFundos = D2;
 
 const char* system_reboot = "home/outdoor/system/reboot";
 const char* status_topic = "home/outdoor/status";
+const char* fallback_on_topic = "home/outdoor/fallback/on";
+const char* fallback_off_topic = "home/outdoor/fallback/off";
 
 WiFiClient espClient;
 PubSubClient client(espClient);
@@ -43,6 +45,22 @@ unsigned long lastReconnectAttempt = 0;
 unsigned long lastHealthCheck = 0;
 unsigned long lastMqttConnected = 0;
 unsigned long lastWiFiConnected = 0;
+
+int fallback_on_hour = 18;
+int fallback_on_minute = 15;
+int fallback_off_hour = 7;
+int fallback_off_minute = 30;
+bool has_fallback_times = false;
+
+bool isFallbackNightTime(int cur_hour, int cur_min) {
+  if (cur_hour > fallback_on_hour || (cur_hour == fallback_on_hour && cur_min >= fallback_on_minute)) {
+    return true;
+  }
+  if (cur_hour < fallback_off_hour || (cur_hour == fallback_off_hour && cur_min < fallback_off_minute)) {
+    return true;
+  }
+  return false;
+}
 
 void setup_time() {
   configTime(-3 * 3600, 0, "pool.ntp.org", "time.nist.gov");
@@ -68,7 +86,10 @@ bool isNightTime() {
   time_t now = time(nullptr);
   if (now < 8 * 3600 * 2) return false;
   struct tm* timeinfo = localtime(&now);
-  return (timeinfo->tm_hour >= 18 || timeinfo->tm_hour < 5);
+  if (has_fallback_times) {
+    return isFallbackNightTime(timeinfo->tm_hour, timeinfo->tm_min);
+  }
+  return (timeinfo->tm_hour >= 18 || timeinfo->tm_hour < 8);
 }
 
 void setup_wifi() {
@@ -125,6 +146,30 @@ void callback(char* topic, byte* payload, unsigned int length) {
       delay(500);
       ESP.restart();
     }
+  } else if (String(topic) == fallback_on_topic) {
+    if (length >= 5) {
+      int h = messageTemp.substring(0, 2).toInt();
+      int m = messageTemp.substring(3, 5).toInt();
+      if (h >= 0 && h < 24 && m >= 0 && m < 60) {
+        fallback_on_hour = h;
+        fallback_on_minute = m;
+        has_fallback_times = true;
+        Serial.print("Fallback ON recebido: ");
+        Serial.printf("%02d:%02d\n", fallback_on_hour, fallback_on_minute);
+      }
+    }
+  } else if (String(topic) == fallback_off_topic) {
+    if (length >= 5) {
+      int h = messageTemp.substring(0, 2).toInt();
+      int m = messageTemp.substring(3, 5).toInt();
+      if (h >= 0 && h < 24 && m >= 0 && m < 60) {
+        fallback_off_hour = h;
+        fallback_off_minute = m;
+        has_fallback_times = true;
+        Serial.print("Fallback OFF recebido: ");
+        Serial.printf("%02d:%02d\n", fallback_off_hour, fallback_off_minute);
+      }
+    }
   }
 }
 
@@ -137,6 +182,8 @@ boolean reconnect() {
     client.subscribe(set_frente);
     client.subscribe(set_fundos);
     client.subscribe(system_reboot);
+    client.subscribe(fallback_on_topic);
+    client.subscribe(fallback_off_topic);
     // Publica estado atual ao reconectar para sincronizar site
     client.publish(state_frente, (digitalRead(pinFrente) == RELAY_ON ? "ON" : "OFF"), true);
     client.publish(state_fundos, (digitalRead(pinFundos) == RELAY_ON ? "ON" : "OFF"), true);
@@ -230,8 +277,45 @@ void loop() {
 
     // Fallback de Segurança: Se o NTP sincronizou e virou dia, garante desligamento
     if (WiFi.status() == WL_CONNECTED && !isNightTime() && time(nullptr) > 1000000) {
-      digitalWrite(pinFrente, RELAY_OFF);
-      digitalWrite(pinFundos, RELAY_OFF);
+      if (digitalRead(pinFrente) == RELAY_ON) {
+        digitalWrite(pinFrente, RELAY_OFF);
+        if (client.connected()) {
+          client.publish(state_frente, "OFF", true);
+        }
+      }
+      if (digitalRead(pinFundos) == RELAY_ON) {
+        digitalWrite(pinFundos, RELAY_OFF);
+        if (client.connected()) {
+          client.publish(state_fundos, "OFF", true);
+        }
+      }
+    }
+
+    // Fallback Local por Horário (Caso perca conexão com o Broker MQTT)
+    if (WiFi.status() == WL_CONNECTED && !client.connected() && has_fallback_times && time(nullptr) > 1000000) {
+      time_t now_unix = time(nullptr);
+      struct tm* timeinfo = localtime(&now_unix);
+      bool should_be_on = isFallbackNightTime(timeinfo->tm_hour, timeinfo->tm_min);
+      
+      if (should_be_on) {
+        if (digitalRead(pinFrente) == RELAY_OFF) {
+          digitalWrite(pinFrente, RELAY_ON);
+          Serial.println("Fallback Local: Frente -> ON");
+        }
+        if (digitalRead(pinFundos) == RELAY_OFF) {
+          digitalWrite(pinFundos, RELAY_ON);
+          Serial.println("Fallback Local: Fundos -> ON");
+        }
+      } else {
+        if (digitalRead(pinFrente) == RELAY_ON) {
+          digitalWrite(pinFrente, RELAY_OFF);
+          Serial.println("Fallback Local: Frente -> OFF");
+        }
+        if (digitalRead(pinFundos) == RELAY_ON) {
+          digitalWrite(pinFundos, RELAY_OFF);
+          Serial.println("Fallback Local: Fundos -> OFF");
+        }
+      }
     }
 
     if (client.connected()) {

@@ -41,6 +41,18 @@ def init_db():
             timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         );
     ''')
+    
+    cur.execute('''
+        CREATE TABLE IF NOT EXISTS light_consumption (
+            id SERIAL PRIMARY KEY,
+            point_id INTEGER REFERENCES light_points(id) ON DELETE CASCADE,
+            on_timestamp TIMESTAMPTZ NOT NULL,
+            off_timestamp TIMESTAMPTZ NOT NULL,
+            duration_seconds INTEGER NOT NULL,
+            consumption_kwh NUMERIC(10, 4) NOT NULL,
+            created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+        );
+    ''')
     conn.commit()
     cur.close()
     conn.close()

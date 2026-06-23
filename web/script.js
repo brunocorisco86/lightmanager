@@ -312,45 +312,168 @@ window.onclick = function(event) {
     if (event.target == modal) closeConfigModal();
 }
 
-async function loadChart() {
-    const chartEl = document.getElementById('usageChart');
-    if (!chartEl) return;
-    try {
-        const history = await fetchData('history');
-        if (history.length === 0) return;
+async function loadCharts() {
+    const durationEl = document.getElementById('durationChart');
+    const consumptionEl = document.getElementById('consumptionChart');
+    if (!durationEl || !consumptionEl) return;
 
-        const ctx = chartEl.getContext('2d');
-        new Chart(ctx, {
+    try {
+        const history = await fetchData('history/consumption');
+        if (!history || history.length === 0) return;
+
+        // A API retorna do mais novo para o mais antigo (ordem decrescente).
+        // Vamos inverter para ordem cronológica (mais antigo primeiro).
+        const chronologicalHistory = [...history].reverse();
+
+        // 1. Extrair e formatar datas
+        const labels = chronologicalHistory.map(item => {
+            const [year, month, day] = item.date.split('-');
+            return `${day}/${month}`;
+        });
+
+        // 2. Identificar todas as lâmpadas únicas cadastradas no histórico
+        const lampNames = new Set();
+        chronologicalHistory.forEach(item => {
+            if (item.points) {
+                item.points.forEach(pt => lampNames.add(pt.name));
+            }
+        });
+        const uniqueLamps = Array.from(lampNames).sort();
+
+        // 3. Cores harmônicas e de alta qualidade visual em tons de azul e roxo para duração
+        const durationColors = [
+            '#38bdf8', // Azul Claro (sky-400)
+            '#818cf8', // Indigo (indigo-400)
+            '#0ea5e9', // Azul Oceano (sky-500)
+            '#c084fc', // Violeta Claro (purple-400)
+            '#2dd4bf', // Teal (teal-400)
+            '#f472b6'  // Rosa (pink-400)
+        ];
+
+        // Construir datasets do Gráfico 1 (empilhado por lâmpada/tópico)
+        const durationDatasets = uniqueLamps.map((lampName, index) => {
+            const data = chronologicalHistory.map(item => {
+                const pt = item.points ? item.points.find(p => p.name === lampName) : null;
+                return pt ? pt.hours : 0;
+            });
+            return {
+                label: lampName,
+                data: data,
+                backgroundColor: durationColors[index % durationColors.length],
+                borderRadius: 4
+            };
+        });
+
+        // 4. Somar consumo diário para o Gráfico 2 (Consumo total diário em kWh)
+        const consumptionData = chronologicalHistory.map(item => {
+            if (!item.points) return 0;
+            const totalDayKwh = item.points.reduce((sum, pt) => sum + pt.kwh, 0);
+            return parseFloat(totalDayKwh.toFixed(4));
+        });
+
+        const gridColor = '#334155';
+        const textColor = '#94a3b8';
+
+        // Inicializa Gráfico 1: Horas de Uso (Empilhado)
+        const ctxDuration = durationEl.getContext('2d');
+        new Chart(ctxDuration, {
             type: 'bar',
             data: {
-                labels: history.map(h => h.date),
+                labels: labels,
+                datasets: durationDatasets
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        stacked: true,
+                        grid: { display: false },
+                        ticks: { color: textColor }
+                    },
+                    y: {
+                        stacked: true,
+                        beginAtZero: true,
+                        grid: { color: gridColor },
+                        ticks: { color: textColor },
+                        title: {
+                            display: true,
+                            text: 'Horas',
+                            color: textColor
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: { color: textColor, boxWidth: 12, padding: 15 }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return ` ${context.dataset.label}: ${context.raw}h`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // Inicializa Gráfico 2: Consumo em kWh (Esverdeado)
+        const ctxConsumption = consumptionEl.getContext('2d');
+        new Chart(ctxConsumption, {
+            type: 'bar',
+            data: {
+                labels: labels,
                 datasets: [{
-                    label: 'Horas Ligadas',
-                    data: history.map(h => h.hours),
-                    backgroundColor: '#38bdf8',
-                    borderRadius: 8
+                    label: 'Consumo Diário',
+                    data: consumptionData,
+                    backgroundColor: '#10b981', // Verde Esverdeado Harmônico (emerald-500)
+                    borderRadius: 6
                 }]
             },
             options: {
                 responsive: true,
+                maintainAspectRatio: false,
                 scales: {
-                    y: { beginAtZero: true, grid: { color: '#334155' }, ticks: { color: '#f8fafc' } },
-                    x: { grid: { display: false }, ticks: { color: '#f8fafc' } }
+                    x: {
+                        grid: { display: false },
+                        ticks: { color: textColor }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        grid: { color: gridColor },
+                        ticks: { color: textColor },
+                        title: {
+                            display: true,
+                            text: 'kWh',
+                            color: textColor
+                        }
+                    }
                 },
                 plugins: {
-                    legend: { labels: { color: '#f8fafc' } }
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return ` Consumo: ${context.raw} kWh`;
+                            }
+                        }
+                    }
                 }
             }
         });
     } catch (e) {
-        console.error("Erro ao carregar gráfico:", e);
+        console.error("Erro ao carregar gráficos:", e);
     }
 }
 
 // Inicialização
 updateSunInfo();
 updateStatus();
-loadChart();
+loadCharts();
 
 // Polling suave
 setInterval(updateStatus, 5000);

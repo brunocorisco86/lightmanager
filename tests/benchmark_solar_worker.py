@@ -88,6 +88,55 @@ class TestSolarWorkerPerformance(unittest.TestCase):
         self.assertEqual(mock_conn.commit.call_count, 1)
 
     @patch('solar_worker.get_db_conn')
+    def test_on_message_consumption_calculation(self, mock_get_db_conn):
+        mock_conn, mock_cur = self.setup_mocks(mock_get_db_conn)
+        
+        # Simulate timezone-aware current time: 2026-06-23 12:00:00 (America/Sao_Paulo)
+        from datetime import datetime as dt_real
+        now_br = dt_real(2026, 6, 23, 12, 0, 0, tzinfo=solar_worker.BR_TZ)
+        on_ts = dt_real(2026, 6, 23, 10, 0, 0, tzinfo=solar_worker.BR_TZ) # 2 hours prior
+        
+        fetchone_values = [
+            [1],       # query 1: point_id
+            [on_ts],   # query 2: ON event timestamp
+            None,      # query 3: OFF event timestamp (None)
+            [100.0]    # query 4: power_w (100W)
+        ]
+        mock_cur.fetchone.side_effect = fetchone_values
+
+        solar_worker.current_states = {"home/outdoor/frente": "ON"}
+        
+        with patch('solar_worker.datetime') as mock_datetime:
+            mock_datetime.now.return_value = now_br
+            
+            client = MagicMock()
+            msg = MagicMock()
+            msg.topic = "home/outdoor/frente/state"
+            msg.payload.decode.return_value = "OFF"
+            
+            solar_worker.on_message(client, None, msg)
+
+        # Check that we queried the db queries
+        # The 4 queries should have been run in sequence.
+        self.assertEqual(mock_cur.execute.call_count, 6) # 4 queries + 2 inserts (light_consumption and light_events)
+        
+        calls = mock_cur.execute.call_args_list
+        insert_consumption_call = None
+        for c in calls:
+            query_str = c[0][0]
+            if "INSERT INTO light_consumption" in query_str:
+                insert_consumption_call = c
+                break
+        
+        self.assertIsNotNone(insert_consumption_call, "INSERT INTO light_consumption query was not executed.")
+        args = insert_consumption_call[0][1]
+        self.assertEqual(args[0], 1) # point_id
+        self.assertEqual(args[1], on_ts) # on_timestamp
+        self.assertEqual(args[2], now_br) # off_timestamp
+        self.assertEqual(args[3], 7200) # duration_seconds (2 hours = 7200s)
+        self.assertEqual(args[4], 0.2) # consumption_kwh: (7200 / 3600) * (100 / 1000) = 2 * 0.1 = 0.2 kWh
+
+    @patch('solar_worker.get_db_conn')
     @patch('solar_worker.get_today_sun_data')
     def test_error_handling_rollback(self, mock_sun_data, mock_get_db_conn):
         mock_conn, mock_cur = self.setup_mocks(mock_get_db_conn)

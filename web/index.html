@@ -78,8 +78,17 @@
         </section>
 
         <section class="stats">
-            <h2>Histórico de Uso (Últimos 7 dias)</h2>
-            <canvas id="usageChart"></canvas>
+            <h2>Histórico de Uso e Consumo (Últimos 7 dias)</h2>
+            <div class="charts-grid">
+                <div class="chart-container">
+                    <h3>Tempo Ligado por Lâmpada (Horas)</h3>
+                    <canvas id="durationChart"></canvas>
+                </div>
+                <div class="chart-container">
+                    <h3>Consumo de Energia Estimado (kWh)</h3>
+                    <canvas id="consumptionChart"></canvas>
+                </div>
+            </div>
         </section>
     </div>
     <script src="script.js"></script>

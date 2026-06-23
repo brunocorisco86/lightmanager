@@ -119,6 +119,43 @@ def test_get_history_success(mock_get_pool):
     assert data[0]["date"] == "2023-10-25"
     assert data[0]["hours"] == 2.5
 
+@patch('web_api.main.get_db_pool')
+def test_get_consumption_history_success(mock_get_pool):
+    mock_pool = MagicMock()
+    mock_get_pool.return_value = mock_pool
+    mock_conn = MagicMock()
+    mock_cur = MagicMock()
+    mock_pool.getconn.return_value = mock_conn
+    mock_conn.cursor.return_value = mock_cur
+
+    # Mock DB data: (date_br, lp.name, total_seconds, total_kwh)
+    mock_cur.fetchall.return_value = [
+        (date(2026, 6, 23), "Frente", 30600, 0.51),
+        (date(2026, 6, 23), "Fundos", 33120, 0.74),
+        (date(2026, 6, 22), "Frente", 28800, 0.48)
+    ]
+
+    response = client.get("/api/history/consumption")
+    assert response.status_code == 200
+    data = response.json()
+    assert len(data) == 2
+    
+    # 2026-06-23 should be first (sorted reverse)
+    assert data[0]["date"] == "2026-06-23"
+    assert len(data[0]["points"]) == 2
+    assert data[0]["points"][0]["name"] == "Frente"
+    assert data[0]["points"][0]["hours"] == 8.5
+    assert data[0]["points"][0]["kwh"] == 0.51
+    assert data[0]["points"][1]["name"] == "Fundos"
+    assert data[0]["points"][1]["hours"] == 9.2
+    assert data[0]["points"][1]["kwh"] == 0.74
+
+    assert data[1]["date"] == "2026-06-22"
+    assert len(data[1]["points"]) == 1
+    assert data[1]["points"][0]["name"] == "Frente"
+    assert data[1]["points"][0]["hours"] == 8.0
+    assert data[1]["points"][0]["kwh"] == 0.48
+
 # --- /api/command tests ---
 
 @patch('web_api.main.mqtt_client')

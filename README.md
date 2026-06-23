@@ -12,7 +12,8 @@ Este repositório contém a solução completa para o controle inteligente de il
     - **Watchdogs (Autocura):** Monitoramento triplo (API, Solar e Bot) a cada 15 min via Crontab.
     - **Persistência Pós-Reboot:** Escalonamento de boot via `@reboot` para garantir ordem de serviços.
     - **NTP & DNS Watchdogs:** Sincronização horária e diagnósticos de rede automáticos.
-- 📊 **Monitoramento:** Registro detalhado de eventos e gráfico de consumo semanal.
+    - **Fallback de Horários Offline:** O Wemos D1 R1 armazena localmente o cronograma solar (enviado via MQTT com retain), garantindo o controle autônomo das luzes em caso de queda do servidor central/broker.
+- 📊 **Monitoramento & Estatísticas:** Registro detalhado de eventos e gráficos interativos de tempo de atividade (empilhado por lâmpada) e consumo acumulado diário em kWh.
 - ☁️ **Backups Cloud:** Dumps automáticos para Cloudflare R2 (Mensal) com política de retenção.
 
 ## 🚀 Operação em Produção (Alpine Linux)
