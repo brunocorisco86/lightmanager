@@ -209,7 +209,20 @@ def on_message(client, userdata, msg):
     payload_str = msg.payload.decode()
     if "/status" in msg.topic:
         logging.info(f"💓 Heartbeat recebido do embarcado: {payload_str}")
-        return # Heartbeat apenas atualiza o arquivo, não vai pro DB
+        try:
+            status_data = json.loads(payload_str)
+            for key in ["frente", "fundos"]:
+                if key in status_data:
+                    sensor_topic = f"home/outdoor/{key}"
+                    sensor_state = status_data[key]
+                    if current_states.get(sensor_topic) != sensor_state:
+                        old_state = current_states.get(sensor_topic, "DESCONHECIDO")
+                        current_states[sensor_topic] = sensor_state
+                        logging.info(f"🔄 Sincronizado via Heartbeat em {sensor_topic}: {old_state} -> {sensor_state}")
+                        log_event_to_db(sensor_topic, sensor_state, source="heartbeat_sync")
+        except Exception as e:
+            logging.error(f"Erro ao processar heartbeat JSON: {e}")
+        return
         
     topic = msg.topic.replace("/state", "")
     state = payload_str
@@ -248,6 +261,14 @@ def get_today_sun_data():
 
 def run_automation_cycle(client):
     global last_hour_logged
+    
+    # Publica a hora atual (Unix Epoch UTC) para o Wemos se sincronizar localmente
+    try:
+        now_epoch = int(time.time())
+        client.publish("home/outdoor/time", str(now_epoch), qos=1, retain=False)
+    except Exception as e:
+        logging.error(f"Erro ao publicar hora no MQTT: {e}")
+
     sun_results = get_today_sun_data()
     if not sun_results: return
 

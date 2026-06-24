@@ -14,4 +14,9 @@ if ! command -v docker >/dev/null 2>&1; then
     service docker start
 fi
 
+echo "==> Executando primeira resolucao e persistência de DNS para api.open-meteo.com..."
+DIR_DEP="$(cd "$(dirname "$0")" && pwd)"
+chmod +x "$DIR_DEP/update_hosts.sh"
+/bin/bash "$DIR_DEP/update_hosts.sh"
+
 echo "==> Dependencias instaladas com sucesso!"

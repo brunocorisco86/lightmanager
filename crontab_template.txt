@@ -20,6 +20,7 @@
 55 23 * * * /bin/bash /home/bruno/lightmanager/reports/generate_daily.sh >> /home/bruno/lightmanager/logs/cron.log 2>&1
 00 03 1 * * /bin/bash /home/bruno/lightmanager/scripts/backup_r2.sh >> /home/bruno/lightmanager/logs/backup.log 2>&1
 00 2,17 * * * /home/bruno/lightmanager/.venv/bin/python3 /home/bruno/lightmanager/scripts/weather_offset_sync.py >> /home/bruno/lightmanager/logs/cron.log 2>&1
+00 03 * * 0 /bin/bash /home/bruno/lightmanager/scripts/update_hosts.sh >> /home/bruno/lightmanager/logs/cron.log 2>&1
 
 # --- RESILIÊNCIA NTP E DIAGNÓSTICO ---
 @reboot sleep 50 && /bin/bash /usr/local/bin/ntp-resync.sh

@@ -1,6 +1,7 @@
 #include <ESP8266WiFi.h>
 #include <PubSubClient.h>
 #include <time.h>
+#include <sys/time.h>
 
 // Configurações de Wi-Fi
 const char* ssid = "ZN-BRUNO_CONTER";
@@ -36,6 +37,7 @@ const char* system_reboot = "home/outdoor/system/reboot";
 const char* status_topic = "home/outdoor/status";
 const char* fallback_on_topic = "home/outdoor/fallback/on";
 const char* fallback_off_topic = "home/outdoor/fallback/off";
+const char* time_topic = "home/outdoor/time";
 
 WiFiClient espClient;
 PubSubClient client(espClient);
@@ -63,7 +65,7 @@ bool isFallbackNightTime(int cur_hour, int cur_min) {
 }
 
 void setup_time() {
-  configTime(-3 * 3600, 0, "pool.ntp.org", "time.nist.gov");
+  configTime("<-03>3", "a.ntp.br", "b.ntp.br", "pool.ntp.org");
   Serial.print("Sincronizando NTP...");
 
   int retries = 0;
@@ -170,6 +172,16 @@ void callback(char* topic, byte* payload, unsigned int length) {
         Serial.printf("%02d:%02d\n", fallback_off_hour, fallback_off_minute);
       }
     }
+  } else if (String(topic) == time_topic) {
+    long long epoch = messageTemp.toInt();
+    if (epoch > 1700000000) { // Timestamp valido pos-2023
+      struct timeval tv;
+      tv.tv_sec = epoch;
+      tv.tv_usec = 0;
+      settimeofday(&tv, nullptr);
+      Serial.print("Relogio local ajustado via MQTT para: ");
+      Serial.println(epoch);
+    }
   }
 }
 
@@ -184,6 +196,7 @@ boolean reconnect() {
     client.subscribe(system_reboot);
     client.subscribe(fallback_on_topic);
     client.subscribe(fallback_off_topic);
+    client.subscribe(time_topic);
     // Publica estado atual ao reconectar para sincronizar site
     client.publish(state_frente, (digitalRead(pinFrente) == RELAY_ON ? "ON" : "OFF"), true);
     client.publish(state_fundos, (digitalRead(pinFundos) == RELAY_ON ? "ON" : "OFF"), true);

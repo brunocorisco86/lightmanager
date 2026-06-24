@@ -161,5 +161,58 @@ class TestSolarWorkerPerformance(unittest.TestCase):
         self.assertGreaterEqual(mock_conn.rollback.call_count, 1)
         self.assertEqual(mock_cur.close.call_count, 1)
 
+    @patch('solar_worker.get_db_conn')
+    def test_on_message_heartbeat_sync(self, mock_get_db_conn):
+        mock_conn, mock_cur = self.setup_mocks(mock_get_db_conn)
+        mock_cur.fetchone.return_value = [1] # point_id
+
+        # Estado inicial limpo
+        solar_worker.current_states = {"home/outdoor/frente": "OFF", "home/outdoor/fundos": "OFF"}
+        client = MagicMock()
+        msg = MagicMock()
+        msg.topic = "home/outdoor/status"
+        # Heartbeat informando que frente está ON e fundos está OFF (fundos não mudou)
+        msg.payload.decode.return_value = '{"status":"online","frente":"ON","fundos":"OFF","rssi":-50,"ip":"192.168.1.111"}'
+
+        solar_worker.on_message(client, None, msg)
+
+        # Deve ter atualizado current_states
+        self.assertEqual(solar_worker.current_states.get("home/outdoor/frente"), "ON")
+        self.assertEqual(solar_worker.current_states.get("home/outdoor/fundos"), "OFF")
+
+        # Deve ter registrado o evento no banco de dados com source="heartbeat_sync"
+        calls = mock_cur.execute.call_args_list
+        insert_event_call = None
+        for c in calls:
+            query_str = c[0][0]
+            if "INSERT INTO light_events" in query_str:
+                insert_event_call = c
+                break
+
+        self.assertIsNotNone(insert_event_call)
+        args = insert_event_call[0][1]
+        self.assertEqual(args[1], "ON") # event_type
+        self.assertEqual(args[2], "heartbeat_sync") # source
+
+    @patch('solar_worker.get_db_conn')
+    @patch('solar_worker.get_today_sun_data')
+    @patch('solar_worker.time')
+    def test_run_automation_cycle_time_publication(self, mock_time, mock_sun_data, mock_get_db_conn):
+        mock_conn, mock_cur = self.setup_mocks(mock_get_db_conn)
+        mock_sun_data.return_value = {
+            "sunrise": "2023-10-27T06:00:00+00:00",
+            "sunset": "2023-10-27T18:00:00+00:00"
+        }
+        mock_cur.fetchall.return_value = [] # sem pontos para simplificar o loop
+
+        # Mock o timestamp da hora atual como 1782288000
+        mock_time.time.return_value = 1782288000
+
+        client = MagicMock()
+        solar_worker.run_automation_cycle(client)
+
+        # Verifica se publicou a hora atual no tópico home/outdoor/time
+        client.publish.assert_any_call("home/outdoor/time", "1782288000", qos=1, retain=False)
+
 if __name__ == '__main__':
     unittest.main()
