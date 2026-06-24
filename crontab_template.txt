@@ -24,6 +24,6 @@
 
 # --- RESILIÊNCIA NTP E DIAGNÓSTICO ---
 @reboot sleep 50 && /bin/bash /usr/local/bin/ntp-resync.sh
-0 4 * * * /bin/bash /usr/local/bin/ntp-resync.sh
+0 4,16 * * * /bin/bash /usr/local/bin/ntp-resync.sh
 30 4 * * * /bin/bash /usr/local/bin/dns-test.sh
 0 1 * * * /bin/bash /usr/local/bin/unbound-diag.sh
