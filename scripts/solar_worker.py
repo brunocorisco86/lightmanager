@@ -125,10 +125,18 @@ def log_event_to_db(topic, state, source="mqtt_capture", cursor=None):
             
             # Se o estado transicionar para OFF e for de mqtt_capture ou solar_trigger, calcula e registra o consumo
             if state == "OFF" and source in ("mqtt_capture", "solar_trigger"):
-                # Busca o último evento ON e o último evento OFF para verificar se é uma transição real
+                # Busca o primeiro acendimento real (ON) após o último desligamento (OFF)
                 cur.execute(
-                    "SELECT timestamp FROM light_events WHERE point_id = %s AND event_type = 'ON' ORDER BY timestamp DESC, id DESC LIMIT 1",
-                    (point_id,)
+                    """
+                    SELECT timestamp FROM light_events 
+                    WHERE point_id = %s AND event_type = 'ON'
+                      AND timestamp > COALESCE(
+                          (SELECT timestamp FROM light_events WHERE point_id = %s AND event_type = 'OFF' ORDER BY timestamp DESC, id DESC LIMIT 1),
+                          '1970-01-01 00:00:00-03'::TIMESTAMPTZ
+                      )
+                    ORDER BY timestamp ASC, id ASC LIMIT 1
+                    """,
+                    (point_id, point_id)
                 )
                 on_res = cur.fetchone()
                 
@@ -195,6 +203,89 @@ def log_event_to_db(topic, state, source="mqtt_capture", cursor=None):
             local_cur.close()
         if conn:
             release_db_conn(conn)
+
+def run_day_rollover():
+    """Realiza a virada de dia virtual para fracionar o consumo de luzes que permanecem ligadas às 23:59."""
+    logging.info("⏰ Iniciando fechamento de consumo na virada de dia (Rollover)...")
+    conn = None
+    cur = None
+    try:
+        conn = get_db_conn()
+        if not conn: return
+        cur = conn.cursor()
+        
+        # Horários limites de fechamento e reabertura
+        now_br = datetime.now(BR_TZ)
+        rollover_off_ts = now_br.replace(hour=23, minute=59, second=59, microsecond=0)
+        rollover_on_ts = (now_br + timedelta(days=1)).replace(hour=0, minute=0, second=0, microsecond=0)
+        
+        # Filtra os tópicos que estão atualmente ON
+        for topic, state in current_states.copy().items():
+            if state == "ON":
+                cur.execute("SELECT id, power_w FROM light_points WHERE mqtt_topic = %s", (topic,))
+                res = cur.fetchone()
+                if res:
+                    point_id, power_w = res[0], float(res[1])
+                    
+                    # Busca o primeiro acendimento real (ON) após o último desligamento (OFF)
+                    cur.execute(
+                        """
+                        SELECT timestamp FROM light_events 
+                        WHERE point_id = %s AND event_type = 'ON'
+                          AND timestamp > COALESCE(
+                              (SELECT timestamp FROM light_events WHERE point_id = %s AND event_type = 'OFF' ORDER BY timestamp DESC, id DESC LIMIT 1),
+                              '1970-01-01 00:00:00-03'::TIMESTAMPTZ
+                          )
+                        ORDER BY timestamp ASC, id ASC LIMIT 1
+                        """,
+                        (point_id, point_id)
+                    )
+                    on_res = cur.fetchone()
+                    if on_res:
+                        on_timestamp = on_res[0]
+                        if on_timestamp.tzinfo is None:
+                            on_timestamp = on_timestamp.replace(tzinfo=BR_TZ)
+                        else:
+                            on_timestamp = on_timestamp.astimezone(BR_TZ)
+                            
+                        duration_seconds = int((rollover_off_ts - on_timestamp).total_seconds())
+                        if duration_seconds > 0:
+                            consumption_kwh = (duration_seconds / 3600.0) * (power_w / 1000.0)
+                            
+                            # Grava o consumo até a meia-noite
+                            cur.execute(
+                                """
+                                INSERT INTO light_consumption 
+                                (point_id, on_timestamp, off_timestamp, duration_seconds, consumption_kwh)
+                                VALUES (%s, %s, %s, %s, %s)
+                                """,
+                                (point_id, on_timestamp, rollover_off_ts, duration_seconds, consumption_kwh)
+                            )
+                            
+                            # Grava um evento OFF virtual para fechar o ciclo
+                            cur.execute(
+                                "INSERT INTO light_events (point_id, event_type, source, timestamp) VALUES (%s, %s, %s, %s)",
+                                (point_id, "OFF", "day_rollover", rollover_off_ts)
+                            )
+                            
+                            # Grava um evento ON virtual para iniciar o consumo do novo dia
+                            cur.execute(
+                                "INSERT INTO light_events (point_id, event_type, source, timestamp) VALUES (%s, %s, %s, %s)",
+                                (point_id, "ON", "day_rollover", rollover_on_ts)
+                            )
+                            
+                            logging.info(
+                                f"🌙 Rollover executado para {topic}: "
+                                f"{duration_seconds}s de consumo ({consumption_kwh:.4f} kWh) fechados às 23:59:59. "
+                                f"Ciclo reaberto à 00:00:00."
+                            )
+        conn.commit()
+    except Exception as e:
+        logging.error(f"❌ Erro durante o rollover do dia: {e}")
+        if conn: conn.rollback()
+    finally:
+        if cur: cur.close()
+        if conn: release_db_conn(conn)
 
 def on_connect(client, userdata, flags, rc, properties):
     logging.info(f"Conectado ao Broker MQTT. Resultado (rc): {rc}")
@@ -410,6 +501,17 @@ if __name__ == "__main__":
 
     logging.info(f"Serviço Solar & Event Logger iniciado (Fuso: GMT-3)")
     
+    last_rollover_date = None
+    
     while True:
         run_automation_cycle(client)
+        
+        # Controle de virada de dia para fracionar consumo de luzes ligadas às 23:59
+        now_br = datetime.now(BR_TZ)
+        current_date = now_br.date()
+        if now_br.hour == 23 and now_br.minute == 59:
+            if last_rollover_date is None or last_rollover_date != current_date:
+                run_day_rollover()
+                last_rollover_date = current_date
+                
         time.sleep(60)

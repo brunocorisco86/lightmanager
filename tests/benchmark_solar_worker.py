@@ -214,5 +214,54 @@ class TestSolarWorkerPerformance(unittest.TestCase):
         # Verifica se publicou a hora atual no tópico home/outdoor/time
         client.publish.assert_any_call("home/outdoor/time", "1782288000", qos=1, retain=False)
 
+    @patch('solar_worker.get_db_conn')
+    def test_run_day_rollover(self, mock_get_db_conn):
+        mock_conn, mock_cur = self.setup_mocks(mock_get_db_conn)
+        
+        from datetime import datetime as dt_real
+        now_br = dt_real(2026, 6, 23, 23, 59, 15, tzinfo=solar_worker.BR_TZ)
+        on_ts = dt_real(2026, 6, 23, 20, 0, 0, tzinfo=solar_worker.BR_TZ)
+        
+        fetchone_values = [
+            (1, 100.0), # point_id (1) and power_w (100W)
+            (on_ts,)    # ON event timestamp
+        ]
+        mock_cur.fetchone.side_effect = fetchone_values
+
+        solar_worker.current_states = {"home/outdoor/frente": "ON"}
+        
+        with patch('solar_worker.datetime') as mock_datetime:
+            mock_datetime.now.return_value = now_br
+            solar_worker.run_day_rollover()
+
+        calls = mock_cur.execute.call_args_list
+        insert_consumption_call = None
+        insert_events_calls = []
+        for c in calls:
+            query_str = c[0][0]
+            if "INSERT INTO light_consumption" in query_str:
+                insert_consumption_call = c
+            elif "INSERT INTO light_events" in query_str:
+                insert_events_calls.append(c)
+
+        self.assertIsNotNone(insert_consumption_call)
+        args_consumption = insert_consumption_call[0][1]
+        self.assertEqual(args_consumption[0], 1)
+        self.assertEqual(args_consumption[1], on_ts)
+        self.assertEqual(args_consumption[2], dt_real(2026, 6, 23, 23, 59, 59, tzinfo=solar_worker.BR_TZ))
+        self.assertEqual(args_consumption[3], 14399)
+        self.assertAlmostEqual(args_consumption[4], 0.39997, places=4)
+        
+        self.assertEqual(len(insert_events_calls), 2)
+        args_event_off = insert_events_calls[0][0][1]
+        self.assertEqual(args_event_off[1], "OFF")
+        self.assertEqual(args_event_off[2], "day_rollover")
+        self.assertEqual(args_event_off[3], dt_real(2026, 6, 23, 23, 59, 59, tzinfo=solar_worker.BR_TZ))
+        
+        args_event_on = insert_events_calls[1][0][1]
+        self.assertEqual(args_event_on[1], "ON")
+        self.assertEqual(args_event_on[2], "day_rollover")
+        self.assertEqual(args_event_on[3], dt_real(2026, 6, 24, 0, 0, 0, tzinfo=solar_worker.BR_TZ))
+
 if __name__ == '__main__':
     unittest.main()
