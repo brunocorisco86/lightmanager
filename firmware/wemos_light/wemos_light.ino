@@ -65,23 +65,8 @@ bool isFallbackNightTime(int cur_hour, int cur_min) {
 }
 
 void setup_time() {
-  configTime("<-03>3", "a.ntp.br", "b.ntp.br", "pool.ntp.org");
-  Serial.print("Sincronizando NTP...");
-
-  int retries = 0;
-  time_t now = time(nullptr);
-  while (now < 8 * 3600 * 2 && retries < 15) {
-    delay(1000);
-    Serial.print(".");
-    now = time(nullptr);
-    retries++;
-  }
-
-  if (now >= 8 * 3600 * 2) {
-    Serial.println("\nTempo sincronizado!");
-  } else {
-    Serial.println("\nNTP pendente (continuara tentando no loop).");
-  }
+  configTime("<-03>3", nullptr);
+  Serial.println("Timezone GMT-3 configurado. Sincronizacao de tempo exclusiva via MQTT.");
 }
 
 bool isNightTime() {
