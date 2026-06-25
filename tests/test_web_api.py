@@ -158,9 +158,18 @@ def test_get_consumption_history_success(mock_get_pool):
 
 # --- /api/command tests ---
 
+@patch('web_api.main.get_db_pool')
 @patch('web_api.main.mqtt_client')
-def test_send_command_success(mock_mqtt):
+def test_send_command_success(mock_mqtt, mock_get_pool):
     mock_mqtt.is_connected.return_value = True
+
+    mock_pool = MagicMock()
+    mock_get_pool.return_value = mock_pool
+    mock_conn = MagicMock()
+    mock_cur = MagicMock()
+    mock_pool.getconn.return_value = mock_conn
+    mock_conn.cursor.return_value = mock_cur
+    mock_cur.fetchone.return_value = (1,) # Mock point_id = 1
 
     payload = {"topic": "home/outdoor/garden", "action": "ON"}
     response = client.post("/api/command", json=payload)

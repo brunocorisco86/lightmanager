@@ -384,9 +384,23 @@ def run_automation_cycle(client):
         if is_hourly_check:
             logging.info(f"⏰ Verificação Horária: {current_hour}:00")
             
-            # Envia horários de fallback (sunset + 15 min e sunrise + 15 min) para o broker MQTT com Retain
-            fallback_on_dt = sunset_br + timedelta(minutes=15)
-            fallback_off_dt = sunrise_br + timedelta(minutes=15)
+            # Busca os offsets configurados para calcular o fallback ideal
+            cur.execute("SELECT offset_on_minutes, offset_off_minutes FROM light_points WHERE auto_mode = TRUE")
+            auto_points = cur.fetchall()
+            
+            if auto_points:
+                # O Wemos precisa de uma margem de segurança.
+                # Colocamos o fallback de ligar 1 minuto ANTES da lâmpada que liga mais cedo (min(offset) - 1)
+                # E o de desligar 1 minuto DEPOIS da lâmpada que desliga mais tarde (max(offset) + 1)
+                min_offset_on = min(p[0] for p in auto_points) - 1
+                max_offset_off = max(p[1] for p in auto_points) + 1
+            else:
+                min_offset_on = int(os.getenv("GLOBAL_SUNSET_OFFSET", -5)) - 1
+                max_offset_off = int(os.getenv("GLOBAL_SUNRISE_OFFSET", 5)) + 1
+
+            # Envia horários de fallback (sunset + min_offset e sunrise + max_offset) para o broker MQTT com Retain
+            fallback_on_dt = sunset_br + timedelta(minutes=min_offset_on)
+            fallback_off_dt = sunrise_br + timedelta(minutes=max_offset_off)
             fallback_on_str = fallback_on_dt.strftime("%H:%M")
             fallback_off_str = fallback_off_dt.strftime("%H:%M")
             
@@ -398,10 +412,10 @@ def run_automation_cycle(client):
             for topic, state in current_states.copy().items():
                 log_event_to_db(topic, state, source="hourly_snapshot", cursor=cur)
 
-        cur.execute("SELECT mqtt_topic, offset_on_minutes, offset_off_minutes FROM light_points WHERE auto_mode = TRUE")
+        cur.execute("SELECT id, mqtt_topic, offset_on_minutes, offset_off_minutes, manual_override FROM light_points WHERE auto_mode = TRUE")
         points = cur.fetchall()
         
-        for topic, off_on, off_off in points:
+        for point_id, topic, off_on, off_off, manual_override in points:
             # Calcula horários exatos de hoje para este ponto
             on_dt = sunset_br + timedelta(minutes=off_on)
             off_dt = sunrise_br + timedelta(minutes=off_off)
@@ -418,21 +432,34 @@ def run_automation_cycle(client):
             else: # Caso comum: liga fim do dia, desliga começo do outro
                 is_night = now_br >= on_dt or now_br < off_dt
 
-            desired_state = "ON" if is_night else "OFF"
-            current_state = current_states.get(topic)
-
             # 1. Gatilho de Minuto Exato (Log e Telegram)
             if current_time_str == target_on_str:
                 logging.info(f"🌑 Gatilho Solar: LIGANDO {topic}")
+                # Limpa override manual ao disparar o gatilho automático
+                cur.execute("UPDATE light_points SET manual_override = NULL WHERE id = %s", (point_id,))
+                conn.commit()
+                manual_override = None
                 client.publish(f"{topic}/set", "ON", qos=1, retain=True)
                 log_event_to_db(topic, "ON", source="solar_trigger", cursor=cur)
                 send_telegram_message(f"🌑 *Gatilho Solar*\nLuz: `{topic}`\nAção: `LIGAR` 💡")
             elif current_time_str == target_off_str:
                 logging.info(f"🌅 Gatilho Solar: DESLIGANDO {topic}")
+                # Limpa override manual ao disparar o gatilho automático
+                cur.execute("UPDATE light_points SET manual_override = NULL WHERE id = %s", (point_id,))
+                conn.commit()
+                manual_override = None
                 client.publish(f"{topic}/set", "OFF", qos=1, retain=True)
                 log_event_to_db(topic, "OFF", source="solar_trigger", cursor=cur)
                 send_telegram_message(f"🌅 *Gatilho Solar*\nLuz: `{topic}`\nAção: `DESLIGAR` 🌑")
             
+            # Determina o estado desejado real (respeita override manual se ativo)
+            if manual_override is not None:
+                desired_state = manual_override
+            else:
+                desired_state = "ON" if is_night else "OFF"
+                
+            current_state = current_states.get(topic)
+
             # 2. Reforço de Estado (Fallback para queda de energia ou hardware offline)
             # Se o estado atual conhecido é diferente do desejado, ou se for virada de hora, reforçamos o comando
             if current_state is None or current_state != desired_state or is_hourly_check:

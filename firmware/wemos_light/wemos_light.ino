@@ -273,8 +273,8 @@ void loop() {
   if (now - lastMsg > 60000) {
     lastMsg = now;
 
-    // Fallback de Segurança: Se o NTP sincronizou e virou dia, garante desligamento
-    if (WiFi.status() == WL_CONNECTED && !isNightTime() && time(nullptr) > 1000000) {
+    // Fallback de Segurança: Se o NTP sincronizou e virou dia, garante desligamento (apenas se desconectado do Broker)
+    if (WiFi.status() == WL_CONNECTED && !client.connected() && !isNightTime() && time(nullptr) > 1000000) {
       if (digitalRead(pinFrente) == RELAY_ON) {
         digitalWrite(pinFrente, RELAY_OFF);
         if (client.connected()) {

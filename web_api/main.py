@@ -460,6 +460,34 @@ def get_monthly_consumption():
 def send_command(req: CommandRequest):
     topic_set = f"{req.topic}/set"
     if mqtt_client.is_connected():
+        # Registra a persistência de override manual e evento no banco
+        conn = get_db_conn()
+        try:
+            cur = conn.cursor()
+            cur.execute("SET timezone TO 'America/Sao_Paulo';")
+            # Busca o ID da luz
+            cur.execute("SELECT id FROM light_points WHERE mqtt_topic = %s", (req.topic,))
+            res = cur.fetchone()
+            if res:
+                point_id = res[0]
+                # Atualiza a coluna manual_override com o novo estado solicitado
+                cur.execute(
+                    "UPDATE light_points SET manual_override = %s WHERE id = %s",
+                    (req.action, point_id)
+                )
+                # Salva o evento como 'manual_control'
+                cur.execute(
+                    "INSERT INTO light_events (point_id, event_type, source, timestamp) VALUES (%s, %s, 'manual_control', NOW())",
+                    (point_id, req.action)
+                )
+                conn.commit()
+            cur.close()
+        except Exception as e:
+            if conn: conn.rollback()
+            print(f"Erro ao salvar comando manual no banco: {e}")
+        finally:
+            if conn: release_db_conn(conn)
+
         # Publica com QoS 1 para garantir a entrega ao broker
         info = mqtt_client.publish(topic_set, req.action, qos=1)
         info.wait_for_publish(timeout=1.0) # Espera confirmação breve

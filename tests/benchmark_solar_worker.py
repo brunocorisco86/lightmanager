@@ -45,9 +45,9 @@ class TestSolarWorkerPerformance(unittest.TestCase):
         }
 
         mock_cur.fetchone.return_value = [1] # point_id
-        mock_cur.fetchall.return_value = [
-            ("home/outdoor/frente", 0, 0),
-            ("home/outdoor/fundos", 0, 0)
+        mock_cur.fetchall.side_effect = [
+            [(0, 0), (0, 0)],  # For the fallback calculation query (offset_on, offset_off)
+            [(1, "home/outdoor/frente", 0, 0, None), (2, "home/outdoor/fundos", 0, 0, None)]  # For the point list query (id, topic, on, off, manual_override)
         ]
 
         solar_worker.current_states = {

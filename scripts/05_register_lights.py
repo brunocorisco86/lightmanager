@@ -28,9 +28,14 @@ def init_db():
             auto_mode BOOLEAN DEFAULT TRUE,
             offset_on_minutes INTEGER DEFAULT 0,
             offset_off_minutes INTEGER DEFAULT 0,
+            manual_override VARCHAR(10) DEFAULT NULL,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         );
     ''')
+    
+    # Migração para bancos existentes
+    cur.execute("ALTER TABLE light_points ADD COLUMN IF NOT EXISTS manual_override VARCHAR(10) DEFAULT NULL;")
+
     
     cur.execute('''
         CREATE TABLE IF NOT EXISTS light_events (

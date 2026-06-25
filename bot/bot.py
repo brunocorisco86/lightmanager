@@ -178,6 +178,34 @@ async def cmd_desliga(message: types.Message):
 async def process_mqtt_callback(callback: types.CallbackQuery):
     if not check_auth(callback.from_user.id): return
     _, action, topic = callback.data.split("_")
+    
+    # Registra a persistência de override manual e evento no banco
+    conn = get_db_conn()
+    try:
+        cur = conn.cursor()
+        cur.execute("SET timezone TO 'America/Sao_Paulo';")
+        cur.execute("SELECT id FROM light_points WHERE mqtt_topic = %s", (topic,))
+        res = cur.fetchone()
+        if res:
+            point_id = res[0]
+            # Atualiza a coluna manual_override com o novo estado solicitado
+            cur.execute(
+                "UPDATE light_points SET manual_override = %s WHERE id = %s",
+                (action, point_id)
+            )
+            # Salva o evento como 'manual_control'
+            cur.execute(
+                "INSERT INTO light_events (point_id, event_type, source, timestamp) VALUES (%s, %s, 'manual_control', NOW())",
+                (point_id, action)
+            )
+            conn.commit()
+        cur.close()
+    except Exception as e:
+        if conn: conn.rollback()
+        logging.error(f"Erro ao salvar comando manual do bot no banco: {e}")
+    finally:
+        if conn: release_db_conn(conn)
+
     # Garante a entrega do comando via QoS 1
     mqtt_client.publish(f"{topic}/set", action, qos=1)
     await callback.answer(f"Enviado: {action} para {topic}")
