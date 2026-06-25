@@ -17,6 +17,12 @@ DB_USER = os.getenv("POSTGRES_USER", "postgres")
 DB_PASS = os.getenv("POSTGRES_PASSWORD")
 DB_PORT = os.getenv("POSTGRES_PORT", "5432")
 
+DISTRIBUTOR_SLUG = os.getenv("ENERGY_DISTRIBUTOR_SLUG")
+try:
+    TAX_RATE = float(os.getenv("ENERGY_TAX_RATE", "0.0"))
+except ValueError:
+    TAX_RATE = 0.0
+
 def main():
     if not TG_TOKEN or not TG_USER_ID:
         print("Configuration error: TELEGRAM_BOT_TOKEN or TELEGRAM_ALLOWED_USER_ID not found in environment.")
@@ -58,6 +64,22 @@ def main():
         """
         cur.execute(query)
         rows = cur.fetchall()
+        
+        # Consulta de tarifas se a distribuidora estiver configurada
+        tarifa_kwh = 0.0
+        dist_name = None
+        if DISTRIBUTOR_SLUG:
+            cur.execute(
+                "SELECT distribuidora, tarifa_energia_kwh, tarifa_uso_kwh FROM energy_tariffs WHERE slug = %s",
+                (DISTRIBUTOR_SLUG.lower().strip(),)
+            )
+            t_res = cur.fetchone()
+            if t_res:
+                dist_name = t_res[0]
+                te = float(t_res[1])
+                tusd = float(t_res[2]) if t_res[2] else 0.0
+                tarifa_kwh = (te + tusd) * (1.0 + TAX_RATE)
+
         cur.close()
         conn.close()
 
@@ -68,16 +90,27 @@ def main():
         else:
             msg = f"📊 *Relatório Diário de Consumo* ({today_str})\n\n"
             total_kwh = 0.0
+            total_cost = 0.0
             for name, power_w, hours in rows:
                 hours_f = float(hours)
                 if hours_f <= 0.01:
                     continue
                 kwh = (hours_f * float(power_w)) / 1000.0
                 total_kwh += kwh
-                msg += f"• *{name}*: {hours_f:.2f}h ligada (Est: {kwh:.3f} kWh)\n"
+                
+                if tarifa_kwh > 0:
+                    cost = kwh * tarifa_kwh
+                    total_cost += cost
+                    msg += f"• *{name}*: {hours_f:.2f}h ligada (Est: {kwh:.3f} kWh | R$ {cost:.2f})\n"
+                else:
+                    msg += f"• *{name}*: {hours_f:.2f}h ligada (Est: {kwh:.3f} kWh)\n"
             
             if total_kwh > 0:
-                msg += f"\n🔋 *Total Geral Estimado*: {total_kwh:.3f} kWh"
+                if tarifa_kwh > 0:
+                    msg += f"\n🔋 *Total Geral Estimado*: {total_kwh:.3f} kWh (R$ {total_cost:.2f})"
+                    msg += f"\n⚡ _Tarifa baseada na distribuidora: {dist_name}_"
+                else:
+                    msg += f"\n🔋 *Total Geral Estimado*: {total_kwh:.3f} kWh"
             else:
                 msg += "\n🔋 Nenhuma lâmpada ativa por tempo significativo."
 
