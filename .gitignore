@@ -32,3 +32,9 @@ reports/output/*.tar.gz
 # OS
 .DS_Store
 Thumbs.db
+
+# Arduino compilation files
+firmware/**/*.elf
+firmware/**/*.map
+firmware/**/*.hex
+firmware/**/wemos_light.ino.bin
