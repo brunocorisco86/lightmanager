@@ -483,7 +483,10 @@ async function loadMonthlyStats() {
 
         distEl.innerText = data.distribuidora || 'Não Configurada';
         kwhEl.innerText = `${data.total_kwh.toFixed(2)} kWh`;
-        hoursEl.innerText = `${data.total_hours.toFixed(1)}h`;
+        
+        const activePointsCount = data.points ? data.points.length : 0;
+        const groupHours = activePointsCount > 0 ? data.total_hours / activePointsCount : 0;
+        hoursEl.innerText = `${groupHours.toFixed(1)}h`;
         
         if (data.distribuidora) {
             costEl.innerText = `R$ ${data.total_cost.toFixed(2)}`;
