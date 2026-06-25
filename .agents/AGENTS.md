@@ -24,3 +24,9 @@ Estas regras se aplicam a todas as interações e modificações no espaço de t
 
 ## 🧪 Testes de Integridade
 * Sempre rode `./run_tests.sh` localmente usando o PostgreSQL do `docker-compose.yml` para validar novas alterações e evitar regressões.
+
+## ⚡ Gestão de Consumo e Tarifas
+* A virada de dia (Rollover) ocorre às **23:59:59** de forma transparente, fracionando o consumo do ciclo noturno de lâmpadas ativas entre os dois dias correspondentes. Ela grava eventos `OFF` e `ON` virtuais no banco de dados com a fonte `day_rollover`.
+* As tarifas das concessionárias homologadas ANEEL são mantidas no banco local na tabela `energy_tariffs` por meio do sincronizador dinâmico [scripts/tariff_sync.py](file:///home/bruno/Documentos/4_HOMELAB/9_LIGHT_MANAGER/scripts/tariff_sync.py), que deve ser agendado para rodar periodicamente (mensal/anual).
+* Parâmetros locais de faturamento como a distribuidora regional e alíquota de impostos (ICMS/PIS/COFINS) devem ser configurados no arquivo `.env` usando as variáveis `ENERGY_DISTRIBUTOR_SLUG` (ex: `copel-dis`) e `ENERGY_TAX_RATE` (ex: `0.25`).
+

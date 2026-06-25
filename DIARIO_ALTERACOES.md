@@ -85,5 +85,34 @@ Este documento registra as falhas diagnosticadas no ambiente de produção do **
 * **Solução**:
   - No `solar_worker.py`, implementamos o cálculo diário do horário de fallback (pôr do sol + 15 min para ligar, nascer do sol + 15 min para desligar) que é publicado de hora em hora nos tópicos `home/outdoor/fallback/on` e `home/outdoor/fallback/off` como mensagens retidas (`retain=True`).
   - No firmware `wemos_light.ino`, adicionamos o recebimento e armazenamento local desse cronograma. Caso o Wemos detecte perda de comunicação com o broker MQTT (`!client.connected()`), ele assume o acionamento e desligamento local baseado nos horários e no relógio NTP do ESP8266.
-  - A função `isNightTime()` do Wemos foi ajustada para aceitar essa tabela dinâmica quando disponível, evitando concorrência com o acionador real.
+    - A função `isNightTime()` do Wemos foi ajustada para aceitar essa tabela dinâmica quando disponível, evitando concorrência com o acionador real.
 
+---
+
+## ⚡ 5. Implementações do Dia 24/06/2026 (Time Sync Híbrido, Rollover e Tarifas ANEEL)
+
+### ⏰ Sincronização de Tempo Híbrida (Remoção do NTP no Embarcado)
+* **Demanda:** Evitar que a biblioteca SNTP em background do ESP8266 limpe o offset de fuso horário local e reverta o relógio para UTC após quedas ou oscilações de conexão de rede.
+* **Solução:**
+  - Removemos totalmente as consultas diretas a servidores NTP do código do [wemos_light.ino](file:///home/bruno/Documentos/4_HOMELAB/9_LIGHT_MANAGER/firmware/wemos_light/wemos_light.ino).
+  - Configuramos a placa apenas com a string POSIX de fuso horário permanente: `configTime("<-03>3", nullptr)`.
+  - O sincronismo de tempo passou a operar de forma 100% local através do envio de payloads Unix Epoch pelo Solar Worker para o tópico MQTT `home/outdoor/time` a cada minuto, com o Wemos ajustando o relógio via chamada de sistema `settimeofday`.
+
+### ⚡ Correção de Duração Truncada por Reforço Horário
+* **Falha:** O consumo total do dia 23/06 estava subestimado no banco (0,0284 kWh em vez de ~0,11 kWh) por registrar durações muito baixas.
+* **Causa Raiz:** O envio de mensagens `ON` redundantes de hora em hora (para garantir resiliência contra falhas do receptor) criava múltiplos eventos de acendimento sequenciais no banco sem interposição de `OFF`. A query antiga simplesmente computava o tempo a partir do último `ON` (que era a mensagem de reforço mais recente), descartando as horas de uso anteriores.
+* **Solução:**
+  - Refatoramos a query em `log_event_to_db` no [solar_worker.py](file:///home/bruno/Documentos/4_HOMELAB/9_LIGHT_MANAGER/scripts/solar_worker.py) para buscar o **primeiro** `ON` real ocorrido após o último `OFF` faturado no banco. Com isso, os disparos de reforço horário não truncam mais as durações reais acumuladas dos ciclos.
+
+### 🌙 Mecanismo de Virada de Dia (Rollover)
+* **Demanda:** Fracionar o tempo e custo das luzes que permanecem ativas durante a madrugada de forma que a estatística de uso seja separada exatamente entre os dois dias correspondentes.
+* **Solução:**
+  - Criamos a função `run_day_rollover()` executada às **23:59:59** no [solar_worker.py](file:///home/bruno/Documentos/4_HOMELAB/9_LIGHT_MANAGER/scripts/solar_worker.py).
+  - Ela calcula e registra o consumo ativo do ponto até o limite do dia corrente, insere um evento `OFF` virtual e, logo em seguida, insere um evento `ON` virtual datado para `00:00:00` do dia seguinte para dar continuidade à contagem de tempo.
+
+### 💰 Integração Tarifária e Financeira (ANEEL & Impostos)
+* **Demanda:** Calcular o custo financeiro estimado em Reais (R$) do consumo da iluminação nos relatórios e no painel administrativo.
+* **Solução:**
+  - Desenvolvemos o script utilitário [scripts/tariff_sync.py](file:///home/bruno/Documentos/4_HOMELAB/9_LIGHT_MANAGER/scripts/tariff_sync.py) que consulta a API CKAN de Dados Abertos da ANEEL, localiza e baixa dinamicamente a última planilha de tarifas homologadas das concessionárias e faz o upsert dos valores das tarifas TE e TUSD do grupo Residencial convencional (B1) na tabela `energy_tariffs` do PostgreSQL.
+  - Atualizamos a geração do relatório diário [reports/generate_daily.py](file:///home/bruno/Documentos/4_HOMELAB/9_LIGHT_MANAGER/reports/generate_daily.py) para incluir a projeção de custo financeiro caso as variáveis de distribuidora e imposto estejam parametrizadas no `.env`.
+  - Desenvolvemos a rota de API `/api/consumption/monthly` em [web_api/main.py](file:///home/bruno/Documentos/4_HOMELAB/9_LIGHT_MANAGER/web_api/main.py) e criamos um widget de resumo financeiro e consumo mensal na interface web do painel. Configurado o `.env` de produção com o slug `copel-dis` e taxa de imposto estimada em 25% (`ENERGY_TAX_RATE=0.25`).
