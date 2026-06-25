@@ -36,6 +36,12 @@ MQTT_PASS = os.getenv("MQTT_PASSWORD")
 LAT = os.getenv("LATITUDE", "0")
 LONG = os.getenv("LONGITUDE", "0")
 
+DISTRIBUTOR_SLUG = os.getenv("ENERGY_DISTRIBUTOR_SLUG")
+try:
+    TAX_RATE = float(os.getenv("ENERGY_TAX_RATE", "0.0"))
+except ValueError:
+    TAX_RATE = 0.0
+
 # Cache de estados
 light_states = {}
 SUN_CACHE_FILE = os.path.join(os.path.dirname(__file__), 'sun_cache.json')
@@ -369,6 +375,82 @@ def get_consumption_history():
         return result
     except Exception as e:
         print(f"Erro DB History Consumption: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        if conn:
+            release_db_conn(conn)
+
+@app.get("/api/consumption/monthly")
+def get_monthly_consumption():
+    conn = None
+    try:
+        conn = get_db_conn()
+        cur = conn.cursor()
+        cur.execute("SET timezone TO 'America/Sao_Paulo';")
+        
+        # 1. Busca a tarifa base
+        tarifa_kwh = 0.0
+        dist_name = None
+        if DISTRIBUTOR_SLUG:
+            cur.execute(
+                "SELECT distribuidora, tarifa_energia_kwh, tarifa_uso_kwh FROM energy_tariffs WHERE slug = %s",
+                (DISTRIBUTOR_SLUG.lower().strip(),)
+            )
+            t_res = cur.fetchone()
+            if t_res:
+                dist_name = t_res[0]
+                te = float(t_res[1])
+                tusd = float(t_res[2]) if t_res[2] else 0.0
+                tarifa_kwh = (te + tusd) * (1.0 + TAX_RATE)
+        
+        # 2. Busca o consumo do mês atual para cada ponto
+        query = """
+            SELECT 
+                lp.name,
+                COALESCE(SUM(lc.consumption_kwh), 0) AS total_kwh,
+                COALESCE(SUM(lc.duration_seconds), 0) AS total_seconds
+            FROM light_points lp
+            LEFT JOIN light_consumption lc ON lc.point_id = lp.id 
+              AND lc.off_timestamp >= DATE_TRUNC('month', CURRENT_DATE AT TIME ZONE 'America/Sao_Paulo') AT TIME ZONE 'America/Sao_Paulo'
+            GROUP BY lp.name
+            ORDER BY lp.name ASC;
+        """
+        cur.execute(query)
+        rows = cur.fetchall()
+        cur.close()
+        
+        points_data = []
+        total_kwh_sum = 0.0
+        total_cost_sum = 0.0
+        total_hours_sum = 0.0
+        
+        for name, kwh, seconds in rows:
+            kwh_f = float(kwh)
+            hours_f = float(seconds) / 3600.0
+            cost_f = kwh_f * tarifa_kwh if tarifa_kwh > 0 else 0.0
+            
+            total_kwh_sum += kwh_f
+            total_cost_sum += cost_f
+            total_hours_sum += hours_f
+            
+            points_data.append({
+                "name": name,
+                "kwh": round(kwh_f, 4),
+                "hours": round(hours_f, 2),
+                "cost": round(cost_f, 2)
+            })
+            
+        return {
+            "distribuidora": dist_name,
+            "tarifa_kwh": round(tarifa_kwh, 4),
+            "tax_rate": TAX_RATE,
+            "total_kwh": round(total_kwh_sum, 4),
+            "total_hours": round(total_hours_sum, 2),
+            "total_cost": round(total_cost_sum, 2),
+            "points": points_data
+        }
+    except Exception as e:
+        print(f"Erro DB Monthly Consumption: {e}")
         raise HTTPException(status_code=500, detail=str(e))
     finally:
         if conn:

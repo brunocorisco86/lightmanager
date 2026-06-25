@@ -470,10 +470,42 @@ async function loadCharts() {
     }
 }
 
+async function loadMonthlyStats() {
+    const distEl = document.getElementById('monthly-distributor');
+    const kwhEl = document.getElementById('monthly-kwh');
+    const hoursEl = document.getElementById('monthly-hours');
+    const costEl = document.getElementById('monthly-cost');
+    if (!distEl || !kwhEl || !hoursEl || !costEl) return;
+
+    try {
+        const data = await fetchData('consumption/monthly');
+        if (!data) return;
+
+        distEl.innerText = data.distribuidora || 'Não Configurada';
+        kwhEl.innerText = `${data.total_kwh.toFixed(2)} kWh`;
+        hoursEl.innerText = `${data.total_hours.toFixed(1)}h`;
+        
+        if (data.distribuidora) {
+            costEl.innerText = `R$ ${data.total_cost.toFixed(2)}`;
+            costEl.title = `Tarifa final: R$ ${data.tarifa_kwh.toFixed(4)}/kWh (com impostos)`;
+        } else {
+            costEl.innerText = 'Não Configurado';
+            costEl.title = 'Configure o .env em produção para calcular o custo';
+        }
+    } catch (e) {
+        console.error("Erro ao carregar resumo mensal:", e);
+        distEl.innerText = 'Erro';
+        kwhEl.innerText = 'Erro';
+        hoursEl.innerText = 'Erro';
+        costEl.innerText = 'Erro';
+    }
+}
+
 // Inicialização
 updateSunInfo();
 updateStatus();
 loadCharts();
+loadMonthlyStats();
 
 // Polling suave
 setInterval(updateStatus, 5000);
