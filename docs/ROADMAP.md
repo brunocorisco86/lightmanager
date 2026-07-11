@@ -27,6 +27,7 @@
 - [ ] Implementar monitoramento de "saúde" do Raspberry Pi no Bot (CPU/Temp/RAM).
 - [ ] Monitoramento Inteligente (Health Check) de placas Wemos: loop em background que verifica se as placas enviaram o heartbeat no tópico `/status` (a cada 60s) e alerta em caso de queda.
 - [ ] Expandir comandos do Telegram (como `/liga`) para ativar ou desativar o modo automático (`auto_mode`) de um ponto de luz diretamente pelo chat.
+- [ ] Suporte a comandos de voz via Inteligência Artificial (Google Gemini 1.5 Flash / Whisper) para controle de ligar/desligar luzes.
 - [ ] Enviar relatório sintético mensal todo dia 5 contendo a média de acionamentos, média de consumo diário por tópico e limites horários de ativação.
 
 ### 📊 Painel & Relatórios (Frontend/Backend)
