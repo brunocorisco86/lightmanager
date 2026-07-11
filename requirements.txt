@@ -51,3 +51,4 @@ requests-cache
 retry-requests
 numpy
 pandas
+graphifyy
