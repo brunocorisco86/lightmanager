@@ -135,4 +135,25 @@ Este documento registra as falhas diagnosticadas no ambiente de produção do **
   - Ajustamos o script de inicialização e migração [scripts/05_register_lights.py](file:///home/bruno/Documentos/4_HOMELAB/9_LIGHT_MANAGER/scripts/05_register_lights.py) para criar a coluna e rodar a migração `ALTER TABLE` de forma retroativa e automática.
   - Atualizamos a rota de comando da API FastAPI em [web_api/main.py](file:///home/bruno/Documentos/4_HOMELAB/9_LIGHT_MANAGER/web_api/main.py) e o callback de bot em [bot/bot.py](file:///home/bruno/Documentos/4_HOMELAB/9_LIGHT_MANAGER/bot/bot.py) para que, em todo acionamento manual, eles atualizem `manual_override = 'ON'` ou `'OFF'` e salvem o evento sob a fonte `manual_control`.
   - No [solar_worker.py](file:///home/bruno/Documentos/4_HOMELAB/9_LIGHT_MANAGER/scripts/solar_worker.py), a lógica de automação agora respeita o `manual_override` do banco de dados (se preenchido, torna-se o `desired_state`), suspendendo o controle solar para aquela lâmpada temporariamente.
-  - O `manual_override` é redefinido automaticamente para `NULL` (limpando o override) no momento exato em que o próximo gatilho solar do ciclo oposto (`target_on_str` ou `target_off_str`) ocorrer, restaurando a rotina de automação padrão sem intervenção do usuário.
+  - O `manual_override` is redefinido automaticamente para `NULL` (limpando o override) no momento exato em que o próximo gatilho solar do ciclo oposto (`target_on_str` ou `target_off_str`) ocorrer, restaurando a rotina de automação padrão sem intervenção do usuário.
+
+---
+
+## 🎙️ 7. Implementações do Dia 11/07/2026 (Comandos de Voz via Gemini API e Reorganização de Documentos)
+
+### 🗣️ Reconhecimento de Comandos de Voz via Telegram Bot
+* **Demanda:** Permitir que o usuário envie notas de voz (.ogg) ao bot do Telegram para controlar as lâmpadas da casa.
+* **Solução:**
+  - Adicionamos o handler de voz `@dp.message(F.voice)` no [bot/bot.py](file:///home/bruno/lightmanager/bot/bot.py).
+  - O bot faz o download da mensagem de áudio, codifica em Base64 e envia para a API do **Google Gemini 2.5 Flash** (`v1beta` endpoint) solicitando que transcreva e extraia a intenção estruturada de ação (`ON`/`OFF`/`UNKNOWN`) e o ponto de luz selecionado (`frente`/`fundos`/`todos`/`UNKNOWN`).
+  - Desenvolvemos a lógica de roteamento que executa e grava as ações correspondentes no PostgreSQL com a fonte `voice_control` e publica via MQTT no Broker.
+  - Atualizamos a chave do Gemini no `.env` de produção e a adicionamos como placeholder no `.env.example`.
+
+### 📂 Reorganização e Limpeza de Documentos (Eliminação de Redundâncias)
+* **Demanda:** Eliminar arquivos duplicados na raiz e consolidar instruções redundantes.
+* **Solução:**
+  - Deletamos os arquivos duplicados `BACKUP_MANUAL.md` e `IDEA.md` na raiz do projeto.
+  - Consolidamos os manuais de backup em um único arquivo de referência: [docs/R2_BACKUP_SETUP.md](file:///home/bruno/lightmanager/docs/R2_BACKUP_SETUP.md), unindo as estratégias Free Tier e configurações. Deletamos `docs/BACKUP_MANUAL.md`.
+  - Fundimos as propostas de melhoria futura de `docs/SUGGESTIONS.md` na lista de tarefas To-Do em [docs/ROADMAP.md](file:///home/bruno/lightmanager/docs/ROADMAP.md) e deletamos `docs/SUGGESTIONS.md`.
+  - Removemos o rascunho de ideias obsoleto `docs/IDEA.md`.
+  - Atualizamos a seção de organização de arquivos no [README.md](file:///home/bruno/lightmanager/README.md).
