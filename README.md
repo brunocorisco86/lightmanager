@@ -78,10 +78,12 @@ Os testes de integração necessitam de uma instância do banco PostgreSQL dispo
 * **Logs Enriquecidos**: Todas as transições de status capturadas via broker MQTT são armazenadas em disco sob a pasta `/logs/` de forma explícita com o payload correspondente para diagnósticos simplificados.
 
 ## 📂 Organização
-- `docs/R2_BACKUP_SETUP.md`: Configuração do Cloudflare R2.
-- `web/`: Interface frontend (HTML/CSS/JS).
-- `web_api/`: Servidor de API e rotas administrativas.
-- `requirements.txt`: Dependências consolidadas do projeto.
+- `docs/R2_BACKUP_SETUP.md`: Configuração e comissionamento do Cloudflare R2.
+- `docs/STACK.md`: Visão técnica detalhada das tecnologias utilizadas.
+- `docs/ROADMAP.md`: Acompanhamento de progresso e melhorias futuras.
+- `web/`: Interface web administrativa (HTML/CSS/JS).
+- `web_api/`: Servidor de API e rotas de administração.
+- `requirements.txt`: Dependências de pacotes Python necessárias.
 
 ---
 **Nota Técnica:** O sistema utiliza `TIMESTAMPTZ` no PostgreSQL para garantir que todos os eventos sejam registrados com a precisão de Brasília (GMT-3), evitando desvios em relatórios de consumo.
