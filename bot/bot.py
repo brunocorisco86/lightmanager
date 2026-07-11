@@ -1,8 +1,12 @@
 import os
 import asyncio
 import logging
+import json
+import base64
+import tempfile
 import psycopg2
 import psutil
+import httpx
 from datetime import datetime, timedelta
 from aiogram import Bot, Dispatcher, types, F
 from aiogram.filters import Command
@@ -20,6 +24,7 @@ MQTT_BROKER = os.getenv("MQTT_BROKER", "localhost")
 MQTT_PORT = int(os.getenv("MQTT_PORT", 1883))
 MQTT_USER = os.getenv("MQTT_USER")
 MQTT_PASS = os.getenv("MQTT_PASSWORD")
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 
 # DB Config
 DB_HOST = os.getenv("POSTGRES_HOST", "localhost")
@@ -226,6 +231,133 @@ async def cmd_relatorio(message: types.Message):
         msg += f"• *{name}*: {hours:.2f} horas ligada\n"
     
     await message.answer(msg, parse_mode="Markdown")
+
+def execute_light_command(topic, action):
+    conn = get_db_conn()
+    try:
+        cur = conn.cursor()
+        cur.execute("SET timezone TO 'America/Sao_Paulo';")
+        cur.execute("SELECT id FROM light_points WHERE mqtt_topic = %s", (topic,))
+        res = cur.fetchone()
+        if res:
+            point_id = res[0]
+            cur.execute("UPDATE light_points SET manual_override = %s WHERE id = %s", (action, point_id))
+            cur.execute(
+                "INSERT INTO light_events (point_id, event_type, source, timestamp) VALUES (%s, %s, 'voice_control', NOW())",
+                (point_id, action)
+            )
+            conn.commit()
+        cur.close()
+    except Exception as e:
+        if conn: conn.rollback()
+        logging.error(f"Erro ao salvar comando de voz no banco: {e}")
+    finally:
+        if conn: release_db_conn(conn)
+        
+    mqtt_client.publish(f"{topic}/set", action, qos=1)
+
+@dp.message(F.voice)
+async def handle_voice_command(message: types.Message):
+    if not check_auth(message.from_user.id): return
+    if not GEMINI_API_KEY:
+        await message.reply("⚠️ A API do Gemini não está configurada no servidor (falta GEMINI_API_KEY no .env).")
+        return
+        
+    # Feedback visual de processamento
+    await message.bot.send_chat_action(chat_id=message.chat.id, action="record_voice")
+    
+    # Download do arquivo de voz (.ogg)
+    file_id = message.voice.file_id
+    file_info = await message.bot.get_file(file_id)
+    
+    with tempfile.NamedTemporaryFile(delete=False, suffix=".ogg") as temp_file:
+        temp_path = temp_file.name
+        
+    try:
+        await message.bot.download_file(file_info.file_path, temp_path)
+        
+        with open(temp_path, "rb") as f:
+            audio_b64 = base64.b64encode(f.read()).decode("utf-8")
+            
+        prompt = (
+            "Você é o assistente de voz do Light Manager. Analise o áudio e responda EXCLUSIVAMENTE "
+            "em formato JSON com o seguinte esquema:\n"
+            "{\n"
+            "  \"action\": \"ON\" | \"OFF\" | \"UNKNOWN\",\n"
+            "  \"point_name\": \"frente\" | \"fundos\" | \"todos\" | \"UNKNOWN\"\n"
+            "}\n"
+            "Identifique se o usuário quer ligar (ON) ou desligar (OFF) e qual área ele mencionou."
+        )
+        
+        headers = {"Content-Type": "application/json"}
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={GEMINI_API_KEY}"
+        
+        payload = {
+            "contents": [{
+                "parts": [
+                    {"text": prompt},
+                    {
+                        "inline_data": {
+                            "mime_type": "audio/ogg",
+                            "data": audio_b64
+                        }
+                    }
+                ]
+            }],
+            "generationConfig": {
+                "response_mime_type": "application/json"
+            }
+        }
+        
+        async with httpx.AsyncClient() as client:
+            response = await client.post(url, json=payload, headers=headers, timeout=30.0)
+            
+        if response.status_code != 200:
+            raise Exception(f"Erro na API do Gemini: {response.text}")
+            
+        res_data = response.json()
+        model_text = res_data["candidates"][0]["content"]["parts"][0]["text"]
+        result = json.loads(model_text)
+        
+        action = result.get("action", "UNKNOWN")
+        point_name = result.get("point_name", "UNKNOWN")
+        
+        if action == "UNKNOWN" or point_name == "UNKNOWN":
+            await message.reply(
+                "❌ Não consegui entender o comando de voz. Tente dizer algo como:\n"
+                "- *'Ligar a frente'*\n"
+                "- *'Desligar os fundos'*",
+                parse_mode="Markdown"
+            )
+            return
+            
+        points = get_light_points()
+        
+        if point_name == "todos":
+            for pt in points:
+                execute_light_command(pt[2], action)
+            await message.reply(f"✅ Comando *{action}* enviado para *TODOS* os pontos!", parse_mode="Markdown")
+            return
+            
+        target_point = None
+        for pt in points:
+            if point_name in pt[1].lower():
+                target_point = pt
+                break
+                
+        if not target_point:
+            await message.reply(f"❌ Ponto de luz '{point_name}' não foi encontrado no sistema.")
+            return
+            
+        execute_light_command(target_point[2], action)
+        await message.reply(f"✅ Comando *{action}* enviado para *{target_point[1]}*!", parse_mode="Markdown")
+        
+    except Exception as e:
+        logging.error(f"Erro ao processar comando de voz: {e}")
+        await message.reply("⚠️ Ocorreu um erro interno ao processar seu comando de voz.")
+    finally:
+        if os.path.exists(temp_path):
+            os.remove(temp_path)
 
 async def main():
     if MQTT_USER and MQTT_PASS:
