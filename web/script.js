@@ -509,6 +509,101 @@ updateSunInfo();
 updateStatus();
 loadCharts();
 loadMonthlyStats();
+if (document.getElementById("log-service-selector")) {
+    changeLogService();
+}
 
 // Polling suave
 setInterval(updateStatus, 5000);
+
+// Terminal de Logs em Tempo Real (SSE)
+let logEventSource = null;
+let isAutoscrollActive = true;
+
+function changeLogService() {
+    const selector = document.getElementById("log-service-selector");
+    if (!selector) return;
+    const service = selector.value;
+    const terminal = document.getElementById("terminal-body");
+    if (!terminal) return;
+
+    if (logEventSource) {
+        logEventSource.close();
+    }
+
+    terminal.innerHTML = `<div class="terminal-line system-msg">[SISTEMA] Conectando ao fluxo de logs do serviço: ${service.toUpperCase()}...</div>`;
+
+    logEventSource = new EventSource(`/api/logs/${service}`);
+
+    logEventSource.onmessage = (event) => {
+        appendLogLine(event.data);
+    };
+
+    logEventSource.onerror = (error) => {
+        console.error("Erro na conexão SSE:", error);
+        appendLogLine("[ERRO] Conexão perdida. Tentando reconectar...", "error-msg");
+    };
+}
+
+function appendLogLine(text, forcedClass = null) {
+    const terminal = document.getElementById("terminal-body");
+    if (!terminal) return;
+    const line = document.createElement("div");
+    
+    if (forcedClass) {
+        line.className = `terminal-line ${forcedClass}`;
+    } else {
+        const lowerText = text.toLowerCase();
+        if (lowerText.includes("error") || lowerText.includes("fail") || lowerText.includes("[erro]")) {
+            line.className = "terminal-line error-msg";
+        } else if (lowerText.includes("warning") || lowerText.includes("warn") || lowerText.includes("[aviso]")) {
+            line.className = "terminal-line warn-msg";
+        } else if (lowerText.includes("info") || lowerText.includes("success")) {
+            line.className = "terminal-line info-msg";
+        } else if (lowerText.includes("mqtt") || lowerText.includes("publish") || lowerText.includes("subscribe") || lowerText.includes("estado recebido")) {
+            line.className = "terminal-line mqtt-msg";
+        } else {
+            line.className = "terminal-line";
+        }
+    }
+
+    line.textContent = text;
+    terminal.appendChild(line);
+
+    if (isAutoscrollActive) {
+        terminal.scrollTop = terminal.scrollHeight;
+    }
+
+    if (terminal.childNodes.length > 300) {
+        terminal.removeChild(terminal.firstChild);
+    }
+}
+
+function toggleScroll() {
+    isAutoscrollActive = !isAutoscrollActive;
+    const btn = document.getElementById("btn-pause-log");
+    if (!btn) return;
+    if (isAutoscrollActive) {
+        btn.innerText = "⏸️";
+        btn.title = "Pausar Autoscroll";
+        const terminal = document.getElementById("terminal-body");
+        if (terminal) terminal.scrollTop = terminal.scrollHeight;
+    } else {
+        btn.innerText = "▶️";
+        btn.title = "Retomar Autoscroll";
+    }
+}
+
+function clearTerminal() {
+    const terminal = document.getElementById("terminal-body");
+    if (terminal) {
+        terminal.innerHTML = '<div class="terminal-line system-msg">[SISTEMA] Console limpo pelo usuário.</div>';
+    }
+}
+
+function downloadFullLog() {
+    const selector = document.getElementById("log-service-selector");
+    if (!selector) return;
+    const service = selector.value;
+    window.open(`/api/logs/${service}/download`, '_blank');
+}

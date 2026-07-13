@@ -112,6 +112,34 @@
                 </div>
             </div>
         </section>
+
+        <section class="logs-panel">
+            <div class="logs-header">
+                <div class="logs-title">
+                    <span class="terminal-dot red"></span>
+                    <span class="terminal-dot yellow"></span>
+                    <span class="terminal-dot green"></span>
+                    <h2>💻 Terminal de Logs do Sistema</h2>
+                </div>
+                <div class="logs-controls">
+                    <select id="log-service-selector" onchange="changeLogService()">
+                        <option value="api" selected>Web API</option>
+                        <option value="bot">Telegram Bot</option>
+                        <option value="solar">Solar Worker</option>
+                        <option value="broker">Mosquitto Broker</option>
+                        <option value="devices">Embarcados (MQTT)</option>
+                    </select>
+                    <button id="btn-pause-log" onclick="toggleScroll()" class="btn-terminal-control" title="Pausar Autoscroll">⏸️</button>
+                    <button onclick="clearTerminal()" class="btn-terminal-control" title="Limpar Tela">🧹</button>
+                    <button onclick="downloadFullLog()" class="btn-terminal-control" title="Baixar Log Completo">📥</button>
+                </div>
+            </div>
+            <div class="terminal-container">
+                <div id="terminal-body" class="terminal-body">
+                    <div class="terminal-line system-msg">Conectando ao terminal de logs do Light Manager...</div>
+                </div>
+            </div>
+        </section>
     </div>
     <script src="script.js"></script>
 </body>

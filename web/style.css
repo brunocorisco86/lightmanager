@@ -393,3 +393,136 @@ button:active { transform: scale(0.95); }
 .summary-value.accent {
     color: var(--accent);
 }
+
+/* Container Principal do Terminal */
+.logs-panel {
+    margin-top: 40px;
+    background: var(--card);
+    border-radius: 16px;
+    border: 1px solid #334155;
+    overflow: hidden;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.4);
+    margin-bottom: 20px;
+}
+
+/* Header do Terminal */
+.logs-header {
+    background: #0f172a;
+    padding: 12px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #334155;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.logs-title {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.logs-title h2 {
+    margin: 0;
+    font-size: 0.95rem;
+    color: #94a3b8;
+    font-weight: 600;
+}
+
+/* Bolinhas de Terminal estilo macOS */
+.terminal-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    display: inline-block;
+}
+.terminal-dot.red { background: #ef4444; }
+.terminal-dot.yellow { background: #f59e0b; }
+.terminal-dot.green { background: #10b981; }
+
+/* Controles de Log */
+.logs-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.logs-controls select {
+    background: #1e293b;
+    border: 1px solid #475569;
+    color: #f8fafc;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    outline: none;
+    cursor: pointer;
+    transition: border-color 0.2s;
+}
+
+.logs-controls select:focus {
+    border-color: var(--primary);
+}
+
+.btn-terminal-control {
+    background: #1e293b;
+    border: 1px solid #475569;
+    color: #f8fafc;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-terminal-control:hover {
+    background: #334155;
+    border-color: #94a3b8;
+}
+
+/* Área de Output do Terminal */
+.terminal-container {
+    background: #05070f;
+    padding: 16px;
+    font-family: 'Fira Code', 'JetBrains Mono', 'Roboto Mono', monospace;
+    font-size: 0.85rem;
+    line-height: 1.5;
+}
+
+.terminal-body {
+    height: 300px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    scroll-behavior: smooth;
+}
+
+/* Customização de Scrollbar para o Terminal */
+.terminal-body::-webkit-scrollbar {
+    width: 8px;
+}
+.terminal-body::-webkit-scrollbar-track {
+    background: #05070f;
+}
+.terminal-body::-webkit-scrollbar-thumb {
+    background: #1e293b;
+    border-radius: 4px;
+}
+.terminal-body::-webkit-scrollbar-thumb:hover {
+    background: #334155;
+}
+
+/* Classes para Coloração Semântica das Linhas */
+.terminal-line {
+    white-space: pre-wrap;
+    word-break: break-all;
+    color: #cbd5e1;
+    text-align: left;
+}
+
+.terminal-line.info-msg { color: #10b981; } /* Verde */
+.terminal-line.warn-msg { color: #f59e0b; } /* Amarelo */
+.terminal-line.error-msg { color: #f87171; } /* Vermelho */
+.terminal-line.system-msg { color: var(--primary); font-style: italic; } /* Azul/Ciano */
+.terminal-line.mqtt-msg { color: #a78bfa; } /* Roxo/Lilás */

@@ -6,6 +6,8 @@ import json
 from datetime import date
 from fastapi import FastAPI, HTTPException
 from fastapi.staticfiles import StaticFiles
+from fastapi.responses import StreamingResponse, FileResponse
+import asyncio
 from pydantic import BaseModel
 from dotenv import load_dotenv
 import paho.mqtt.client as mqtt
@@ -53,12 +55,30 @@ mqtt_client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
 def on_connect(client, userdata, flags, rc, properties):
     print(f"Conectado ao MQTT Broker com resultado: {rc}")
     client.subscribe("home/outdoor/+/state")
+    client.subscribe("home/outdoor/+/log")
 
 def on_message(client, userdata, msg):
     topic = msg.topic
-    state = msg.payload.decode()
-    light_states[topic] = state
-    print(f"Estado recebido: {topic} -> {state}")
+    payload = msg.payload.decode()
+    
+    if topic.endswith("/state"):
+        light_states[topic] = payload
+        print(f"Estado recebido: {topic} -> {payload}")
+    elif topic.endswith("/log"):
+        try:
+            device_name = topic.split("/")[-2]
+            log_dir = os.path.join(os.path.dirname(__file__), '..', 'logs')
+            os.makedirs(log_dir, exist_ok=True)
+            log_file_path = os.path.join(log_dir, 'devices.log')
+            
+            from datetime import datetime, timezone, timedelta
+            sp_tz = timezone(timedelta(hours=-3))
+            now_str = datetime.now(sp_tz).strftime("%Y-%m-%d %H:%M:%S")
+            
+            with open(log_file_path, "a", encoding="utf-8") as f:
+                f.write(f"[{now_str}] [{device_name.upper()}] {payload}\n")
+        except Exception as e:
+            print(f"Erro ao salvar log do dispositivo: {e}")
 
 mqtt_client.on_connect = on_connect
 mqtt_client.on_message = on_message
@@ -494,6 +514,80 @@ def send_command(req: CommandRequest):
         return {"status": "sent", "topic": topic_set, "action": req.action}
     else:
         raise HTTPException(status_code=503, detail="MQTT Broker offline")
+
+# Configuração dos caminhos de logs com fallback para desenvolvimento local
+PROJECT_ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..')
+LOGS_DIR = os.path.join(PROJECT_ROOT, 'logs')
+
+LOG_FILES = {
+    "api": os.path.join(LOGS_DIR, "api.log"),
+    "bot": os.path.join(LOGS_DIR, "bot.log"),
+    "solar": os.path.join(LOGS_DIR, "solar.log"),
+    "broker": "/var/log/mosquitto/mosquitto.log",
+    "devices": os.path.join(LOGS_DIR, "devices.log")
+}
+
+# Fallback se o log do broker real não for acessível (ex: local/dev ou permissões)
+if not os.path.exists("/var/log/mosquitto/mosquitto.log"):
+    mock_broker_path = os.path.join(LOGS_DIR, "mosquitto.log")
+    if not os.path.exists(mock_broker_path):
+        os.makedirs(LOGS_DIR, exist_ok=True)
+        with open(mock_broker_path, "w", encoding="utf-8") as f:
+            f.write("[SYSTEM] Simulador de logs do mosquitto ativo localmente...\n")
+    LOG_FILES["broker"] = mock_broker_path
+
+async def tail_log_file(file_path: str, last_lines_count: int = 50):
+    if not os.path.exists(file_path):
+        yield f"data: [ERRO] O arquivo de log '{os.path.basename(file_path)}' não foi encontrado.\n\n"
+        return
+
+    # 1. Envia as últimas N linhas de histórico
+    try:
+        with open(file_path, "r", encoding="utf-8", errors="ignore") as f:
+            lines = f.readlines()
+            history = lines[-last_lines_count:] if len(lines) > last_lines_count else lines
+            for line in history:
+                yield f"data: {line.strip()}\n\n"
+    except Exception as e:
+        yield f"data: [ERRO] Falha ao ler histórico: {str(e)}\n\n"
+        return
+
+    # 2. Transmite novas linhas em tempo real (tail -f)
+    try:
+        with open(file_path, "r", encoding="utf-8", errors="ignore") as f:
+            f.seek(0, os.SEEK_END)
+            while True:
+                line = f.readline()
+                if not line:
+                    await asyncio.sleep(0.5)
+                    continue
+                yield f"data: {line.strip()}\n\n"
+    except asyncio.CancelledError:
+        pass
+    except Exception as e:
+        yield f"data: [ERRO] Erro na transmissão: {str(e)}\n\n"
+
+@app.get("/api/logs/{service}")
+async def stream_service_logs(service: str):
+    if service not in LOG_FILES:
+        raise HTTPException(status_code=400, detail=f"Serviço '{service}' inválido.")
+    return StreamingResponse(
+        tail_log_file(LOG_FILES[service]),
+        media_type="text/event-stream"
+    )
+
+@app.get("/api/logs/{service}/download")
+def download_service_log(service: str):
+    if service not in LOG_FILES:
+        raise HTTPException(status_code=400, detail=f"Serviço '{service}' inválido.")
+    file_path = LOG_FILES[service]
+    if not os.path.exists(file_path):
+        raise HTTPException(status_code=404, detail="Arquivo de log não encontrado.")
+    return FileResponse(
+        path=file_path,
+        filename=f"{service}_log.txt",
+        media_type="text/plain"
+    )
 
 # Serve o frontend
 # Usa caminho absoluto baseado no local deste script
