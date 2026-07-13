@@ -114,18 +114,34 @@ def main():
             else:
                 msg += "\n🔋 Nenhuma lâmpada ativa por tempo significativo."
 
-        # Envia a mensagem para o bot
+        # Envia a mensagem para o bot com tratamento de Rate-Limit e retentativas
+        import time
         url = f"https://api.telegram.org/bot{TG_TOKEN}/sendMessage"
         payload = {
             "chat_id": TG_USER_ID,
             "text": msg,
             "parse_mode": "Markdown"
         }
-        res = requests.post(url, json=payload, timeout=10)
-        if res.status_code == 200:
-            print("Daily report sent successfully to Telegram.")
-        else:
-            print(f"Error sending report to Telegram: {res.status_code} - {res.text}")
+        
+        for attempt in range(3):
+            try:
+                res = requests.post(url, json=payload, timeout=10)
+                if res.status_code == 200:
+                    print("Daily report sent successfully to Telegram.")
+                    break
+                elif res.status_code == 429:
+                    try:
+                        retry_after = res.json().get("parameters", {}).get("retry_after", 5)
+                    except Exception:
+                        retry_after = 5
+                    print(f"Warning: Rate Limit (429) no Telegram. Aguardando {retry_after}s...")
+                    time.sleep(retry_after)
+                else:
+                    print(f"Error sending report to Telegram: HTTP {res.status_code} - {res.text}")
+                    break
+            except Exception as e:
+                print(f"Error connecting to Telegram (attempt {attempt + 1}/3): {e}")
+                time.sleep(2)
 
     except Exception as e:
         print(f"Error executing daily report script: {e}")

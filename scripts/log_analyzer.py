@@ -132,11 +132,12 @@ def get_ai_summary(errors):
     return None
 
 def send_telegram_message(text):
-    """Envia uma mensagem de texto pelo bot do Telegram."""
+    """Envia uma mensagem de texto pelo bot do Telegram com tratamento de Rate-Limiting."""
     if not TELEGRAM_BOT_TOKEN or not TELEGRAM_CHAT_ID:
         print("Erro: TELEGRAM_BOT_TOKEN ou TELEGRAM_ALLOWED_USER_ID não configurados.")
         return False
         
+    import time
     url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage"
     payload = {
         "chat_id": TELEGRAM_CHAT_ID,
@@ -144,12 +145,26 @@ def send_telegram_message(text):
         "parse_mode": "HTML"
     }
     
-    try:
-        res = requests.post(url, json=payload, timeout=10)
-        return res.status_code == 200
-    except Exception as e:
-        print(f"Erro ao enviar mensagem no Telegram: {e}")
-        return False
+    for attempt in range(3):
+        try:
+            res = requests.post(url, json=payload, timeout=10)
+            if res.status_code == 200:
+                return True
+            elif res.status_code == 429:
+                try:
+                    retry_after = res.json().get("parameters", {}).get("retry_after", 5)
+                except Exception:
+                    retry_after = 5
+                print(f"Aviso: Rate Limit (429) no Telegram. Aguardando {retry_after}s antes de tentar novamente...")
+                time.sleep(retry_after)
+            else:
+                print(f"Erro ao enviar mensagem no Telegram: HTTP {res.status_code} - {res.text}")
+                return False
+        except Exception as e:
+            print(f"Exceção ao enviar mensagem no Telegram (tentativa {attempt + 1}/3): {e}")
+            time.sleep(2)
+            
+    return False
 
 def main():
     sp_tz = timezone(timedelta(hours=-3))

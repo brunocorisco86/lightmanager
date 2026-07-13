@@ -2,9 +2,10 @@
 # Diretorio do Projeto: /home/bruno/lightmanager
 
 # --- MANUTENÇÃO DO SISTEMA ---
-@reboot sudo chown mosquitto:mosquitto /etc/mosquitto/passwd && sudo chmod 600 /etc/mosquitto/passwd && sudo mkdir -p /var/log/mosquitto && sudo chown mosquitto:mosquitto /var/log/mosquitto
+@reboot sudo chown mosquitto:mosquitto /etc/mosquitto/passwd && sudo chmod 600 /etc/mosquitto/passwd && sudo mkdir -p /var/log/mosquitto && sudo chown mosquitto:mosquitto /var/log/mosquitto && sudo mkdir -p /var/lib/mosquitto && sudo chown -R mosquitto:mosquitto /var/lib/mosquitto
 */5 * * * * pgrep -x mosquitto > /dev/null || sudo rc-service mosquitto start
 */10 * * * * /bin/bash /home/bruno/lightmanager/scripts/network_watchdog.sh
+*/10 * * * * /bin/bash /home/bruno/lightmanager/scripts/internet_watchdog.sh
 
 # --- PROCESSOS PERSISTENTES (REBOOT COM DELAY) ---
 @reboot sleep 40 && /bin/bash /home/bruno/lightmanager/scripts/entrypoint.sh api

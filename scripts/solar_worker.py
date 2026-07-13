@@ -38,23 +38,37 @@ current_states = {}
 last_hour_logged = -1
 
 def send_telegram_message(text):
-    """Envia uma notificação para o Telegram via requisição HTTP direta."""
+    """Envia uma notificação para o Telegram com tratamento de Rate-Limiting e retentativas."""
     if not TG_TOKEN or not TG_USER_ID:
         return
 
+    import time
     url = f"https://api.telegram.org/bot{TG_TOKEN}/sendMessage"
     payload = {
         "chat_id": TG_USER_ID,
         "text": text,
         "parse_mode": "Markdown"
     }
-    try:
-        # Timeout curto para não atrasar o ciclo principal do worker
-        response = requests.post(url, json=payload, timeout=5)
-        if response.status_code != 200:
-            logging.error(f"Erro ao enviar Telegram: {response.text}")
-    except Exception as e:
-        logging.error(f"Falha na conexão com Telegram: {e}")
+    
+    for attempt in range(3):
+        try:
+            # Timeout curto para não atrasar o ciclo principal do worker
+            response = requests.post(url, json=payload, timeout=5)
+            if response.status_code == 200:
+                return
+            elif response.status_code == 429:
+                try:
+                    retry_after = response.json().get("parameters", {}).get("retry_after", 5)
+                except Exception:
+                    retry_after = 5
+                logging.warning(f"Rate Limit (429) no Telegram. Aguardando {retry_after}s...")
+                time.sleep(retry_after)
+            else:
+                logging.error(f"Erro ao enviar Telegram: HTTP {response.status_code} - {response.text}")
+                return
+        except Exception as e:
+            logging.error(f"Falha na conexão com Telegram (tentativa {attempt + 1}/3): {e}")
+            time.sleep(2)
 
 def touch_last_seen():
     """Atualiza o timestamp local de última atividade do Wemos."""
