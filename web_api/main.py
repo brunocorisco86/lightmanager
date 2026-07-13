@@ -4,7 +4,7 @@ import psycopg2
 from psycopg2 import pool
 import json
 from datetime import date
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Response
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import StreamingResponse, FileResponse
 import asyncio
@@ -582,12 +582,24 @@ def download_service_log(service: str):
         raise HTTPException(status_code=400, detail=f"Serviço '{service}' inválido.")
     file_path = LOG_FILES[service]
     if not os.path.exists(file_path):
+        if service == "devices":
+            return Response(
+                content="",
+                media_type="text/plain",
+                headers={"Content-Disposition": "attachment; filename=devices_log.txt"}
+            )
         raise HTTPException(status_code=404, detail="Arquivo de log não encontrado.")
-    return FileResponse(
-        path=file_path,
-        filename=f"{service}_log.txt",
-        media_type="text/plain"
-    )
+    
+    try:
+        with open(file_path, "r", encoding="utf-8", errors="ignore") as f:
+            content = f.read()
+        return Response(
+            content=content,
+            media_type="text/plain",
+            headers={"Content-Disposition": f"attachment; filename={service}_log.txt"}
+        )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Erro ao ler arquivo de log: {e}")
 
 # Serve o frontend
 # Usa caminho absoluto baseado no local deste script
