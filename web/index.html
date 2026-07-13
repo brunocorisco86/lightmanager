@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Light Manager - Painel</title>
-    <link rel="stylesheet" href="style.css?v=1.0.1">
+    <link rel="stylesheet" href="style.css?v=1.0.2">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
@@ -122,25 +122,30 @@
                     <h2>💻 Terminal de Logs do Sistema</h2>
                 </div>
                 <div class="logs-controls">
-                    <select id="log-service-selector" onchange="changeLogService()">
+                    <select id="log-service-selector" onchange="loadLogs()">
                         <option value="api" selected>Web API</option>
                         <option value="bot">Telegram Bot</option>
                         <option value="solar">Solar Worker</option>
                         <option value="broker">Mosquitto Broker</option>
                         <option value="devices">Embarcados (MQTT)</option>
                     </select>
-                    <button id="btn-pause-log" onclick="toggleScroll()" class="btn-terminal-control" title="Pausar Autoscroll">⏸️</button>
+                    <select id="log-lines-selector" onchange="loadLogs()">
+                        <option value="50">50 linhas</option>
+                        <option value="100" selected>100 linhas</option>
+                        <option value="200">200 linhas</option>
+                    </select>
+                    <button onclick="loadLogs()" class="btn-terminal-control" title="Carregar/Atualizar Logs">🔄 Atualizar</button>
                     <button onclick="clearTerminal()" class="btn-terminal-control" title="Limpar Tela">🧹</button>
                     <button onclick="downloadFullLog()" class="btn-terminal-control" title="Baixar Log Completo">📥</button>
                 </div>
             </div>
             <div class="terminal-container">
                 <div id="terminal-body" class="terminal-body">
-                    <div class="terminal-line system-msg">Conectando ao terminal de logs do Light Manager...</div>
+                    <div class="terminal-line system-msg">Clique em "Atualizar" para carregar os logs do serviço selecionado.</div>
                 </div>
             </div>
         </section>
     </div>
-    <script src="script.js?v=1.0.1"></script>
+    <script src="script.js?v=1.0.2"></script>
 </body>
 </html>

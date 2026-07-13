@@ -536,45 +536,25 @@ if not os.path.exists("/var/log/mosquitto/mosquitto.log"):
             f.write("[SYSTEM] Simulador de logs do mosquitto ativo localmente...\n")
     LOG_FILES["broker"] = mock_broker_path
 
-async def tail_log_file(file_path: str, last_lines_count: int = 50):
-    if not os.path.exists(file_path):
-        yield f"data: [ERRO] O arquivo de log '{os.path.basename(file_path)}' não foi encontrado.\n\n"
-        return
-
-    # 1. Envia as últimas N linhas de histórico
-    try:
-        with open(file_path, "r", encoding="utf-8", errors="ignore") as f:
-            lines = f.readlines()
-            history = lines[-last_lines_count:] if len(lines) > last_lines_count else lines
-            for line in history:
-                yield f"data: {line.strip()}\n\n"
-    except Exception as e:
-        yield f"data: [ERRO] Falha ao ler histórico: {str(e)}\n\n"
-        return
-
-    # 2. Transmite novas linhas em tempo real (tail -f)
-    try:
-        with open(file_path, "r", encoding="utf-8", errors="ignore") as f:
-            f.seek(0, os.SEEK_END)
-            while True:
-                line = f.readline()
-                if not line:
-                    await asyncio.sleep(0.5)
-                    continue
-                yield f"data: {line.strip()}\n\n"
-    except asyncio.CancelledError:
-        pass
-    except Exception as e:
-        yield f"data: [ERRO] Erro na transmissão: {str(e)}\n\n"
-
-@app.get("/api/logs/{service}")
-async def stream_service_logs(service: str):
+@app.get("/api/logs/{service}/tail")
+def get_service_log_tail(service: str, lines: int = 100):
     if service not in LOG_FILES:
         raise HTTPException(status_code=400, detail=f"Serviço '{service}' inválido.")
-    return StreamingResponse(
-        tail_log_file(LOG_FILES[service]),
-        media_type="text/event-stream"
-    )
+    file_path = LOG_FILES[service]
+    
+    if not os.path.exists(file_path):
+        if service == "devices":
+            return {"service": service, "lines": ["[SISTEMA] Nenhum log de dispositivo registrado ainda."]}
+        raise HTTPException(status_code=404, detail="Arquivo de log não encontrado.")
+        
+    try:
+        with open(file_path, "r", encoding="utf-8", errors="ignore") as f:
+            all_lines = f.readlines()
+            tail_lines = all_lines[-lines:] if len(all_lines) > lines else all_lines
+            cleaned_lines = [line.rstrip('\r\n') for line in tail_lines]
+        return {"service": service, "lines": cleaned_lines}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Erro ao ler log: {e}")
 
 @app.get("/api/logs/{service}/download")
 def download_service_log(service: str):

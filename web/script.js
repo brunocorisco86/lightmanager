@@ -510,39 +510,49 @@ updateStatus();
 loadCharts();
 loadMonthlyStats();
 if (document.getElementById("log-service-selector")) {
-    changeLogService();
+    loadLogs();
 }
 
 // Polling suave
 setInterval(updateStatus, 5000);
 
-// Terminal de Logs em Tempo Real (SSE)
-let logEventSource = null;
-let isAutoscrollActive = true;
-
-function changeLogService() {
+// Terminal de Logs Sob Demanda (Estático / Tail)
+async function loadLogs() {
     const selector = document.getElementById("log-service-selector");
-    if (!selector) return;
+    const linesSelector = document.getElementById("log-lines-selector");
+    if (!selector || !linesSelector) return;
+    
     const service = selector.value;
+    const linesCount = linesSelector.value;
     const terminal = document.getElementById("terminal-body");
     if (!terminal) return;
 
-    if (logEventSource) {
-        logEventSource.close();
+    terminal.innerHTML = `<div class="terminal-line system-msg">[SISTEMA] Carregando últimas ${linesCount} linhas de logs do serviço: ${service.toUpperCase()}...</div>`;
+
+    try {
+        const response = await fetch(`/api/logs/${service}/tail?lines=${linesCount}`);
+        if (!response.ok) {
+            throw new Error(`Status HTTP ${response.status}`);
+        }
+        const data = await response.json();
+        
+        // Limpa e renderiza
+        terminal.innerHTML = "";
+        
+        if (data.lines && data.lines.length > 0) {
+            data.lines.forEach(lineText => {
+                appendLogLine(lineText);
+            });
+        } else {
+            terminal.innerHTML = `<div class="terminal-line system-msg">[SISTEMA] Arquivo de log vazio ou sem registros.</div>`;
+        }
+        
+        // Sempre rola para o final ao carregar
+        terminal.scrollTop = terminal.scrollHeight;
+    } catch (error) {
+        console.error("Erro ao carregar logs:", error);
+        terminal.innerHTML = `<div class="terminal-line error-msg">[ERRO] Não foi possível carregar os logs: ${error.message}</div>`;
     }
-
-    terminal.innerHTML = `<div class="terminal-line system-msg">[SISTEMA] Conectando ao fluxo de logs do serviço: ${service.toUpperCase()}...</div>`;
-
-    logEventSource = new EventSource(`/api/logs/${service}`);
-
-    logEventSource.onmessage = (event) => {
-        appendLogLine(event.data);
-    };
-
-    logEventSource.onerror = (error) => {
-        console.error("Erro na conexão SSE:", error);
-        appendLogLine("[ERRO] Conexão perdida. Tentando reconectar...", "error-msg");
-    };
 }
 
 function appendLogLine(text, forcedClass = null) {
@@ -569,29 +579,6 @@ function appendLogLine(text, forcedClass = null) {
 
     line.textContent = text;
     terminal.appendChild(line);
-
-    if (isAutoscrollActive) {
-        terminal.scrollTop = terminal.scrollHeight;
-    }
-
-    if (terminal.childNodes.length > 300) {
-        terminal.removeChild(terminal.firstChild);
-    }
-}
-
-function toggleScroll() {
-    isAutoscrollActive = !isAutoscrollActive;
-    const btn = document.getElementById("btn-pause-log");
-    if (!btn) return;
-    if (isAutoscrollActive) {
-        btn.innerText = "⏸️";
-        btn.title = "Pausar Autoscroll";
-        const terminal = document.getElementById("terminal-body");
-        if (terminal) terminal.scrollTop = terminal.scrollHeight;
-    } else {
-        btn.innerText = "▶️";
-        btn.title = "Retomar Autoscroll";
-    }
 }
 
 function clearTerminal() {
