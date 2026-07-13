@@ -106,7 +106,7 @@ def get_ai_summary(errors):
         f"{error_list_text}"
     )
     
-    url = f"https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key={GEMINI_API_KEY}"
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={GEMINI_API_KEY}"
     headers = {"Content-Type": "application/json"}
     payload = {
         "contents": [{
@@ -122,9 +122,9 @@ def get_ai_summary(errors):
             data = res.json()
             return data["candidates"][0]["content"]["parts"][0]["text"]
         else:
-            print(f"Erro na API do Gemini: {res.status_code} - {res.text}")
+            print(f"Aviso: Não foi possível obter resumo da IA (HTTP {res.status_code}). Usando fallback de resumo em texto simples.")
     except Exception as e:
-        print(f"Exceção ao chamar a API do Gemini: {e}")
+        print(f"Aviso: Exceção ao chamar a API do Gemini: {e}. Usando fallback de resumo em texto simples.")
         
     return None
 
