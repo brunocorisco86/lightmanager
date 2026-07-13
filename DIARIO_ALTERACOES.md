@@ -157,3 +157,38 @@ Este documento registra as falhas diagnosticadas no ambiente de produção do **
   - Fundimos as propostas de melhoria futura de `docs/SUGGESTIONS.md` na lista de tarefas To-Do em [docs/ROADMAP.md](file:///home/bruno/lightmanager/docs/ROADMAP.md) e deletamos `docs/SUGGESTIONS.md`.
   - Removemos o rascunho de ideias obsoleto `docs/IDEA.md`.
   - Atualizamos a seção de organização de arquivos no [README.md](file:///home/bruno/lightmanager/README.md).
+
+---
+
+## 🧠 8. Implementações do Dia 12/07/2026 (Housekeeping, Resiliência de DNS Unbound e Rate-limiting no Telegram)
+
+### 🧹 Housekeeping de Logs (logrotate e copytruncate)
+* **Demanda:** Evitar que o crescimento ilimitado dos arquivos de logs (`api.log`, `bot.log`, `solar.log`, `cron.log`, `watchdog.log`, `backup.log` e `devices.log`) esgote o espaço de armazenamento e acelere o desgaste por escrita (Write Wear) do cartão MicroSD do Raspberry Pi 3B.
+* **Solução:**
+  - Criamos o arquivo de configuração local [scripts/logrotate.conf](file:///media/brunoconter/DOCUMENTOS3/10_LIGHT_MANAGER/lightmanager/scripts/logrotate.conf) executando rotação diária (`daily`) com retenção de 7 dias (`rotate 7`) e compactação automática (`compress` / `delaycompress`).
+  - Utilizamos a flag `copytruncate` para permitir que os serviços persistentes do sistema continuem gravando nos arquivos de logs ativos sem a necessidade de reinicializar os processos após a rotação.
+  - Integramos o agendamento no [crontab_template.txt](file:///media/brunoconter/DOCUMENTOS3/10_LIGHT_MANAGER/lightmanager/crontab_template.txt) para executar à meia-noite (`00:00`) diariamente sob o usuário comum `bruno` (salvando o status de execução de forma local com a flag `-s`).
+  - Adicionamos o pacote `logrotate` ao script de instalação de dependências do Alpine Linux [scripts/02_install_alpine_deps.sh](file:///media/brunoconter/DOCUMENTOS3/10_LIGHT_MANAGER/lightmanager/scripts/02_install_alpine_deps.sh).
+
+### 🤖 Análise e Notificação Inteligente de Erros (Gemini 2.5 Flash + Telegram)
+* **Demanda:** Notificar o administrador às 19h00 sobre erros que comprometam o funcionamento do sistema, provendo resumos inteligentes que evitem duplicidade.
+* **Solução:**
+  - Desenvolvemos o script [scripts/log_analyzer.py](file:///media/brunoconter/DOCUMENTOS3/10_LIGHT_MANAGER/lightmanager/scripts/log_analyzer.py), que faz a varredura diária nos logs do sistema em busca de erros/exceções.
+  - Implementamos um algoritmo de normalização para remover timestamps e variáveis dinâmicas das linhas, desduplicando e consolidando a contagem de ocorrências de erros idênticos.
+  - O script envia os erros estruturados via chamada REST para o modelo **Gemini 2.5 Flash** (autenticando através do cabeçalho `X-goog-api-key`) para gerar um sumário executivo curto.
+  - Se houver falhas críticas, o sumário da IA é enviado via Telegram. Caso contrário, envia apenas `"🤖 Status Light Manager: Tudo OK."`.
+  - O script dispõe de fallback automático para texto formatado caso a API da IA ou a chave de acesso falhem.
+
+### 🌐 Watchdog Híbrido de Internet e DNS Local Unbound (Governança e Autorrecuperação)
+* **Demanda:** Resolver quedas de rede e eventuais travamentos do DNS recursivo local `unbound` (127.0.0.1) que roda em produção no Raspberry Pi 3B.
+* **Solução:**
+  - Desenvolvemos o script [scripts/internet_watchdog.sh](file:///media/brunoconter/DOCUMENTOS3/10_LIGHT_MANAGER/lightmanager/scripts/internet_watchdog.sh) que executa a cada 10 minutos no Crontab de produção.
+  - **Monitoramento Direcionado**: Se o ping externo (para `8.8.8.8`) está operacional mas a resolução DNS falha, o script identifica que o Unbound local travou.
+  - **Governança de Reinícios**: Executa o reinício do Unbound (`sudo rc-service unbound restart`) apenas 1 vez de forma consecutiva (contador persistido em `/tmp/unbound_restart_count`) para evitar instabilizar a rede local com loops infinitos de restarts em falhas persistentes.
+  - **Alerta e Fallback**: No estouro do limite de restarts, emite uma notificação de erro crítica prioritária via Telegram solicitando intervenção manual. Em quedas de internet física total por mais de 3 verificações, reinicia as interfaces de rede do Alpine (`networking` + `wpa_supplicant`).
+
+### ✉️ Resiliência contra Rate-Limiting no Telegram (HTTP 429)
+* **Demanda:** Evitar falhas de disparo e travamento dos serviços em rajadas de notificações de status ou reinícios.
+* **Solução:**
+  - Atualizamos as funções utilitárias de envio de mensagem no [log_analyzer.py](file:///media/brunoconter/DOCUMENTOS3/10_LIGHT_MANAGER/lightmanager/scripts/log_analyzer.py), [solar_worker.py](file:///media/brunoconter/DOCUMENTOS3/10_LIGHT_MANAGER/lightmanager/scripts/solar_worker.py) e [reports/generate_daily.py](file:///media/brunoconter/DOCUMENTOS3/10_LIGHT_MANAGER/lightmanager/reports/generate_daily.py).
+  - Implementamos captura do código de erro `429 (Too Many Requests)` com extração do parâmetro `retry_after` sugerido pelo Telegram para realizar esperas dinâmicas temporizadas e retentar o envio em até 3 tentativas com backoff.

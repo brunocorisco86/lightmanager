@@ -11,7 +11,10 @@ Este repositório contém a solução completa para o controle inteligente de il
     - **Login Seguro:** Autenticação via BCrypt com usuários persistidos no PostgreSQL.
     - **Watchdogs (Autocura):** Monitoramento triplo (API, Solar e Bot) a cada 15 min via Crontab.
     - **Persistência Pós-Reboot:** Escalonamento de boot via `@reboot` para garantir ordem de serviços.
-    - **NTP & DNS Watchdogs:** Sincronização horária e diagnósticos de rede automáticos.
+    - **Permissões do Mosquitto**: Criação e propriedade automática do diretório `/var/lib/mosquitto` configuradas no boot para resguardar a persistência local do broker.
+    - **Watchdog Híbrido de Internet e DNS local (Unbound)**: Monitoramento a cada 10 min que detecta travamentos no DNS recursivo local `unbound` (127.0.0.1) e executa restarts com governança para proteger a rede local.
+    - **Housekeeping Automático de Logs**: Rotação compactada diária via `logrotate` com a diretiva `copytruncate` (usuário comum `bruno`), evitando o esgotamento do cartão MicroSD.
+    - **Rate Limiting no Telegram**: Tratamento dinâmico de erros HTTP 429 com retentativas baseadas no *Retry-After* nos disparos de notificações dos serviços.
     - **Persistência de DNS Estática:** Mapeamento estático e atualização semanal automática do IP de api.open-meteo.com no /etc/hosts para proteção contra falhas de upstream DNS.
     - **Fallback de Horários Offline:** O Wemos D1 R1 armazena localmente o cronograma solar (enviado via MQTT com retain), garantindo o controle autônomo das luzes em caso de queda do servidor central/broker.
 - 📊 **Monitoramento & Estatísticas:** Registro detalhado de eventos e gráficos interativos de tempo de atividade (empilhado por lâmpada) e consumo acumulado diário em kWh.
@@ -39,6 +42,9 @@ Para garantir que o sistema opere de forma resiliente no Raspberry Pi:
 ## ⚙️ Gestão e Manutenção
 O sistema possui scripts dedicados para operação contínua:
 - **Reiniciar Serviços:** `bash scripts/restart_api.sh`, `bash scripts/restart_solar.sh` e `bash scripts/restart_bot.sh`.
+- **Análise de Logs e IA:** `python3 scripts/log_analyzer.py` (varredura diária desduplicada com IA Gemini às 19h00).
+- **Housekeeping de Logs:** `scripts/logrotate.conf` (regras locais de rotação e limpeza do projeto).
+- **Watchdog de Rede:** `bash scripts/internet_watchdog.sh` (resiliência de internet e Unbound local).
 - **Gestão de Usuários:** `python3 scripts/manage_users.py` (para criar/gerenciar acessos web).
 - **Atualização de DNS:** `bash scripts/update_hosts.sh` (atualiza dinamicamente o IP da API climática no `/etc/hosts` com privilégios sudo).
 - **Comissionamento:** `bash scripts/setup.sh` (ambiente virtual) e `bash scripts/02_install_alpine_deps.sh` (dependências de SO e primeira execução do mapeador de DNS).
