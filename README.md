@@ -7,13 +7,14 @@ Este repositório contém a solução completa para o controle inteligente de il
 - 🌅 **Automação Solar Inteligente:** Ciclo circadiano baseado em latitude/longitude com GMT-3 (Brasília).
 - 🤖 **Controle via Telegram:** Comandos `/status`, `/liga` e `/desliga` com feedback em tempo real (Long Polling).
 - ⚙️ **Gerenciamento Web:** Interface administrativa protegida por senha para cadastrar pontos, ajustar offsets de tempo e auditar o histórico solar.
+- 🧠 **Diagnósticos SRE com IA (Gemini 2.5 Flash):** Varredura e consolidação automatizada de logs de erro diariamente às 19h00. O sistema normaliza e desduplica mensagens repetitivas antes de consultar a API do Gemini via cabeçalhos REST, gerando um resumo executivo de causa raiz e criticidade enviado via Telegram apenas se houver falhas ativas no sistema.
+- 🧹 **Housekeeping & Autocura de Logs:** Rotação compactada diária automatizada via `logrotate` local com a diretiva `copytruncate` sob a conta `bruno`. Evita o desgaste por escrita (Write Wear) do cartão MicroSD do Raspberry Pi 3B sem a necessidade de reiniciar serviços Python ou quebrar o redirecionamento de logs de shell (`>>`).
 - 🛡️ **Segurança & Resiliência:** 
     - **Login Seguro:** Autenticação via BCrypt com usuários persistidos no PostgreSQL.
     - **Watchdogs (Autocura):** Monitoramento triplo (API, Solar e Bot) a cada 15 min via Crontab.
     - **Persistência Pós-Reboot:** Escalonamento de boot via `@reboot` para garantir ordem de serviços.
     - **Permissões do Mosquitto**: Criação e propriedade automática do diretório `/var/lib/mosquitto` configuradas no boot para resguardar a persistência local do broker.
     - **Watchdog Híbrido de Internet e DNS local (Unbound)**: Monitoramento a cada 10 min que detecta travamentos no DNS recursivo local `unbound` (127.0.0.1) e executa restarts com governança para proteger a rede local.
-    - **Housekeeping Automático de Logs**: Rotação compactada diária via `logrotate` com a diretiva `copytruncate` (usuário comum `bruno`), evitando o esgotamento do cartão MicroSD.
     - **Rate Limiting no Telegram**: Tratamento dinâmico de erros HTTP 429 com retentativas baseadas no *Retry-After* nos disparos de notificações dos serviços.
     - **Persistência de DNS Estática:** Mapeamento estático e atualização semanal automática do IP de api.open-meteo.com no /etc/hosts para proteção contra falhas de upstream DNS.
     - **Fallback de Horários Offline:** O Wemos D1 R1 armazena localmente o cronograma solar (enviado via MQTT com retain), garantindo o controle autônomo das luzes em caso de queda do servidor central/broker.
