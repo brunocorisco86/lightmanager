@@ -28,11 +28,11 @@ def get_db_connection():
         if db_url:
             return psycopg2.connect(db_url)
         return psycopg2.connect(
-            dbname=os.getenv("DB_NAME", "light_manager"),
-            user=os.getenv("DB_USER", "postgres"),
-            password=os.getenv("DB_PASS", "postgres"),
-            host=os.getenv("DB_HOST", "localhost"),
-            port=os.getenv("DB_PORT", "5432")
+            dbname=os.getenv("POSTGRES_DB") or os.getenv("DB_NAME", "light_manager"),
+            user=os.getenv("POSTGRES_USER") or os.getenv("DB_USER", "postgres"),
+            password=os.getenv("POSTGRES_PASSWORD") or os.getenv("DB_PASS", "postgres"),
+            host=os.getenv("POSTGRES_HOST") or os.getenv("DB_HOST", "127.0.0.1"),
+            port=os.getenv("POSTGRES_PORT") or os.getenv("DB_PORT", "5432")
         )
     except Exception as e:
         print(f"⚠️ [HOUSEKEEPING] Não foi possível conectar ao PostgreSQL: {e}")
