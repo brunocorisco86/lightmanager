@@ -10,16 +10,20 @@ fi
 
 echo "==> Configurando o Eclipse Mosquitto..."
 
-# 1. Garante permissão na pasta de configs
-mkdir -p /etc/mosquitto/conf.d
+# 1. Garante permissão na pasta de configs, logs e persistência
+mkdir -p /etc/mosquitto/conf.d /var/log/mosquitto /var/lib/mosquitto
+chown -R mosquitto:mosquitto /var/lib/mosquitto /var/log/mosquitto
+chmod 755 /var/lib/mosquitto /var/log/mosquitto
 
-# 2. Criar arquivo de configuração com autenticação
+# 2. Criar arquivo de configuração com autenticação e retenção otimizada para SD Card
 cat << 'CONF' > /etc/mosquitto/mosquitto.conf
 listener 1883
 allow_anonymous false
 password_file /etc/mosquitto/passwd
 persistence true
 persistence_location /var/lib/mosquitto/
+autosave_interval 1800
+autosave_on_changes false
 log_dest file /var/log/mosquitto/mosquitto.log
 CONF
 

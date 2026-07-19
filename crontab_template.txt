@@ -2,7 +2,7 @@
 # Diretorio do Projeto: /home/bruno/lightmanager
 
 # --- MANUTENÇÃO DO SISTEMA ---
-@reboot sudo chown mosquitto:mosquitto /etc/mosquitto/passwd && sudo chmod 600 /etc/mosquitto/passwd && sudo mkdir -p /var/log/mosquitto && sudo chown mosquitto:mosquitto /var/log/mosquitto && sudo mkdir -p /var/lib/mosquitto && sudo chown -R mosquitto:mosquitto /var/lib/mosquitto
+@reboot sudo chown mosquitto:mosquitto /etc/mosquitto/passwd && sudo chmod 600 /etc/mosquitto/passwd && sudo mkdir -p /var/log/mosquitto && sudo chown mosquitto:mosquitto /var/log/mosquitto && sudo mkdir -p /var/lib/mosquitto && sudo chown -R mosquitto:mosquitto /var/lib/mosquitto && sudo chmod 755 /var/lib/mosquitto
 */5 * * * * pgrep -x mosquitto > /dev/null || sudo rc-service mosquitto start
 */10 * * * * /bin/bash /home/bruno/lightmanager/scripts/network_watchdog.sh
 */10 * * * * /bin/bash /home/bruno/lightmanager/scripts/internet_watchdog.sh
@@ -18,6 +18,7 @@
 */15 * * * * pgrep -f "bot/bot.py" > /dev/null || (/bin/bash /home/bruno/lightmanager/scripts/restart_bot.sh >> /home/bruno/lightmanager/logs/cron.log 2>&1)
 
 # --- TAREFAS AGENDADAS ---
+01 00 * * * /home/bruno/lightmanager/.venv/bin/python3 /home/bruno/lightmanager/scripts/housekeeping.py >> /home/bruno/lightmanager/logs/housekeeping.log 2>&1
 55 23 * * * /bin/bash /home/bruno/lightmanager/reports/generate_daily.sh >> /home/bruno/lightmanager/logs/cron.log 2>&1
 00 03 1 * * /bin/bash /home/bruno/lightmanager/scripts/backup_r2.sh >> /home/bruno/lightmanager/logs/backup.log 2>&1
 00 2,17 * * * /home/bruno/lightmanager/.venv/bin/python3 /home/bruno/lightmanager/scripts/weather_offset_sync.py >> /home/bruno/lightmanager/logs/cron.log 2>&1

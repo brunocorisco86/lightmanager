@@ -22,7 +22,7 @@ export PYTHONPATH=$PYTHONPATH:.
 
 # 1. Testes Unitários e de Integração (Pytest)
 echo -e "\n${GREEN}1. Executando Pytest (API, Web, Auth, Config, Reliability, Telegram, Backup, Bot)...${NC}"
-./.venv/bin/python3 -m pytest tests/test_api.py tests/test_web_api.py tests/test_timezone.py tests/test_auth.py tests/test_web_config.py tests/test_command_reliability.py tests/test_telegram.py tests/test_backup.py tests/test_bot_integrity.py tests/test_weather_sync.py tests/test_automation_improvements.py -v | tee logs/tests.log
+./.venv/bin/python3 -m pytest tests/test_api.py tests/test_web_api.py tests/test_timezone.py tests/test_auth.py tests/test_web_config.py tests/test_command_reliability.py tests/test_telegram.py tests/test_backup.py tests/test_bot_integrity.py tests/test_weather_sync.py tests/test_automation_improvements.py tests/test_housekeeping.py -v | tee logs/tests.log
 
 # Captura o status do pytest (temos que pegar o status do pytest, não do tee. PIPESTATUS[0] funciona no bash)
 PYTEST_RES=${PIPESTATUS[0]}
