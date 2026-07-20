@@ -1,3 +1,33 @@
+# Diário de Alterações (Changelog) - 19/07/2026
+
+Este documento registra a implementação da rotina de Housekeeping, otimização de I/O de cartão SD no Mosquitto MQTT broker, tratamento de erros de produção e atualização dos Guardrails do agente no dia 19 de julho de 2026.
+
+---
+
+## 🔍 1. Problemas e Solicitações
+
+### 🧹 Prunagem de Banco de Dados e Logs (Housekeeping)
+* **Demanda**: Necessidade de prunar a tabela `light_events` do PostgreSQL e os logs do sistema/Mosquitto para manter apenas a última semana (7 dias) de retenção, liberando espaço em disco no Alpine Linux.
+* **Solução**: Desenvolvimento do script [scripts/housekeeping.py](file:///home/bruno/Documentos/4_HOMELAB/9_LIGHT_MANAGER/scripts/housekeeping.py), integração com `logrotate`, criação da suíte de testes [tests/test_housekeeping.py](file:///home/bruno/Documentos/4_HOMELAB/9_LIGHT_MANAGER/tests/test_housekeeping.py) e agendamento diário no crontab às 00:01h.
+
+### 💾 Mosquitto persistence & Desgaste de Cartão SD (Overhead de I/O)
+* **Falha**: Relatório diário apontou falha persistente ao salvar `mosquitto.db` em `/var/lib/mosquitto/` por falta de permissões do usuário `mosquitto`.
+* **Risco de Hardware**: Sem configurações explícitas de autosave, o Mosquitto poderia reescrever a base `mosquitto.db` a cada mensagem publicada, causando desgaste prematuro no cartão SD do Raspberry Pi.
+* **Solução**: Garantia de permissão `755` e propriedade `mosquitto:mosquitto` em `/var/lib/mosquitto/` via boot/crontab e [scripts/03_setup_mosquitto.sh](file:///home/bruno/Documentos/4_HOMELAB/9_LIGHT_MANAGER/scripts/03_setup_mosquitto.sh). Inclusão de `autosave_interval 1800` (salva a cada 30 min) e `autosave_on_changes false` no `mosquitto.conf`.
+
+### 🛡️ Definição de Guardrails do Agente
+* **Análise de Erro do Telegram**: Falhas intermitentes de conexão com a API do Telegram foram identificadas como oscilações externas da rede WAN/operadora. Foram adicionados guardrails ao arquivo [.agents/AGENTS.md](file:///home/bruno/Documentos/4_HOMELAB/9_LIGHT_MANAGER/.agents/AGENTS.md) para evitar alterações de código desnecessárias no bot durante quedas de internet.
+
+---
+
+## 🛠️ 2. Resumo de Execução em Produção
+
+* **Housekeeping Inicial**: Executado com sucesso via SSH, prunando 3.780 eventos antigos do banco de dados e rotacionando logs.
+* **Agendador Cron**: Crontab de produção atualizado (`01 00 * * *`).
+* **Mosquitto Status**: Serviço reiniciado com sucesso (`mosquitto.db` de 0.87 KB verificado e operando normalmente).
+
+---
+
 # Diário de Alterações (Changelog) - 21/06/2026
 
 Este documento registra as falhas diagnosticadas no ambiente de produção do **Light Manager** no dia 21 de junho de 2026, juntamente com as correções e melhorias aplicadas no repositório.
