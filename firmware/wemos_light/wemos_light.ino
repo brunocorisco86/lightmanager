@@ -55,18 +55,21 @@ int fallback_off_minute = 30;
 bool has_fallback_times = false;
 
 bool isFallbackNightTime(int cur_hour, int cur_min) {
-  if (cur_hour > fallback_on_hour || (cur_hour == fallback_on_hour && cur_min >= fallback_on_minute)) {
-    return true;
+  int cur_total = cur_hour * 60 + cur_min;
+  int on_total = fallback_on_hour * 60 + fallback_on_minute;
+  int off_total = fallback_off_hour * 60 + fallback_off_minute;
+
+  if (on_total > off_total) {
+    return (cur_total >= on_total || cur_total < off_total);
+  } else {
+    return (cur_total >= on_total && cur_total < off_total);
   }
-  if (cur_hour < fallback_off_hour || (cur_hour == fallback_off_hour && cur_min < fallback_off_minute)) {
-    return true;
-  }
-  return false;
 }
 
 void setup_time() {
-  configTime("<-03>3", nullptr);
-  Serial.println("Timezone GMT-3 configurado. Sincronizacao de tempo exclusiva via MQTT.");
+  setenv("TZ", "BRT3", 1);
+  tzset();
+  Serial.println("Timezone GMT-3 (BRT3) configurado. Sincronizacao de tempo via MQTT.");
 }
 
 bool isNightTime() {
@@ -164,6 +167,8 @@ void callback(char* topic, byte* payload, unsigned int length) {
       tv.tv_sec = epoch;
       tv.tv_usec = 0;
       settimeofday(&tv, nullptr);
+      setenv("TZ", "BRT3", 1);
+      tzset();
       Serial.print("Relogio local ajustado via MQTT para: ");
       Serial.println(epoch);
     }
@@ -273,24 +278,23 @@ void loop() {
   if (now - lastMsg > 60000) {
     lastMsg = now;
 
-    // Fallback de Segurança: Se o NTP sincronizou e virou dia, garante desligamento (apenas se desconectado do Broker)
-    if (WiFi.status() == WL_CONNECTED && !client.connected() && !isNightTime() && time(nullptr) > 1000000) {
+    // Apenas ativa a rotina de fallback local se estiver sem conexão com o broker MQTT há mais de 2 minutos (120000ms)
+    // Isso evita acionamento precoce durante pequenas oscilações de keep-alive de rede.
+    unsigned long mqtt_offline_duration = (lastMqttConnected > 0 && now > lastMqttConnected) ? (now - lastMqttConnected) : 0;
+    bool is_mqtt_offline_sustained = (!client.connected() && mqtt_offline_duration > 120000);
+
+    // Fallback de Segurança: Se virou dia, garante desligamento (apenas se desconectado do Broker de forma sustentada)
+    if (WiFi.status() == WL_CONNECTED && is_mqtt_offline_sustained && !isNightTime() && time(nullptr) > 1000000) {
       if (digitalRead(pinFrente) == RELAY_ON) {
         digitalWrite(pinFrente, RELAY_OFF);
-        if (client.connected()) {
-          client.publish(state_frente, "OFF", true);
-        }
       }
       if (digitalRead(pinFundos) == RELAY_ON) {
         digitalWrite(pinFundos, RELAY_OFF);
-        if (client.connected()) {
-          client.publish(state_fundos, "OFF", true);
-        }
       }
     }
 
-    // Fallback Local por Horário (Caso perca conexão com o Broker MQTT)
-    if (WiFi.status() == WL_CONNECTED && !client.connected() && has_fallback_times && time(nullptr) > 1000000) {
+    // Fallback Local por Horário (Caso perca conexão com o Broker MQTT de forma sustentada)
+    if (WiFi.status() == WL_CONNECTED && is_mqtt_offline_sustained && has_fallback_times && time(nullptr) > 1000000) {
       time_t now_unix = time(nullptr);
       struct tm* timeinfo = localtime(&now_unix);
       bool should_be_on = isFallbackNightTime(timeinfo->tm_hour, timeinfo->tm_min);
