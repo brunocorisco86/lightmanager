@@ -17,8 +17,128 @@ STATUS_MAP = {
     4: "Upgrading"
 }
 
-def get_inverter_ip():
-    return os.getenv("SOLAR_INVERTER_IP", "192.168.1.13")
+import subprocess
+import socket
+import concurrent.futures
+
+DEFAULT_SOLAR_MAC = "98:cd:ac:1b:9d:79"
+DEFAULT_SOLAR_IP = "192.168.1.13"
+CACHE_IP_FILE = "/tmp/solar_inverter_cached_ip"
+
+def get_inverter_mac():
+    return os.getenv("SOLAR_INVERTER_MAC", DEFAULT_SOLAR_MAC).lower().strip()
+
+def get_inverter_ip_hint():
+    return os.getenv("SOLAR_INVERTER_IP", DEFAULT_SOLAR_IP).strip()
+
+def find_ip_in_arp(target_mac):
+    """
+    Busca o IP correspondente ao MAC address informado na tabela ARP do sistema (/proc/net/arp / ip neighbor).
+    """
+    target_mac = target_mac.lower().strip()
+    if os.path.exists('/proc/net/arp'):
+        try:
+            with open('/proc/net/arp', 'r') as f:
+                for line in f.readlines()[1:]:
+                    parts = line.split()
+                    if len(parts) >= 4:
+                        ip, hw_addr = parts[0], parts[3].lower()
+                        if hw_addr == target_mac:
+                            return ip
+        except Exception:
+            pass
+
+    try:
+        out = subprocess.check_output(['ip', 'neighbor'], text=True, stderr=subprocess.DEVNULL)
+        for line in out.splitlines():
+            parts = line.split()
+            if 'lladdr' in parts:
+                idx = parts.index('lladdr')
+                if idx + 1 < len(parts) and parts[idx+1].lower() == target_mac:
+                    return parts[0]
+    except Exception:
+        pass
+
+    return None
+
+def test_inverter_endpoint(ip, timeout=2):
+    """
+    Valida rapidamente se um dado IP responde com a assinatura do inversor solar.
+    """
+    try:
+        url = f"http://{ip}/status/status.php"
+        resp = requests.post(url, data={"t": "l"}, timeout=timeout)
+        return resp.status_code == 200 and len(resp.text.strip().split(",")) == 35
+    except Exception:
+        return False
+
+def scan_subnet_for_mac(target_mac, subnet_prefix="192.168.1."):
+    """
+    Realiza uma varredura paralela rápida na sub-rede para forçar atualização da tabela ARP e localizar o MAC.
+    """
+    target_mac = target_mac.lower().strip()
+    ips = [f"{subnet_prefix}{i}" for i in range(1, 255)]
+
+    def probe(ip):
+        try:
+            with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+                s.settimeout(0.2)
+                s.connect((ip, 80))
+        except Exception:
+            pass
+
+    with concurrent.futures.ThreadPoolExecutor(max_workers=50) as executor:
+        list(executor.map(probe, ips))
+
+    return find_ip_in_arp(target_mac)
+
+def cache_working_ip(ip):
+    try:
+        with open(CACHE_IP_FILE, 'w') as f:
+            f.write(ip)
+    except Exception:
+        pass
+
+def resolve_inverter_ip():
+    """
+    Resolve dinamicamente o IP do inversor solar com resiliência baseada em MAC Address:
+    1. Tenta o IP armazenado em cache local (/tmp/solar_inverter_cached_ip).
+    2. Procura pelo MAC address na tabela ARP ativa (/proc/net/arp).
+    3. Testa o IP hint configurado no .env.
+    4. Se falhar, executa scan rápido na sub-rede para atualizar o ARP e localizar o MAC.
+    """
+    target_mac = get_inverter_mac()
+    ip_hint = get_inverter_ip_hint()
+
+    # 1. Tenta IP em cache
+    if os.path.exists(CACHE_IP_FILE):
+        try:
+            with open(CACHE_IP_FILE, 'r') as f:
+                cached_ip = f.read().strip()
+                if cached_ip and test_inverter_endpoint(cached_ip):
+                    return cached_ip
+        except Exception:
+            pass
+
+    # 2. Busca na tabela ARP pelo MAC
+    arp_ip = find_ip_in_arp(target_mac)
+    if arp_ip and test_inverter_endpoint(arp_ip):
+        cache_working_ip(arp_ip)
+        return arp_ip
+
+    # 3. Testa IP de hint configurado no .env
+    if ip_hint and test_inverter_endpoint(ip_hint):
+        cache_working_ip(ip_hint)
+        return ip_hint
+
+    # 4. Varredura de sub-rede se o IP mudou e a tabela ARP expirou
+    scanned_ip = scan_subnet_for_mac(target_mac)
+    if scanned_ip and test_inverter_endpoint(scanned_ip):
+        logging.info(f"🔎 Inversor solar localizado no novo IP {scanned_ip} via MAC {target_mac}")
+        cache_working_ip(scanned_ip)
+        return scanned_ip
+
+    return ip_hint
 
 def parse_solar_csv(csv_text):
     """
@@ -68,10 +188,11 @@ def parse_solar_csv(csv_text):
 def fetch_solar_telemetry(ip=None, timeout=5):
     """
     Solicita a telemetria do inversor via requisição HTTP POST.
+    Resolve o IP dinamicamente por MAC address caso o IP não seja especificado.
     Retorna um dicionário de telemetria se online, ou None se offline (sem sol).
     """
     if ip is None:
-        ip = get_inverter_ip()
+        ip = resolve_inverter_ip()
 
     url = f"http://{ip}/status/status.php"
     try:

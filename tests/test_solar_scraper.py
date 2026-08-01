@@ -6,7 +6,9 @@ from scripts.solar_scraper import (
     fetch_solar_telemetry,
     save_solar_telemetry,
     publish_solar_mqtt,
-    run_solar_scraping_cycle
+    run_solar_scraping_cycle,
+    find_ip_in_arp,
+    resolve_inverter_ip
 )
 
 SAMPLE_CSV = "1,1692894,180154,1048,64,1304,788,1953,610,65535,65535,0,0,65535,65535,0,0,65535,65535,0,0,65535,65535,2146,6000,2282,923,65535,65535,65535,65535,3649,432,132892,2"
@@ -75,3 +77,16 @@ def test_publish_solar_mqtt_offline():
     topics = [call[0][0] for call in mock_mqtt.publish.call_args_list]
     assert "home/solar/status" in topics
     assert "home/solar/power_w" in topics
+
+@patch("scripts.solar_scraper.find_ip_in_arp", return_value="192.168.1.50")
+@patch("scripts.solar_scraper.test_inverter_endpoint", return_value=True)
+def test_resolve_inverter_ip_via_arp(mock_test, mock_arp):
+    resolved = resolve_inverter_ip()
+    assert resolved == "192.168.1.50"
+
+@patch("scripts.solar_scraper.find_ip_in_arp", return_value=None)
+@patch("scripts.solar_scraper.scan_subnet_for_mac", return_value="192.168.1.99")
+@patch("scripts.solar_scraper.test_inverter_endpoint", side_effect=lambda ip: ip == "192.168.1.99")
+def test_resolve_inverter_ip_via_subnet_scan(mock_test, mock_scan, mock_arp):
+    resolved = resolve_inverter_ip()
+    assert resolved == "192.168.1.99"
