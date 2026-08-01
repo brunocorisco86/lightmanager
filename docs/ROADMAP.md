@@ -46,3 +46,5 @@
 - [x] **Etapa 3**: Exibição da curva sino (bell curve) de potência solar no dashboard frontend e gráfico comparativo com histórico.
 - [x] **Etapa 4**: Sistema de alertas automáticos de anomalias no Telegram com parecer técnico automatizado por Agente Especialista IA (Gemini API).
 - [x] **Etapa 5**: Alerta preditivo de chuva por queda abrupta de geração solar durante horário de sol combinada com alta probabilidade de chuva do Open-Meteo.
+- [x] **Etapa 6**: Relatório mensal consolidado de produção solar no dia 01 às 06:30h com gráfico Matplotlib, economia financeira estimada (R$) e parecer técnico do Agente Consultor IA (Gemini API).
+
