@@ -66,5 +66,10 @@
   "64": "graphify reference: GitHub clone and cross-repo merge",
   "65": "graphify reference: transcribe video and audio",
   "66": "extraction-spec.md",
-  "67": "test_solar_scraper.py"
+  "67": "test_solar_scraper.py",
+  "68": "run_monthly_report_flow",
+  "69": "fetch_solar_forecast",
+  "70": "☀️ 1. Resumo das Etapas Implementadas (Roadmap Solar)",
+  "71": "send_daily_solar_telegram_report",
+  "72": "analyze_solar_anomaly_with_ai"
 }

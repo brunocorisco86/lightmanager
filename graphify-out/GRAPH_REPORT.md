@@ -1,16 +1,16 @@
 # Graph Report - 9_LIGHT_MANAGER  (2026-08-01)
 
 ## Corpus Check
-- 86 files · ~50,852 words
+- 86 files · ~51,248 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 583 nodes · 797 edges · 73 communities (45 shown, 28 thin omitted)
+- 585 nodes · 801 edges · 73 communities (45 shown, 28 thin omitted)
 - Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 8 edges (avg confidence: 0.5)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `0bb72313`
+- Built from commit: `9678e1e7`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -92,10 +92,10 @@
 4. `What You Must Do When Invoked` - 12 edges
 5. `fetch_solar_forecast()` - 11 edges
 6. `run_monthly_report_flow()` - 10 edges
-7. `send_daily_solar_telegram_report()` - 10 edges
-8. `run_solar_scraping_cycle()` - 10 edges
-9. `TestSolarWorkerPerformance` - 10 edges
-10. `fetchData()` - 10 edges
+7. `check_abrupt_power_drop_and_rain()` - 10 edges
+8. `send_daily_solar_telegram_report()` - 10 edges
+9. `check_solar_anomalies()` - 10 edges
+10. `run_solar_scraping_cycle()` - 10 edges
 
 ## Surprising Connections (you probably didn't know these)
 - `test_prune_database_dry_run()` --calls--> `prune_database()`  [EXTRACTED]
@@ -123,8 +123,8 @@ Cohesion: 0.14
 Nodes (33): BaseModel, delete, get, post, put, check_password(), CommandRequest, create_point() (+25 more)
 
 ### Community 2 - "solar_worker.py"
-Cohesion: 0.14
-Nodes (23): fetch_sun_data_with_retry(), get_db_conn(), get_db_pool(), get_today_sun_data(), log_event_to_db(), on_message(), Salva um evento de estado no banco de dados com fonte e timestamp correto., Realiza a virada de dia virtual para fracionar o consumo de luzes que permanecem (+15 more)
+Cohesion: 0.13
+Nodes (25): Ciclo principal de coleta de telemetria solar:     1. Scraping via HTTP (POST st, run_solar_scraping_cycle(), fetch_sun_data_with_retry(), get_db_conn(), get_db_pool(), get_today_sun_data(), log_event_to_db(), on_message() (+17 more)
 
 ### Community 3 - "script.js"
 Cohesion: 0.16
@@ -255,8 +255,8 @@ Cohesion: 0.50
 Nodes (3): For --cluster-only, For --update (incremental re-extraction), graphify reference: incremental update and cluster-only
 
 ### Community 67 - "test_solar_scraper.py"
-Cohesion: 0.09
-Nodes (38): cache_working_ip(), check_solar_anomalies(), fetch_solar_telemetry(), find_ip_in_arp(), get_inverter_ip_hint(), get_inverter_mac(), init_solar_db(), parse_solar_csv() (+30 more)
+Cohesion: 0.12
+Nodes (30): cache_working_ip(), fetch_solar_telemetry(), find_ip_in_arp(), get_inverter_ip_hint(), get_inverter_mac(), init_solar_db(), parse_solar_csv(), publish_solar_mqtt() (+22 more)
 
 ### Community 68 - "run_monthly_report_flow"
 Cohesion: 0.15
@@ -264,7 +264,7 @@ Nodes (21): fetch_monthly_solar_data(), generate_ai_monthly_consultant_report(),
 
 ### Community 69 - "fetch_solar_forecast"
 Cohesion: 0.18
-Nodes (13): calculate_system_efficiency_factor(), fetch_solar_forecast(), get_db_conn(), Consulta a API Open-Meteo Solar Forecast e retorna a previsão estimada de geraçã, Calcula o fator dinâmico de conversão (kWh por MJ/m²) baseado no histórico recen, check_abrupt_power_drop_and_rain(), Detecta queda abrupta de geração solar no horário de pico e cruza com a probabil, patch (+5 more)
+Nodes (14): calculate_system_efficiency_factor(), fetch_solar_forecast(), get_db_conn(), Consulta a API Open-Meteo Solar Forecast e retorna a previsão estimada de geraçã, Calcula o fator dinâmico de conversão (kWh por MJ/m²) baseado no histórico recen, check_abrupt_power_drop_and_rain(), Detecta queda abrupta de geração solar no horário de pico e cruza com a probabil, patch (+6 more)
 
 ### Community 70 - "☀️ 1. Resumo das Etapas Implementadas (Roadmap Solar)"
 Cohesion: 0.12
@@ -275,8 +275,8 @@ Cohesion: 0.24
 Nodes (13): calculate_daily_summary(), fetch_daily_solar_data(), generate_solar_chart_png(), get_db_conn(), Gera o gráfico da curva sino de potência solar fotovoltaica usando Matplotlib He, Gera e envia o relatório diário de produção solar fotovoltaica para o Telegram., Busca todas as entradas de telemetria solar registradas no banco para o dia espe, Calcula os indicadores resumidos (KPIs) da geração do dia. (+5 more)
 
 ### Community 72 - "analyze_solar_anomaly_with_ai"
-Cohesion: 0.43
-Nodes (5): analyze_solar_anomaly_with_ai(), Invoca o Agente Especialista Fotovoltaico (Gemini AI) para analisar a anomalia s, patch, test_solar_ai_expert_no_key(), test_solar_ai_expert_with_gemini_key()
+Cohesion: 0.21
+Nodes (12): analyze_solar_anomaly_with_ai(), Invoca o Agente Especialista Fotovoltaico (Gemini AI) para analisar a anomalia s, check_solar_anomalies(), Verifica a ocorrência de anomalias no inversor solar e envia alertas no Telegram, patch, test_solar_ai_expert_no_key(), test_solar_ai_expert_with_gemini_key(), test_check_solar_anomalies_high_temperature() (+4 more)
 
 ## Knowledge Gaps
 - **154 isolated node(s):** `generate_daily.sh script`, `run_tests.sh script`, `PYTHONPATH`, `00_setup_python.sh script`, `01_setup_env.sh script` (+149 more)
@@ -288,8 +288,8 @@ _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `fetch_solar_forecast()` connect `fetch_solar_forecast` to `main.py`, `send_daily_solar_telegram_report`?**
   _High betweenness centrality (0.063) - this node is a cross-community bridge._
-- **Why does `check_abrupt_power_drop_and_rain()` connect `fetch_solar_forecast` to `test_solar_scraper.py`?**
-  _High betweenness centrality (0.029) - this node is a cross-community bridge._
+- **Why does `check_abrupt_power_drop_and_rain()` connect `fetch_solar_forecast` to `solar_worker.py`, `test_solar_scraper.py`?**
+  _High betweenness centrality (0.031) - this node is a cross-community bridge._
 - **Why does `send_daily_solar_telegram_report()` connect `send_daily_solar_telegram_report` to `solar_worker.py`, `fetch_solar_forecast`?**
   _High betweenness centrality (0.022) - this node is a cross-community bridge._
 - **What connects `generate_daily.sh script`, `run_tests.sh script`, `PYTHONPATH` to the rest of the system?**
@@ -299,4 +299,4 @@ _Questions this graph is uniquely positioned to answer:_
 - **Should `main.py` be split into smaller, more focused modules?**
   _Cohesion score 0.14444444444444443 - nodes in this community are weakly interconnected._
 - **Should `solar_worker.py` be split into smaller, more focused modules?**
-  _Cohesion score 0.13675213675213677 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.12561576354679804 - nodes in this community are weakly interconnected._

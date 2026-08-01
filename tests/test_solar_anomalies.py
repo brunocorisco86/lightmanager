@@ -53,3 +53,16 @@ def test_check_solar_anomalies_inverter_fault():
     anomalies = check_solar_anomalies(telemetry, dry_run=True)
     assert len(anomalies) == 1
     assert anomalies[0]["key"] == "inverter_fault"
+
+def test_check_solar_anomalies_waiting_status_ignored():
+    # Status Waiting no pôr do sol (17:29) ou durante o dia não deve gerar alerta de anomalia solar
+    now_sunset = datetime.now(BR_TZ).replace(hour=17, minute=29, second=44)
+    telemetry = {
+        "status": "Waiting",
+        "temperature": 32.0,
+        "pv1_voltage": 12.0,
+        "pv2_voltage": 10.0,
+        "power_w": 0.0
+    }
+    anomalies = check_solar_anomalies(telemetry, now_obj=now_sunset, dry_run=True)
+    assert len(anomalies) == 0

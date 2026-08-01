@@ -338,7 +338,8 @@ def check_solar_anomalies(telemetry, now_obj=None, dry_run=False):
     power_w = float(telemetry.get("power_w") or 0.0)
 
     # 1. Falha de Status do Inversor
-    if status.lower() not in ["normal", "online", "ok"]:
+    # Statuses operacionais normais ou de espera/transição (Normal, Online, OK, Waiting, Not connected, Offline) não são falhas.
+    if status.lower() not in ["normal", "online", "ok", "waiting", "not connected", "offline"]:
         anomalies_detected.append({
             "key": "inverter_fault",
             "title": "Falha / Alerta de Status no Inversor",

@@ -345,8 +345,8 @@
     "semantic_hash": ""
   },
   "docs/ROADMAP.md": {
-    "mtime": 1785607019.0113366,
-    "ast_hash": "78537a0f7d2481a5f19de0acb6c51210",
+    "mtime": 1785607108.6147912,
+    "ast_hash": "dea4cb8535e299744454934718042639",
     "semantic_hash": ""
   },
   "docs/STACK.md": {
@@ -370,13 +370,13 @@
     "semantic_hash": ""
   },
   "web/index.html": {
-    "mtime": 1785605607.643819,
-    "ast_hash": "9c5b349f46d93cf24e9a3b0a5156ff76",
+    "mtime": 1785607267.79026,
+    "ast_hash": "5db29c993493a1dcda7d586d1259bfee",
     "semantic_hash": ""
   },
   "web/login.html": {
-    "mtime": 1779843269.5237567,
-    "ast_hash": "90d5f63c6699e248fe4fb7b2976207de",
+    "mtime": 1785607275.2438285,
+    "ast_hash": "8910ff4007b3ef4f373711871eaa9e77",
     "semantic_hash": ""
   },
   ".agents/skills/graphify/SKILL.md": {
@@ -425,8 +425,8 @@
     "semantic_hash": ""
   },
   "scripts/solar_scraper.py": {
-    "mtime": 1785606151.8443246,
-    "ast_hash": "13646a354b69746fb8019ad515da98bb",
+    "mtime": 1785619840.5022333,
+    "ast_hash": "f89f5a9adb5f8a81035054151b16e70a",
     "semantic_hash": ""
   },
   "tests/test_solar_scraper.py": {
@@ -450,8 +450,8 @@
     "semantic_hash": ""
   },
   "scripts/solar_rain_alert.py": {
-    "mtime": 1785606120.2842033,
-    "ast_hash": "04d6a56f78d5b7983d742411e0e2e53f",
+    "mtime": 1785619838.279716,
+    "ast_hash": "7b080f6bcadba1aafed15b1db0b94205",
     "semantic_hash": ""
   },
   "scripts/solar_report.py": {
@@ -465,8 +465,8 @@
     "semantic_hash": ""
   },
   "tests/test_solar_anomalies.py": {
-    "mtime": 1785605768.0941017,
-    "ast_hash": "335846c5b6ddc0ce56a5353731f71564",
+    "mtime": 1785619849.595393,
+    "ast_hash": "1f9733915c15a7a0fc5b6ca1f6600dd8",
     "semantic_hash": ""
   },
   "tests/test_solar_forecast.py": {
@@ -480,13 +480,18 @@
     "semantic_hash": ""
   },
   "tests/test_solar_rain_alert.py": {
-    "mtime": 1785606156.607343,
-    "ast_hash": "eb65e9223de9333ede0404489a68de95",
+    "mtime": 1785619845.3082345,
+    "ast_hash": "75b48e1996519ec67ae7682fa6cd5c5f",
     "semantic_hash": ""
   },
   "tests/test_solar_report.py": {
     "mtime": 1785604596.0846267,
     "ast_hash": "ab452d6859e19f08d916489252bff09c",
+    "semantic_hash": ""
+  },
+  "web/favicon.svg": {
+    "mtime": 1785607260.4916887,
+    "ast_hash": "2422701a44331f88e2839ee8c3cf35a0",
     "semantic_hash": ""
   }
 }

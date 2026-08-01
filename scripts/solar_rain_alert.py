@@ -26,16 +26,24 @@ def check_abrupt_power_drop_and_rain(telemetry, previous_power_w, now_obj=None, 
 
     now = now_obj or datetime.now(BR_TZ)
     current_hour = now.hour
+    current_minute = now.minute
+    time_float = current_hour + current_minute / 60.0
     current_power = float(telemetry.get("power_w") or 0.0)
     prev_power = float(previous_power_w)
+    status = (telemetry.get("status") or "Normal").strip().lower()
 
-    # 1. Valida se está no horário diurno de pico solar (10:00 às 16:30)
-    if not (10 <= current_hour <= 16):
+    # 1. Valida se está no horário diurno de geração solar (10:00 às 16:30)
+    if not (10.0 <= time_float <= 16.5):
         return False
 
-    # 2. Calcula se houve queda abrupta de geração (drop >= 50% e queda >= 750W quando prev >= 1000W)
+    # 2. Requisitos do Guardrail:
+    # A queda de geração deve ser com potência de até 100W (current_power <= 100W) com drop significativo,
+    # OU quando o sistema entra em status 'Waiting' durante o dia.
     power_drop = prev_power - current_power
-    if prev_power < 1000.0 or power_drop < 750.0 or (current_power / prev_power) > 0.50:
+    is_power_drop_to_low = (prev_power >= 300.0 and power_drop >= 200.0 and current_power <= 100.0)
+    is_waiting_during_day = (status == "waiting" and prev_power >= 200.0)
+
+    if not (is_power_drop_to_low or is_waiting_during_day):
         return False
 
     # 3. Consulta dados de previsão do tempo (Open-Meteo) para confirmar probabilidade de chuva
