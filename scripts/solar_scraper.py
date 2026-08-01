@@ -442,6 +442,8 @@ def check_solar_anomalies(telemetry, now_obj=None, dry_run=False):
 
     return alerts_sent
 
+last_scraped_power_w = None
+
 def run_solar_scraping_cycle(mqtt_client=None, conn=None, ip=None):
     """
     Ciclo principal de coleta de telemetria solar:
@@ -449,7 +451,9 @@ def run_solar_scraping_cycle(mqtt_client=None, conn=None, ip=None):
     2. Persistência no PostgreSQL
     3. Publicação no MQTT
     4. Checagem e Alerta de Anomalias no Telegram
+    5. Alerta Preventivo de Chuva por Queda Abrupta de Potência
     """
+    global last_scraped_power_w
     telemetry = fetch_solar_telemetry(ip=ip)
     if telemetry:
         if conn:
@@ -460,6 +464,22 @@ def run_solar_scraping_cycle(mqtt_client=None, conn=None, ip=None):
             check_solar_anomalies(telemetry)
         except Exception as ea:
             logging.error(f"Erro ao checar anomalias solares: {ea}")
+
+        try:
+            from scripts.solar_rain_alert import check_abrupt_power_drop_and_rain
+        except ImportError:
+            try:
+                from solar_rain_alert import check_abrupt_power_drop_and_rain
+            except ImportError:
+                check_abrupt_power_drop_and_rain = None
+
+        if check_abrupt_power_drop_and_rain and last_scraped_power_w is not None:
+            try:
+                check_abrupt_power_drop_and_rain(telemetry, previous_power_w=last_scraped_power_w)
+            except Exception as erain:
+                logging.error(f"Erro ao checar alerta preventivo de chuva: {erain}")
+
+        last_scraped_power_w = float(telemetry.get("power_w") or 0.0)
     else:
         if mqtt_client:
             publish_solar_mqtt(None, mqtt_client)
