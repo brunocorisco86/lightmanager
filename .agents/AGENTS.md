@@ -7,6 +7,7 @@ Estas regras se aplicam a todas as interações e modificações no espaço de t
 * O diretório base no servidor de produção é `/home/bruno/lightmanager`.
 * Ao realizar implantações ou correções, certifique-se de instruir o usuário ou fornecer comandos para aplicar as mudanças em `ssh alpine`.
 * **Fluxo de Deploy:** Prefira utilizar o fluxo de Git (commits locais, push e `git pull` em produção) em vez de cópia direta via `scp` ou `rsync` para transferir códigos para o servidor Alpine.
+* **Validação Pós-Deploy:** Ao final de todo deploy em produção, é OBRIGATÓRIO disparar uma notificação de teste/validação via Telegram para confirmar a entrega no aplicativo do usuário e a saúde operacional do canal.
 
 ## 🕒 Fuso Horário e Registro
 * Toda lógica de tempo e agendamento deve usar explicitamente o fuso horário de Brasília (GMT-3), correspondente a `America/Sao_Paulo` (ou `timezone(timedelta(hours=-3))`).

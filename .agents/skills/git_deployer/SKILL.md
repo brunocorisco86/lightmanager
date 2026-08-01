@@ -56,3 +56,11 @@ tail -n 20 logs/api.log
 tail -n 20 logs/solar.log
 tail -n 20 logs/bot.log
 ```
+
+### 6. Teste Obrigatório no Telegram pós-deploy
+Ao final de QUALQUER deploy em produção, execute a validação de entrega enviando uma notificação de teste no Telegram para confirmar que a comunicação em tempo real está 100% operacional:
+```bash
+ssh alpine "cd /home/bruno/lightmanager && .venv/bin/python3 -c \"import requests, os; from dotenv import load_dotenv; load_dotenv(); requests.post(f'https://api.telegram.org/bot{os.getenv(\\\"TELEGRAM_BOT_TOKEN\\\")}/sendMessage', json={'chat_id': os.getenv(\\\"TELEGRAM_ALLOWED_USER_ID\\\"), 'text': '🚀 *DEPLOY FINALIZADO & TESTADO*\nO deploy em produção foi concluído com sucesso e validado pelo agente! ⚡', 'parse_mode': 'Markdown'})\""
+```
+> [!TIP]
+> Em deploys de funcionalidades de relatórios (como a telemetria fotovoltaica), execute também uma simulação real (`.venv/bin/python3 scripts/solar_report.py`) para confirmar a entrega da foto/gráfico no aplicativo do usuário.
