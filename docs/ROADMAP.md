@@ -41,7 +41,7 @@
 - [ ] Segurança Física local no Wemos usando Sensor LDR: se o dispositivo perder comunicação com o broker MQTT por mais de 2 horas e estiver escuro, aciona o relé localmente de forma autônoma.
 
 ## 4. Roadmap Fotovoltaico (Geração Solar) ☀️
-- [ ] **Etapa 1**: Relatório diário de produção solar no Telegram momentos após o pôr do sol, contendo gráfico de curva de potência gerado via `matplotlib` (otimizado para Alpine em modo headless).
+- [x] **Etapa 1**: Relatório diário de produção solar no Telegram momentos após o pôr do sol, contendo gráfico de curva de potência gerado via `matplotlib` (otimizado para Alpine em modo headless).
 - [ ] **Etapa 2**: Previsão de geração solar para o dia atual e o dia seguinte utilizando dados de radiação solar (`solar radiation`) da API Open-Meteo.
 - [ ] **Etapa 3**: Exibição da curva sino (bell curve) de potência solar no dashboard frontend e gráfico comparativo com histórico.
 - [ ] **Etapa 4**: Sistema de alertas automáticos de anomalias no Telegram (status de erro do inversor, sobretemperatura $> 60^\circ\text{C}$, ou queda de tensão de string PV).
