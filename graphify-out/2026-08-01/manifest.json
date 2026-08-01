@@ -425,8 +425,8 @@
     "semantic_hash": ""
   },
   "scripts/solar_scraper.py": {
-    "mtime": 1785606151.8443246,
-    "ast_hash": "13646a354b69746fb8019ad515da98bb",
+    "mtime": 1785619840.5022333,
+    "ast_hash": "f89f5a9adb5f8a81035054151b16e70a",
     "semantic_hash": ""
   },
   "tests/test_solar_scraper.py": {
@@ -450,8 +450,8 @@
     "semantic_hash": ""
   },
   "scripts/solar_rain_alert.py": {
-    "mtime": 1785606120.2842033,
-    "ast_hash": "04d6a56f78d5b7983d742411e0e2e53f",
+    "mtime": 1785619838.279716,
+    "ast_hash": "7b080f6bcadba1aafed15b1db0b94205",
     "semantic_hash": ""
   },
   "scripts/solar_report.py": {
@@ -465,8 +465,8 @@
     "semantic_hash": ""
   },
   "tests/test_solar_anomalies.py": {
-    "mtime": 1785605768.0941017,
-    "ast_hash": "335846c5b6ddc0ce56a5353731f71564",
+    "mtime": 1785619849.595393,
+    "ast_hash": "1f9733915c15a7a0fc5b6ca1f6600dd8",
     "semantic_hash": ""
   },
   "tests/test_solar_forecast.py": {
@@ -480,8 +480,8 @@
     "semantic_hash": ""
   },
   "tests/test_solar_rain_alert.py": {
-    "mtime": 1785606156.607343,
-    "ast_hash": "eb65e9223de9333ede0404489a68de95",
+    "mtime": 1785619845.3082345,
+    "ast_hash": "75b48e1996519ec67ae7682fa6cd5c5f",
     "semantic_hash": ""
   },
   "tests/test_solar_report.py": {

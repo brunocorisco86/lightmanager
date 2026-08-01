@@ -80,8 +80,8 @@
     "semantic_hash": ""
   },
   "scripts/housekeeping.py": {
-    "mtime": 1785603010.3230731,
-    "ast_hash": "abc872abeffcc8faeecdcfd17b9835c9",
+    "mtime": 1785620200.9155252,
+    "ast_hash": "a16d5ee3afb4aa189cef193b3f7510b8",
     "semantic_hash": ""
   },
   "scripts/internet_watchdog.sh": {
@@ -215,8 +215,8 @@
     "semantic_hash": ""
   },
   "tests/test_housekeeping.py": {
-    "mtime": 1785603067.483933,
-    "ast_hash": "e79a23fae4e2f64d048f4891972f3591",
+    "mtime": 1785620206.1463838,
+    "ast_hash": "047a0a76ca8bf479fd648f0906e21f83",
     "semantic_hash": ""
   },
   "tests/test_telegram.py": {
@@ -255,8 +255,8 @@
     "semantic_hash": ""
   },
   ".agents/AGENTS.md": {
-    "mtime": 1785605111.6816497,
-    "ast_hash": "d42753cd68017cb605a9d525f759b23b",
+    "mtime": 1785620213.5641794,
+    "ast_hash": "9a3c9f29112fb77161a06254f621d44a",
     "semantic_hash": ""
   },
   ".agents/rules/graphify.md": {

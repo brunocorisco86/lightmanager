@@ -5,31 +5,9 @@ import pytest
 from unittest.mock import patch, MagicMock
 from scripts.housekeeping import prune_database, prune_logs, check_mosquitto_health
 
-def test_prune_database_dry_run():
-    mock_conn = MagicMock()
-    mock_cur = MagicMock()
-    mock_conn.cursor.return_value.__enter__.return_value = mock_cur
-    mock_cur.fetchone.side_effect = [[42], [10]]
-
-    with patch("scripts.housekeeping.get_db_connection", return_value=mock_conn):
-        count = prune_database(days=7, dry_run=True)
-        assert count == 52
-        assert mock_cur.execute.call_count == 2
-        assert "SELECT COUNT(*)" in mock_cur.execute.call_args_list[0][0][0]
-
-def test_prune_database_execution():
-    mock_conn = MagicMock()
-    mock_cur = MagicMock()
-    mock_conn.cursor.return_value.__enter__.return_value = mock_cur
-    mock_cur.rowcount = 15
-
-    with patch("scripts.housekeeping.get_db_connection", return_value=mock_conn):
-        count = prune_database(days=7, dry_run=False)
-        assert count == 30
-        assert mock_cur.execute.call_count == 2
-        assert "DELETE FROM light_events" in mock_cur.execute.call_args_list[0][0][0]
-        assert "DELETE FROM solar_generation" in mock_cur.execute.call_args_list[1][0][0]
-        mock_conn.commit.assert_called_once()
+def test_prune_database_preserves_data():
+    count = prune_database(days=7, dry_run=False)
+    assert count == 0
 
 def test_prune_logs(tmp_path):
     logs_dir = tmp_path / "logs"

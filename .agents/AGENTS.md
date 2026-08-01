@@ -34,6 +34,6 @@ Estas regras se aplicam a todas as interações e modificações no espaço de t
 ## 🛡️ Guardrails & Resiliência
 * **Instabilidade de Rede Externa (Bot Telegram):** Quedas intermitentes de conectividade WAN para a API do Telegram são causadas por oscilações na rede externa. O bot implementa retries automáticos. Não realizar alterações no código base do bot devido a timeouts temporários de rede externa.
 * **Persistência do Broker MQTT (Mosquitto & SD Card):** O diretório `/var/lib/mosquitto/` deve obrigatoriamente possuir permissões `755` e propriedade `mosquitto:mosquitto`. Para proteger o cartão SD contra overhead de escritas frequentes, o Mosquitto deve manter `autosave_interval 1800` e `autosave_on_changes false`.
-* **Retenção de Dados e Limpeza (Housekeeping):** O script `scripts/housekeeping.py` roda diariamente às 00:01h via cron para prunar eventos da tabela `light_events` e logs antigos com retenção máxima de 7 dias.
+* **Retenção de Dados e Limpeza (Housekeeping):** O script `scripts/housekeeping.py` roda diariamente às 00:01h via cron para rotacionar e limpar logs antigos (> 7 dias) e verificar a sanidade do Mosquitto. Os dados de banco de dados (PostgreSQL/SQLite) são preservados de forma permanente sem expurgo.
 
 

@@ -39,49 +39,9 @@ def get_db_connection():
         return None
 
 def prune_database(days=7, dry_run=False):
-    """Pruna os eventos na tabela light_events e registros de solar_generation mais antigos que N dias."""
-    cutoff_date = datetime.now(SP_TZ) - timedelta(days=days)
-    cutoff_str = cutoff_date.strftime('%Y-%m-%d %H:%M:%S%z')
-    print(f"🧹 [HOUSEKEEPING] Verificando eventos do banco mais antigos que {days} dias (Corte: {cutoff_str})...")
-
-    conn = get_db_connection()
-    if not conn:
-        print("⚠️ [HOUSEKEEPING] Pulando limpeza do banco de dados (sem conexão).")
-        return 0
-
-    try:
-        with conn.cursor() as cur:
-            if dry_run:
-                cur.execute("SELECT COUNT(*) FROM light_events WHERE timestamp < %s;", (cutoff_date,))
-                count_events = cur.fetchone()[0]
-                count_solar = 0
-                try:
-                    cur.execute("SELECT COUNT(*) FROM solar_generation WHERE timestamp < %s;", (cutoff_date,))
-                    count_solar = cur.fetchone()[0]
-                except Exception:
-                    conn.rollback()
-                print(f"🔍 [DRY-RUN] Encontrados {count_events} em 'light_events' e {count_solar} em 'solar_generation' para deletar.")
-                return count_events + count_solar
-            else:
-                cur.execute("DELETE FROM light_events WHERE timestamp < %s;", (cutoff_date,))
-                count_events = cur.rowcount
-                count_solar = 0
-                try:
-                    cur.execute("DELETE FROM solar_generation WHERE timestamp < %s;", (cutoff_date,))
-                    count_solar = cur.rowcount
-                except Exception:
-                    conn.rollback()
-                conn.commit()
-                print(f"✅ [HOUSEKEEPING] Deletados {count_events} eventos de luz e {count_solar} registros solares antigos.")
-                return count_events + count_solar
-    except Exception as e:
-        print(f"❌ [HOUSEKEEPING] Erro ao deletar registros antigos do banco: {e}")
-        if conn:
-            conn.rollback()
-        return 0
-    finally:
-        if conn:
-            conn.close()
+    """Preserva integralmente todos os registros de tabelas no banco de dados (PostgreSQL / SQLite)."""
+    print("ℹ️ [HOUSEKEEPING] Preservação permanente de dados do banco ativa. Nenhum registro do PostgreSQL/SQLite será deletado.")
+    return 0
 
 def prune_logs(days=7, dry_run=False):
     """Roda logrotate e deleta arquivos de log rotacionados/comprimidos mais antigos que N dias."""
