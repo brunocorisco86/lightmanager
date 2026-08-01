@@ -58,6 +58,27 @@ def init_db():
             created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
         );
     ''')
+
+    cur.execute('''
+        CREATE TABLE IF NOT EXISTS solar_generation (
+            id SERIAL PRIMARY KEY,
+            timestamp TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            power_w NUMERIC(10, 2) NOT NULL DEFAULT 0,
+            today_kwh NUMERIC(10, 2) NOT NULL DEFAULT 0,
+            total_kwh NUMERIC(10, 2) NOT NULL DEFAULT 0,
+            pv1_voltage NUMERIC(6, 2),
+            pv1_current NUMERIC(6, 2),
+            pv2_voltage NUMERIC(6, 2),
+            pv2_current NUMERIC(6, 2),
+            grid_voltage NUMERIC(6, 2),
+            grid_current NUMERIC(6, 2),
+            grid_frequency NUMERIC(5, 2),
+            temperature NUMERIC(5, 2),
+            status VARCHAR(20) DEFAULT 'Normal',
+            raw_csv TEXT
+        );
+        CREATE INDEX IF NOT EXISTS idx_solar_gen_timestamp ON solar_generation(timestamp DESC);
+    ''')
     conn.commit()
     cur.close()
     conn.close()

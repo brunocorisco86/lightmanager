@@ -504,9 +504,74 @@ async function loadMonthlyStats() {
     }
 }
 
+async function updateSolarGeneration() {
+    try {
+        const data = await fetchData('solar/generation/latest');
+        if (!data) return;
+
+        const badgeEl = document.getElementById('solar-status-badge');
+        const powerWEl = document.getElementById('solar-power-w');
+        const todayKwhEl = document.getElementById('solar-today-kwh');
+        const totalKwhEl = document.getElementById('solar-total-kwh');
+        const tempEl = document.getElementById('solar-temp');
+        const statusTextEl = document.getElementById('solar-status-text');
+        const powerBarEl = document.getElementById('solar-power-bar');
+        const pv1El = document.getElementById('solar-pv1');
+        const pv2El = document.getElementById('solar-pv2');
+        const gridEl = document.getElementById('solar-grid');
+
+        if (data.status === 'Offline' || !data.timestamp) {
+            if (badgeEl) {
+                badgeEl.innerText = '🌙 Inversor Offline (Sem Sol)';
+                badgeEl.className = 'solar-badge offline';
+            }
+            if (powerWEl) powerWEl.innerText = '0';
+            if (powerBarEl) powerBarEl.style.width = '0%';
+            if (statusTextEl) statusTextEl.innerText = 'Offline';
+            if (todayKwhEl) todayKwhEl.innerText = (data.today_kwh || 0).toFixed(2);
+            if (totalKwhEl) totalKwhEl.innerText = (data.total_kwh || 0).toFixed(2);
+            if (tempEl) tempEl.innerText = '--';
+            if (pv1El) pv1El.innerText = 'Sem sinal (0.0 V)';
+            if (pv2El) pv2El.innerText = 'Sem sinal (0.0 V)';
+            if (gridEl) gridEl.innerText = 'Offline';
+            return;
+        }
+
+        if (badgeEl) {
+            badgeEl.innerText = `⚡ Telemetria Ativa (${data.status})`;
+            badgeEl.className = 'solar-badge normal';
+        }
+
+        const power = Math.round(data.power_w || 0);
+        if (powerWEl) powerWEl.innerText = power.toLocaleString('pt-BR');
+        if (todayKwhEl) todayKwhEl.innerText = (data.today_kwh || 0).toFixed(2);
+        if (totalKwhEl) totalKwhEl.innerText = (data.total_kwh || 0).toFixed(2);
+        if (tempEl) tempEl.innerText = (data.temperature !== null ? data.temperature.toFixed(1) : '--');
+        if (statusTextEl) statusTextEl.innerText = data.status || 'Normal';
+
+        if (powerBarEl) {
+            const pct = Math.min(Math.max((power / 3000) * 100, 0), 100);
+            powerBarEl.style.width = `${pct}%`;
+        }
+
+        if (pv1El) {
+            pv1El.innerText = (data.pv1_voltage !== null) ? `${data.pv1_voltage.toFixed(1)} V / ${(data.pv1_current || 0).toFixed(2)} A` : 'N/A';
+        }
+        if (pv2El) {
+            pv2El.innerText = (data.pv2_voltage !== null) ? `${data.pv2_voltage.toFixed(1)} V / ${(data.pv2_current || 0).toFixed(2)} A` : 'N/A';
+        }
+        if (gridEl) {
+            gridEl.innerText = (data.grid_voltage !== null) ? `${data.grid_voltage.toFixed(1)} V (${(data.grid_frequency || 60).toFixed(2)} Hz) | ${(data.grid_current || 0).toFixed(2)} A` : 'N/A';
+        }
+    } catch (e) {
+        console.error('Erro ao atualizar geração solar:', e);
+    }
+}
+
 // Inicialização
 updateSunInfo();
 updateStatus();
+updateSolarGeneration();
 loadCharts();
 loadMonthlyStats();
 if (document.getElementById("log-service-selector")) {
@@ -515,6 +580,7 @@ if (document.getElementById("log-service-selector")) {
 
 // Polling suave
 setInterval(updateStatus, 5000);
+setInterval(updateSolarGeneration, 10000);
 
 // Terminal de Logs Sob Demanda (Estático / Tail)
 async function loadLogs() {

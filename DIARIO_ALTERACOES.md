@@ -217,8 +217,13 @@ Este documento registra as falhas diagnosticadas no ambiente de produção do **
   - **Governança de Reinícios**: Executa o reinício do Unbound (`sudo rc-service unbound restart`) apenas 1 vez de forma consecutiva (contador persistido em `/tmp/unbound_restart_count`) para evitar instabilizar a rede local com loops infinitos de restarts em falhas persistentes.
   - **Alerta e Fallback**: No estouro do limite de restarts, emite uma notificação de erro crítica prioritária via Telegram solicitando intervenção manual. Em quedas de internet física total por mais de 3 verificações, reinicia as interfaces de rede do Alpine (`networking` + `wpa_supplicant`).
 
-### ✉️ Resiliência contra Rate-Limiting no Telegram (HTTP 429)
-* **Demanda:** Evitar falhas de disparo e travamento dos serviços em rajadas de notificações de status ou reinícios.
+### ☀️ Coleta e Scraping de Dados de Geração Solar (Inversor LAN 192.168.1.13)
+* **Demanda:** Coletar dados em tempo real da produção de energia solar via scraping no inversor conectado no endereço da LAN `192.168.1.13` (operacional apenas durante o dia/com sol).
 * **Solução:**
-  - Atualizamos as funções utilitárias de envio de mensagem no [log_analyzer.py](file:///media/brunoconter/DOCUMENTOS3/10_LIGHT_MANAGER/lightmanager/scripts/log_analyzer.py), [solar_worker.py](file:///media/brunoconter/DOCUMENTOS3/10_LIGHT_MANAGER/lightmanager/scripts/solar_worker.py) e [reports/generate_daily.py](file:///media/brunoconter/DOCUMENTOS3/10_LIGHT_MANAGER/lightmanager/reports/generate_daily.py).
-  - Implementamos captura do código de erro `429 (Too Many Requests)` com extração do parâmetro `retry_after` sugerido pelo Telegram para realizar esperas dinâmicas temporizadas e retentar o envio em até 3 tentativas com backoff.
+  - Identificamos o endpoint de telemetria HTTP POST `status/status.php` (com payload `t=l`) que fornece 35 parâmetros formatados em CSV.
+  - Desenvolvemos o módulo dedicado [scripts/solar_scraper.py](file:///home/bruno/Documentos/4_HOMELAB/9_LIGHT_MANAGER/scripts/solar_scraper.py) que faz o parsing e aplicação dos fatores de escala para extrair potência gerada (`power_w`), produção diária (`today_kwh`), produção acumulada (`total_kwh`), tensões/correntes das strings (`PV1`, `PV2`), tensão da rede AC e temperatura interna do dispositivo.
+  - Criamos a tabela `solar_generation` no PostgreSQL (`05_register_lights.py` e `solar_scraper.py`) para armazenar o histórico de telemetria.
+  - Integramos a execução automática do scraping a cada minuto no [solar_worker.py](file:///home/bruno/Documentos/4_HOMELAB/9_LIGHT_MANAGER/scripts/solar_worker.py), publicando métricas em tempo real no MQTT (`home/solar/telemetry`, `home/solar/power_w`, `home/solar/today_kwh`, `home/solar/status`). Tratamos desconexões noturnas de forma graciosa sem gerar exceções.
+  - Adicionamos endpoints na Web API (`GET /api/solar/generation/latest` e `GET /api/solar/generation/history`) em [web_api/main.py](file:///home/bruno/Documentos/4_HOMELAB/9_LIGHT_MANAGER/web_api/main.py).
+  - Adicionamos o comando `/solar` (ou `/geracao`) no Bot do Telegram em [bot/bot.py](file:///home/bruno/Documentos/4_HOMELAB/9_LIGHT_MANAGER/bot/bot.py) para visualização rápida das métricas fotovoltaicas.
+  - Incluímos retenção de 7 dias para registros solares no [scripts/housekeeping.py](file:///home/bruno/Documentos/4_HOMELAB/9_LIGHT_MANAGER/scripts/housekeeping.py) e suite completa de testes em [tests/test_solar_scraper.py](file:///home/bruno/Documentos/4_HOMELAB/9_LIGHT_MANAGER/tests/test_solar_scraper.py).

@@ -70,6 +70,68 @@
             </div>
         </div>
 
+        <section class="solar-section">
+            <div class="solar-header">
+                <h2>☀️ Geração Solar Fotovoltaica</h2>
+                <span id="solar-status-badge" class="solar-badge">⚡ Carregando...</span>
+            </div>
+            
+            <div class="solar-grid">
+                <div class="solar-card power-card">
+                    <div class="solar-card-header">
+                        <span class="solar-icon">⚡</span>
+                        <span class="solar-label">Potência Instantânea</span>
+                    </div>
+                    <div class="solar-value-large"><span id="solar-power-w">0</span> <small>W</small></div>
+                    <div class="solar-bar-container">
+                        <div id="solar-power-bar" class="solar-power-bar" style="width: 0%;"></div>
+                    </div>
+                </div>
+
+                <div class="solar-card">
+                    <div class="solar-card-header">
+                        <span class="solar-icon">📊</span>
+                        <span class="solar-label">Gerado Hoje</span>
+                    </div>
+                    <div class="solar-value"><span id="solar-today-kwh">0.00</span> <small>kWh</small></div>
+                    <div class="solar-subtext">Produção diária atual</div>
+                </div>
+
+                <div class="solar-card">
+                    <div class="solar-card-header">
+                        <span class="solar-icon">🔋</span>
+                        <span class="solar-label">Total Acumulado</span>
+                    </div>
+                    <div class="solar-value"><span id="solar-total-kwh">0.00</span> <small>kWh</small></div>
+                    <div class="solar-subtext">Histórico total do inversor</div>
+                </div>
+
+                <div class="solar-card">
+                    <div class="solar-card-header">
+                        <span class="solar-icon">🌡️</span>
+                        <span class="solar-label">Temp. Inversor</span>
+                    </div>
+                    <div class="solar-value"><span id="solar-temp">--</span> <small>°C</small></div>
+                    <div class="solar-subtext">Status: <b id="solar-status-text">Normal</b></div>
+                </div>
+            </div>
+
+            <div class="solar-details-card">
+                <div class="detail-group">
+                    <span class="detail-title">⚡ Placa PV1 (DC)</span>
+                    <span id="solar-pv1" class="detail-value">-- V / -- A</span>
+                </div>
+                <div class="detail-group">
+                    <span class="detail-title">⚡ Placa PV2 (DC)</span>
+                    <span id="solar-pv2" class="detail-value">-- V / -- A</span>
+                </div>
+                <div class="detail-group">
+                    <span class="detail-title">🔌 Rede AC (Grid)</span>
+                    <span id="solar-grid" class="detail-value">-- V (-- Hz) | -- A</span>
+                </div>
+            </div>
+        </section>
+
         <section class="controls">
             <h2>Controle em Tempo Real</h2>
             <div id="light-cards" class="grid">

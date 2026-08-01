@@ -348,6 +348,75 @@ def get_history():
         if conn:
             release_db_conn(conn)
 
+@app.get("/api/solar/generation/latest")
+def get_solar_generation_latest():
+    conn = None
+    try:
+        conn = get_db_conn()
+        cur = conn.cursor()
+        cur.execute("""
+            SELECT timestamp, power_w, today_kwh, total_kwh,
+                   pv1_voltage, pv1_current, pv2_voltage, pv2_current,
+                   grid_voltage, grid_current, grid_frequency, temperature, status
+            FROM solar_generation
+            ORDER BY timestamp DESC LIMIT 1;
+        """)
+        row = cur.fetchone()
+        cur.close()
+        if not row:
+            return {"status": "Offline", "power_w": 0.0, "today_kwh": 0.0}
+        
+        return {
+            "timestamp": row[0].isoformat() if row[0] else None,
+            "power_w": float(row[1]) if row[1] is not None else 0.0,
+            "today_kwh": float(row[2]) if row[2] is not None else 0.0,
+            "total_kwh": float(row[3]) if row[3] is not None else 0.0,
+            "pv1_voltage": float(row[4]) if row[4] is not None else None,
+            "pv1_current": float(row[5]) if row[5] is not None else None,
+            "pv2_voltage": float(row[6]) if row[6] is not None else None,
+            "pv2_current": float(row[7]) if row[7] is not None else None,
+            "grid_voltage": float(row[8]) if row[8] is not None else None,
+            "grid_current": float(row[9]) if row[9] is not None else None,
+            "grid_frequency": float(row[10]) if row[10] is not None else None,
+            "temperature": float(row[11]) if row[11] is not None else None,
+            "status": row[12] or "Normal"
+        }
+    except Exception as e:
+        print(f"Erro DB Solar Latest: {e}")
+        return {"status": "Offline", "power_w": 0.0, "today_kwh": 0.0}
+    finally:
+        if conn:
+            release_db_conn(conn)
+
+@app.get("/api/solar/generation/history")
+def get_solar_generation_history(limit: int = 100):
+    conn = None
+    try:
+        conn = get_db_conn()
+        cur = conn.cursor()
+        cur.execute("""
+            SELECT timestamp, power_w, today_kwh, total_kwh, status
+            FROM solar_generation
+            ORDER BY timestamp DESC LIMIT %s;
+        """, (limit,))
+        rows = cur.fetchall()
+        cur.close()
+        return [
+            {
+                "timestamp": r[0].isoformat() if r[0] else None,
+                "power_w": float(r[1]) if r[1] is not None else 0.0,
+                "today_kwh": float(r[2]) if r[2] is not None else 0.0,
+                "total_kwh": float(r[3]) if r[3] is not None else 0.0,
+                "status": r[4] or "Normal"
+            } for r in rows
+        ]
+    except Exception as e:
+        print(f"Erro DB Solar History: {e}")
+        return []
+    finally:
+        if conn:
+            release_db_conn(conn)
+
 @app.get("/api/history/consumption")
 def get_consumption_history():
     conn = None

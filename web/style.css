@@ -526,3 +526,159 @@ button:active { transform: scale(0.95); }
 .terminal-line.error-msg { color: #f87171; } /* Vermelho */
 .terminal-line.system-msg { color: var(--primary); font-style: italic; } /* Azul/Ciano */
 .terminal-line.mqtt-msg { color: #a78bfa; } /* Roxo/Lilás */
+
+/* ==========================================================================
+   Seção de Geração Solar Fotovoltaica
+   ========================================================================== */
+.solar-section {
+    background: var(--card);
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 30px;
+    border: 1px solid rgba(251, 191, 36, 0.2);
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+}
+
+.solar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.solar-header h2 {
+    margin: 0;
+    font-size: 1.3rem;
+    color: var(--accent);
+}
+
+.solar-badge {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    background: rgba(56, 189, 248, 0.15);
+    color: var(--primary);
+    border: 1px solid rgba(56, 189, 248, 0.3);
+}
+
+.solar-badge.normal {
+    background: rgba(16, 185, 129, 0.15);
+    color: #10b981;
+    border-color: rgba(16, 185, 129, 0.3);
+}
+
+.solar-badge.offline {
+    background: rgba(148, 163, 184, 0.15);
+    color: #94a3b8;
+    border-color: rgba(148, 163, 184, 0.3);
+}
+
+.solar-grid {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+@media (min-width: 600px) {
+    .solar-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+    .power-card {
+        grid-column: span 1;
+    }
+}
+
+.solar-card {
+    background: #0f172a;
+    border-radius: 12px;
+    padding: 16px;
+    border: 1px solid #334155;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.solar-card-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.85rem;
+    color: #94a3b8;
+    margin-bottom: 8px;
+}
+
+.solar-value-large {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #fbbf24;
+}
+
+.solar-value {
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: #f8fafc;
+}
+
+.solar-value small, .solar-value-large small {
+    font-size: 0.9rem;
+    color: #94a3b8;
+    font-weight: 400;
+}
+
+.solar-subtext {
+    font-size: 0.75rem;
+    color: #64748b;
+    margin-top: 6px;
+}
+
+.solar-bar-container {
+    height: 6px;
+    background: #1e293b;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-top: 10px;
+}
+
+.solar-power-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #f59e0b, #fbbf24);
+    border-radius: 4px;
+    transition: width 0.5s ease;
+}
+
+.solar-details-card {
+    background: #0f172a;
+    border-radius: 12px;
+    padding: 14px 20px;
+    border: 1px solid #334155;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+@media (min-width: 600px) {
+    .solar-details-card {
+        flex-direction: row;
+        justify-content: space-between;
+    }
+}
+
+.detail-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.detail-title {
+    font-size: 0.8rem;
+    color: #94a3b8;
+}
+
+.detail-value {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #cbd5e1;
+    font-family: 'Fira Code', monospace;
+}

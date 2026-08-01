@@ -123,12 +123,68 @@ async def cmd_start(message: types.Message):
     await message.answer(
         "💡 *Light Manager Bot*\n\n"
         "/status - Ver saúde do sistema e luzes\n"
+        "/solar - Ver geração de energia solar\n"
         "/liga - Ligar luzes\n"
         "/desliga - Desligar luzes\n"
         "/relatorio7d - Consumo última semana\n"
         "/relatorio30d - Consumo último mês",
         parse_mode="Markdown"
     )
+
+@dp.message(Command("solar"))
+@dp.message(Command("geracao"))
+async def cmd_solar(message: types.Message):
+    if not check_auth(message.from_user.id): return
+    conn = None
+    try:
+        conn = get_db_conn()
+        cur = conn.cursor()
+        cur.execute("""
+            SELECT timestamp, power_w, today_kwh, total_kwh,
+                   pv1_voltage, pv1_current, pv2_voltage, pv2_current,
+                   grid_voltage, grid_current, grid_frequency, temperature, status
+            FROM solar_generation
+            ORDER BY timestamp DESC LIMIT 1;
+        """)
+        row = cur.fetchone()
+        cur.close()
+        
+        if not row:
+            await message.answer("☀️ *Geração Solar*\nStatus: `Offline` (Inversor sem resposta / Sem Sol)", parse_mode="Markdown")
+            return
+
+        ts, power, today_kwh, total_kwh, pv1_v, pv1_a, pv2_v, pv2_a, grid_v, grid_a, grid_freq, temp, status = row
+
+        time_diff = (datetime.now(timezone.utc) - ts).total_seconds() if ts else 9999
+        if time_diff > 300 or status == "Offline":
+            solar_msg = (
+                f"☀️ *Geração Solar*\n"
+                f"Status: 🌙 `Offline` (Sem Sol)\n"
+                f"Hoje Gerado: `{today_kwh or 0:.2f} kWh`\n"
+                f"Total Acumulado: `{total_kwh or 0:.2f} kWh`"
+            )
+        else:
+            pv1_str = f"{pv1_v or 0:.1f}V / {pv1_a or 0:.2f}A" if pv1_v else "N/A"
+            pv2_str = f"{pv2_v or 0:.1f}V / {pv2_a or 0:.2f}A" if pv2_v else "N/A"
+            solar_msg = (
+                f"☀️ *Geração Solar Realtime*\n"
+                f"Potência Atual: `⚡ {power or 0:.0f} W`\n"
+                f"Hoje Gerado: `📊 {today_kwh or 0:.2f} kWh`\n"
+                f"Total Acumulado: `🔋 {total_kwh or 0:.2f} kWh`\n\n"
+                f"⚡ *Métricas das Placas (DC)*\n"
+                f"PV1: `{pv1_str}`\n"
+                f"PV2: `{pv2_str}`\n\n"
+                f"🔌 *Rede Elétrica (AC)*\n"
+                f"Tensão: `{grid_v or 0:.1f} V` ({grid_freq or 0:.2f} Hz)\n"
+                f"Corrente: `{grid_a or 0:.2f} A`\n\n"
+                f"🌡 Temp Inversor: `{temp or 0:.1f} °C` | Status: `{status}`"
+            )
+        await message.answer(solar_msg, parse_mode="Markdown")
+    except Exception as e:
+        await message.answer(f"❌ Erro ao consultar geração solar: {e}")
+    finally:
+        if conn:
+            release_db_conn(conn)
 
 @dp.message(Command("status"))
 async def cmd_status(message: types.Message):

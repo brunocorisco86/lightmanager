@@ -9,13 +9,13 @@ def test_prune_database_dry_run():
     mock_conn = MagicMock()
     mock_cur = MagicMock()
     mock_conn.cursor.return_value.__enter__.return_value = mock_cur
-    mock_cur.fetchone.return_value = [42]
+    mock_cur.fetchone.side_effect = [[42], [10]]
 
     with patch("scripts.housekeeping.get_db_connection", return_value=mock_conn):
         count = prune_database(days=7, dry_run=True)
-        assert count == 42
-        mock_cur.execute.assert_called_once()
-        assert "SELECT COUNT(*)" in mock_cur.execute.call_args[0][0]
+        assert count == 52
+        assert mock_cur.execute.call_count == 2
+        assert "SELECT COUNT(*)" in mock_cur.execute.call_args_list[0][0][0]
 
 def test_prune_database_execution():
     mock_conn = MagicMock()
@@ -25,9 +25,10 @@ def test_prune_database_execution():
 
     with patch("scripts.housekeeping.get_db_connection", return_value=mock_conn):
         count = prune_database(days=7, dry_run=False)
-        assert count == 15
-        mock_cur.execute.assert_called_once()
-        assert "DELETE FROM light_events" in mock_cur.execute.call_args[0][0]
+        assert count == 30
+        assert mock_cur.execute.call_count == 2
+        assert "DELETE FROM light_events" in mock_cur.execute.call_args_list[0][0][0]
+        assert "DELETE FROM solar_generation" in mock_cur.execute.call_args_list[1][0][0]
         mock_conn.commit.assert_called_once()
 
 def test_prune_logs(tmp_path):

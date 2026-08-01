@@ -39,7 +39,7 @@ def get_db_connection():
         return None
 
 def prune_database(days=7, dry_run=False):
-    """Pruna os eventos na tabela light_events mais antigos que N dias."""
+    """Pruna os eventos na tabela light_events e registros de solar_generation mais antigos que N dias."""
     cutoff_date = datetime.now(SP_TZ) - timedelta(days=days)
     cutoff_str = cutoff_date.strftime('%Y-%m-%d %H:%M:%S%z')
     print(f"🧹 [HOUSEKEEPING] Verificando eventos do banco mais antigos que {days} dias (Corte: {cutoff_str})...")
@@ -53,15 +53,27 @@ def prune_database(days=7, dry_run=False):
         with conn.cursor() as cur:
             if dry_run:
                 cur.execute("SELECT COUNT(*) FROM light_events WHERE timestamp < %s;", (cutoff_date,))
-                count = cur.fetchone()[0]
-                print(f"🔍 [DRY-RUN] Encontrados {count} registros em 'light_events' para deletar.")
-                return count
+                count_events = cur.fetchone()[0]
+                count_solar = 0
+                try:
+                    cur.execute("SELECT COUNT(*) FROM solar_generation WHERE timestamp < %s;", (cutoff_date,))
+                    count_solar = cur.fetchone()[0]
+                except Exception:
+                    conn.rollback()
+                print(f"🔍 [DRY-RUN] Encontrados {count_events} em 'light_events' e {count_solar} em 'solar_generation' para deletar.")
+                return count_events + count_solar
             else:
                 cur.execute("DELETE FROM light_events WHERE timestamp < %s;", (cutoff_date,))
-                count = cur.rowcount
+                count_events = cur.rowcount
+                count_solar = 0
+                try:
+                    cur.execute("DELETE FROM solar_generation WHERE timestamp < %s;", (cutoff_date,))
+                    count_solar = cur.rowcount
+                except Exception:
+                    conn.rollback()
                 conn.commit()
-                print(f"✅ [HOUSEKEEPING] Deletados {count} registros antigos da tabela 'light_events'.")
-                return count
+                print(f"✅ [HOUSEKEEPING] Deletados {count_events} eventos de luz e {count_solar} registros solares antigos.")
+                return count_events + count_solar
     except Exception as e:
         print(f"❌ [HOUSEKEEPING] Erro ao deletar registros antigos do banco: {e}")
         if conn:

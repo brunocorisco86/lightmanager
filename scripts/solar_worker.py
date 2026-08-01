@@ -13,6 +13,11 @@ from dotenv import load_dotenv
 # Carrega configurações
 load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), '..', '.env'))
 
+try:
+    from scripts.solar_scraper import run_solar_scraping_cycle
+except ImportError:
+    from solar_scraper import run_solar_scraping_cycle
+
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - SOLAR_WORKER - %(message)s')
 
 # Configurações
@@ -393,6 +398,12 @@ def run_automation_cycle(client):
         conn = get_db_conn()
         if not conn: return
         cur = conn.cursor()
+
+        # Scraping de Geração Solar do Inversor LAN
+        try:
+            run_solar_scraping_cycle(mqtt_client=client, conn=conn)
+        except Exception as es:
+            logging.error(f"Erro no ciclo de scraping solar: {es}")
 
         is_hourly_check = (current_hour != last_hour_logged)
         if is_hourly_check:

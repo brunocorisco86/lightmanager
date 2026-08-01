@@ -7,6 +7,7 @@ Este repositório contém a solução completa para o controle inteligente de il
 - 🌅 **Automação Solar Inteligente:** Ciclo circadiano baseado em latitude/longitude com GMT-3 (Brasília).
 - 🤖 **Controle via Telegram:** Comandos `/status`, `/liga` e `/desliga` com feedback em tempo real (Long Polling).
 - ⚙️ **Gerenciamento Web:** Interface administrativa protegida por senha para cadastrar pontos, ajustar offsets de tempo e auditar o histórico solar.
+- ☀️ **Telemetria de Geração Solar (Inversor LAN):** Scraping automático em tempo real do inversor fotovoltaico (`192.168.1.13`), armazenando potência (W), geração diária/acumulada (kWh) e métricas DC/AC no PostgreSQL e MQTT com suporte ao comando `/solar` no Telegram.
 - 🧠 **Diagnósticos SRE com IA (Gemini 2.5 Flash):** Varredura e consolidação automatizada de logs de erro diariamente às 19h00. O sistema normaliza e desduplica mensagens repetitivas antes de consultar a API do Gemini via cabeçalhos REST, gerando um resumo executivo de causa raiz e criticidade enviado via Telegram apenas se houver falhas ativas no sistema.
 - 🧹 **Housekeeping & Autocura de Logs:** Rotação compactada diária automatizada via `logrotate` local com a diretiva `copytruncate` sob a conta `bruno`. Evita o desgaste por escrita (Write Wear) do cartão MicroSD do Raspberry Pi 3B sem a necessidade de reiniciar serviços Python ou quebrar o redirecionamento de logs de shell (`>>`).
 - 🛡️ **Segurança & Resiliência:** 
