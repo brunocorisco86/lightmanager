@@ -413,6 +413,21 @@ def check_solar_anomalies(telemetry, now_obj=None, dry_run=False):
                 except Exception as e:
                     logging.error(f"Erro ao enviar alerta de anomalia no Telegram: {e}")
 
+            # Invoca o Agente Especialista Solar (IA Gemini) para parecer técnico complementar
+            try:
+                from scripts.solar_ai_expert import analyze_solar_anomaly_with_ai
+            except ImportError:
+                try:
+                    from solar_ai_expert import analyze_solar_anomaly_with_ai
+                except ImportError:
+                    analyze_solar_anomaly_with_ai = None
+
+            if analyze_solar_anomaly_with_ai:
+                try:
+                    analyze_solar_anomaly_with_ai(anomaly, telemetry, dry_run=dry_run)
+                except Exception as eai:
+                    logging.error(f"Erro ao disparar diagnóstico do Especialista IA Solar: {eai}")
+
             if not dry_run:
                 throttle_data[key] = now_ts
 
