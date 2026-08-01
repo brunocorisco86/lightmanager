@@ -1,6 +1,7 @@
 import os
 import sys
 import json
+import time
 import logging
 import requests
 import psycopg2
@@ -313,12 +314,126 @@ def publish_solar_mqtt(telemetry, mqtt_client):
     except Exception as e:
         logging.error(f"Erro ao publicar telemetria solar no MQTT: {e}")
 
+ANOMALY_THROTTLE_FILE = "/tmp/solar_anomalies_throttle.json"
+ANOMALY_THROTTLE_SECONDS = 1800  # Rate-limiting de 30 minutos por anomalia
+
+def check_solar_anomalies(telemetry, now_obj=None, dry_run=False):
+    """
+    Verifica a ocorrência de anomalias no inversor solar e envia alertas no Telegram.
+    1. Status de erro no inversor (status != Normal)
+    2. Sobretemperatura crítica (>= 60°C)
+    3. Desconexão / Assimetria de String PV no pico solar (10h às 16h)
+    Aplica trava de rate-limiting (throttle) de 30 minutos por tipo de anomalia.
+    """
+    if not telemetry:
+        return []
+
+    anomalies_detected = []
+    now = now_obj or datetime.now(BR_TZ)
+    current_hour = now.hour
+    status = (telemetry.get("status") or "Normal").strip()
+    temp = float(telemetry.get("temperature") or 0.0)
+    pv1_v = float(telemetry.get("pv1_voltage") or 0.0)
+    pv2_v = float(telemetry.get("pv2_voltage") or 0.0)
+    power_w = float(telemetry.get("power_w") or 0.0)
+
+    # 1. Falha de Status do Inversor
+    if status.lower() not in ["normal", "online", "ok"]:
+        anomalies_detected.append({
+            "key": "inverter_fault",
+            "title": "Falha / Alerta de Status no Inversor",
+            "detail": f"Status reportado: `{status}`",
+            "icon": "🚨"
+        })
+
+    # 2. Sobretemperatura (>= 60°C)
+    if temp >= 60.0:
+        anomalies_detected.append({
+            "key": "high_temperature",
+            "title": "Sobretemperatura Crítica no Inversor",
+            "detail": f"Temperatura atual: `{temp:.1f} °C` (Limite: `60.0 °C`)",
+            "icon": "🔥"
+        })
+
+    # 3. Desconexão / Assimetria de String PV (Horário de pico sol: 10h às 16h)
+    if 10 <= current_hour <= 16:
+        if pv1_v >= 80.0 and pv2_v < 15.0:
+            anomalies_detected.append({
+                "key": "pv_string_fault",
+                "title": "Queda / Desconexão na String PV2",
+                "detail": f"Tensão PV1: `{pv1_v:.1f} V` | Tensão PV2: `{pv2_v:.1f} V` (Anormal em pico sol)",
+                "icon": "⚡"
+            })
+        elif pv2_v >= 80.0 and pv1_v < 15.0:
+            anomalies_detected.append({
+                "key": "pv_string_fault",
+                "title": "Queda / Desconexão na String PV1",
+                "detail": f"Tensão PV1: `{pv1_v:.1f} V` | Tensão PV2: `{pv2_v:.1f} V` (Anormal em pico sol)",
+                "icon": "⚡"
+            })
+
+    if not anomalies_detected:
+        return []
+
+    # Carrega controle de throttle de alertas
+    throttle_data = {}
+    if os.path.exists(ANOMALY_THROTTLE_FILE):
+        try:
+            with open(ANOMALY_THROTTLE_FILE, "r") as f:
+                throttle_data = json.load(f)
+        except Exception:
+            throttle_data = {}
+
+    tg_token = os.getenv("TELEGRAM_BOT_TOKEN")
+    tg_user_id = os.getenv("TELEGRAM_ALLOWED_USER_ID")
+    now_ts = time.time()
+
+    alerts_sent = []
+    for anomaly in anomalies_detected:
+        key = anomaly["key"]
+        last_sent = throttle_data.get(key, 0)
+        
+        if dry_run or (now_ts - last_sent >= ANOMALY_THROTTLE_SECONDS):
+            msg = (
+                f"{anomaly['icon']} *ALERTA DE ANOMALIA SOLAR*\n\n"
+                f"⚠️ *Anomalia:* `{anomaly['title']}`\n"
+                f"📊 *Detalhe:* {anomaly['detail']}\n"
+                f"⚡ *Potência Atual:* `{int(power_w)} W`\n"
+                f"📅 *Horário:* `{now.strftime('%d/%m/%Y %H:%M:%S')}`"
+            )
+            logging.warning(f"🚨 Anomalia solar detectada [{key}]: {anomaly['title']}")
+
+            if not dry_run and tg_token and tg_user_id:
+                try:
+                    requests.post(
+                        f"https://api.telegram.org/bot{tg_token}/sendMessage",
+                        json={"chat_id": tg_user_id, "text": msg, "parse_mode": "Markdown"},
+                        timeout=10
+                    )
+                except Exception as e:
+                    logging.error(f"Erro ao enviar alerta de anomalia no Telegram: {e}")
+
+            if not dry_run:
+                throttle_data[key] = now_ts
+
+            alerts_sent.append(anomaly)
+
+    if not dry_run:
+        try:
+            with open(ANOMALY_THROTTLE_FILE, "w") as f:
+                json.dump(throttle_data, f)
+        except Exception as e:
+            logging.warning(f"Erro ao atualizar throttle file de anomalias: {e}")
+
+    return alerts_sent
+
 def run_solar_scraping_cycle(mqtt_client=None, conn=None, ip=None):
     """
     Ciclo principal de coleta de telemetria solar:
     1. Scraping via HTTP (POST status.php)
     2. Persistência no PostgreSQL
     3. Publicação no MQTT
+    4. Checagem e Alerta de Anomalias no Telegram
     """
     telemetry = fetch_solar_telemetry(ip=ip)
     if telemetry:
@@ -326,6 +441,10 @@ def run_solar_scraping_cycle(mqtt_client=None, conn=None, ip=None):
             save_solar_telemetry(telemetry, conn)
         if mqtt_client:
             publish_solar_mqtt(telemetry, mqtt_client)
+        try:
+            check_solar_anomalies(telemetry)
+        except Exception as ea:
+            logging.error(f"Erro ao checar anomalias solares: {ea}")
     else:
         if mqtt_client:
             publish_solar_mqtt(None, mqtt_client)
