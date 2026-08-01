@@ -18,6 +18,11 @@ try:
 except ImportError:
     from solar_scraper import run_solar_scraping_cycle
 
+try:
+    from scripts.solar_report import send_daily_solar_telegram_report
+except ImportError:
+    from solar_report import send_daily_solar_telegram_report
+
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - SOLAR_WORKER - %(message)s')
 
 # Configurações
@@ -41,6 +46,7 @@ LAST_SEEN_FILE = "/tmp/wemos_last_seen"
 # Estado global em memória
 current_states = {} 
 last_hour_logged = -1
+last_solar_report_date = None
 
 def send_telegram_message(text):
     """Envia uma notificação para o Telegram com tratamento de Rate-Limiting e retentativas."""
@@ -404,6 +410,19 @@ def run_automation_cycle(client):
             run_solar_scraping_cycle(mqtt_client=client, conn=conn)
         except Exception as es:
             logging.error(f"Erro no ciclo de scraping solar: {es}")
+
+        # Relatório de Geração Solar Pós-Pôr do Sol (15 minutos após o por do sol)
+        global last_solar_report_date
+        sunset_report_time = (sunset_br + timedelta(minutes=15)).strftime("%H:%M")
+        if current_time_str == sunset_report_time:
+            today_date = now_br.date()
+            if last_solar_report_date != today_date:
+                logging.info(f"📊 Pôr do Sol detectado. Gerando relatório diário de produção solar...")
+                try:
+                    send_daily_solar_telegram_report(target_date=today_date, conn=conn)
+                    last_solar_report_date = today_date
+                except Exception as erp:
+                    logging.error(f"Erro ao disparar relatório diário solar: {erp}")
 
         is_hourly_check = (current_hour != last_hour_logged)
         if is_hourly_check:
