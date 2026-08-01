@@ -1,3 +1,43 @@
+# Diário de Alterações (Changelog) - 01/08/2026 (Roadmap Fotovoltaico Completo)
+
+Este documento registra a implementação, testes e deploy em produção do **Roadmap de Inteligência Fotovoltaica** (Etapas 1 a 6) no Light Manager.
+
+---
+
+## ☀️ 1. Resumo das Etapas Implementadas (Roadmap Solar)
+
+### 🚀 Resiliência de Scraping por Endereço MAC (Inversor Solar)
+* **Solução**: Implementado o resolvedor dinâmico `resolve_inverter_ip()` em [scripts/solar_scraper.py](file:///home/bruno/Documentos/4_HOMELAB/9_LIGHT_MANAGER/scripts/solar_scraper.py) via cache em `/tmp/solar_inverter_cached_ip`, consulta da tabela ARP `/proc/net/arp` / `ip neighbor` pelo MAC `98:cd:ac:1b:9d:79` e varredura de socket em paralelo na sub-rede `192.168.1.0/24`.
+
+### 📈 Etapa 1: Relatório Pós-Pôr do Sol com Gráfico Matplotlib Headless
+* **Solução**: Criado [scripts/solar_report.py](file:///home/bruno/Documentos/4_HOMELAB/9_LIGHT_MANAGER/scripts/solar_report.py) configurado para Matplotlib headless (`matplotlib.use('Agg')`), sem dependências X11, otimizado para o Alpine Linux. Plota a curva sino do dia com pico de potência e gera gráfico PNG em `/tmp/` enviado via Telegram 15 min após o pôr do sol.
+
+### 🔮 Etapa 2: Previsão Solar via Open-Meteo & Calibração Dinâmica
+* **Solução**: Criado [scripts/solar_forecast.py](file:///home/bruno/Documentos/4_HOMELAB/9_LIGHT_MANAGER/scripts/solar_forecast.py) para consulta da API Open-Meteo (`shortwave_radiation_sum` em $MJ/m^2$). Calcula o fator dinâmico de calibração $K_{\text{solar}} = 0,715 \text{ kWh/MJ/m}^2$ sobre a telemetria do PostgreSQL, projetando a geração em $kWh$ para Hoje e Amanhã. Exposto na API REST `GET /api/solar/forecast` e card no frontend.
+
+### 📊 Etapa 3: Curva Sino de Potência no Dashboard Frontend Web
+* **Solução**: Adicionado o endpoint `GET /api/solar/generation/curve` em `web_api/main.py` bucketizando dados em slots de 15 min. Integrado gráfico interativo Chart.js em `web/index.html`, `web/script.js` e `web/style.css` comparando a curva de potência de Hoje vs Ontem.
+
+### 🚨 Etapa 4: Alertas de Anomalia + Agente IA Especialista em Elétrica Solar (Gemini API)
+* **Solução**: Implementada a detecção de anomalias em `scripts/solar_scraper.py` (falhas de status, sobretemperatura $\ge 60^\circ\text{C}$ e assimetria de strings PV no pico de sol) com rate-limiting/throttle de 30 min em `/tmp/solar_anomalies_throttle.json`.
+* **Agente IA Especialista Solar**: Criado [scripts/solar_ai_expert.py](file:///home/bruno/Documentos/4_HOMELAB/9_LIGHT_MANAGER/scripts/solar_ai_expert.py) que aciona a API Gemini (`gemini-2.5-flash`) enviando parecer de causa raiz, risco e ações elétricas prioritárias no Telegram.
+
+### 🌧️ Etapa 5: Alerta Preventivo de Chuva (Drop Solar + Open-Meteo)
+* **Solução**: Criado [scripts/solar_rain_alert.py](file:///home/bruno/Documentos/4_HOMELAB/9_LIGHT_MANAGER/scripts/solar_rain_alert.py) que monitora quedas abruptas de geração solar ($\ge 50\%$ de drop no horário de pico 10h-16h30) e cruza com a probabilidade de chuva do Open-Meteo, enviando um alerta no Telegram para o usuário não se molhar no caminho dos compromissos.
+
+### 📊 Etapa 6: Relatório Mensal Consolidado + Agente Consultor IA (Cron Dia 01 às 06:30h)
+* **Solução**: Criado [scripts/solar_monthly_report.py](file:///home/bruno/Documentos/4_HOMELAB/9_LIGHT_MANAGER/scripts/solar_monthly_report.py) agendado no `crontab_template.txt` (`30 06 1 * *`). Plota o gráfico de barras mensal via Matplotlib, calcula a economia financeira em R$ e invoca o Agente Consultor IA (Gemini API) para parecer executivo. Inclui fallback automático para o mês atual em testes quando o mês anterior está zerado.
+
+---
+
+## 🧪 2. Validação & Deploy em Produção
+
+* **Suíte de Testes**: **68/68 testes unitários aprovados** (`./run_tests.sh`).
+* **Deploy**: Atualizado o repositório em `ssh alpine`, aplicados os crontabs e reiniciado o `solar_worker.py`.
+* **Telegram Validation**: Testes reais de relatórios diários, pareceres da IA e alertas preventivos disparados com 100% de sucesso.
+
+---
+
 # Diário de Alterações (Changelog) - 19/07/2026
 
 Este documento registra a implementação da rotina de Housekeeping, otimização de I/O de cartão SD no Mosquitto MQTT broker, tratamento de erros de produção e atualização dos Guardrails do agente no dia 19 de julho de 2026.
