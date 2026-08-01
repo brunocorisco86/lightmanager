@@ -73,10 +73,12 @@ def test_generate_ai_monthly_consultant_report_mocked(mock_post):
         res = generate_ai_monthly_consultant_report(summary_data)
         assert "Desempenho Geral" in res
 
-def test_run_monthly_report_flow_dry_run():
-    summary_data, chart_path, ai_report, success = run_monthly_report_flow(year=2026, month=7, dry_run=True)
-    assert summary_data["year"] == 2026
-    assert summary_data["month"] == 7
+def test_run_monthly_report_flow_test_mode():
+    now_dt = datetime.now(BR_TZ)
+    summary_data, chart_path, ai_report, success = run_monthly_report_flow(dry_run=True, test_mode=True)
+    assert summary_data["year"] == now_dt.year
+    assert summary_data["month"] == now_dt.month
     assert success is True
     if os.path.exists(chart_path):
         os.remove(chart_path)
+

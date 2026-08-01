@@ -292,23 +292,43 @@ def send_monthly_telegram_report(photo_path, summary_data, ai_report_text, dry_r
 
     return False
 
-def run_monthly_report_flow(year=None, month=None, dry_run=False):
+def run_monthly_report_flow(year=None, month=None, dry_run=False, force=False, test_mode=False):
     """
     Orquestrador principal do relatório mensal.
     """
+    month_names_pt = [
+        "", "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
+        "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"
+    ]
+
+    if test_mode:
+        now_dt = datetime.now(BR_TZ)
+        year = now_dt.year
+        month = now_dt.month
+
     if year is None or month is None:
         year, month, month_name, days_in_month = get_target_month_range()
+        daily_data = fetch_monthly_solar_data(year, month)
+        total_kwh = sum([daily_data[d]["kwh"] for d in daily_data])
+
+        # Se o mês anterior estiver totalmente zerado (início da coleta no dia 01) e acionado via --force/--test:
+        if total_kwh == 0 and (force or test_mode):
+            curr_year = datetime.now(BR_TZ).year
+            curr_month = datetime.now(BR_TZ).month
+            curr_daily_data = fetch_monthly_solar_data(curr_year, curr_month)
+            curr_kwh = sum([curr_daily_data[d]["kwh"] for d in curr_daily_data])
+            if curr_kwh > 0:
+                logging.info(f"⚠️ Mês anterior ({month_name}/{year}) sem telemetria gravada. Redirecionando para o mês atual em andamento ({month_names_pt[curr_month]}/{curr_year}) para teste/demonstração.")
+                year, month = curr_year, curr_month
+                daily_data = curr_daily_data
     else:
-        month_names_pt = [
-            "", "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
-            "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"
-        ]
-        month_name = month_names_pt[month]
-        days_in_month = calendar.monthrange(year, month)[1]
+        daily_data = fetch_monthly_solar_data(year, month)
+
+    month_name = month_names_pt[month]
+    days_in_month = calendar.monthrange(year, month)[1]
 
     logging.info(f"☀️ Gerando Relatório Mensal de Produção Solar para {month_name}/{year}...")
 
-    daily_data = fetch_monthly_solar_data(year, month)
     tariff_rate = get_tariff_rate()
 
     kwh_list = [daily_data[d]["kwh"] for d in daily_data]
@@ -350,10 +370,11 @@ def run_monthly_report_flow(year=None, month=None, dry_run=False):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Relatório Mensal de Produção Solar")
-    parser.add_argument("--force", action="store_true", help="Força a execução independente da data")
+    parser.add_argument("--force", action="store_true", help="Força a execução e faz fallback para o mês atual se o mês anterior estiver zerado")
+    parser.add_argument("--test", action="store_true", help="Modo de teste usando o mês atual em andamento")
     parser.add_argument("--dry-run", action="store_true", help="Executa sem enviar mensagens no Telegram")
     parser.add_argument("--month", type=int, help="Mês específico (1-12)")
     parser.add_argument("--year", type=int, help="Ano específico (ex: 2026)")
 
     args = parser.parse_args()
-    run_monthly_report_flow(year=args.year, month=args.month, dry_run=args.dry_run)
+    run_monthly_report_flow(year=args.year, month=args.month, dry_run=args.dry_run, force=args.force, test_mode=args.test)
