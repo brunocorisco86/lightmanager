@@ -178,6 +178,29 @@ def test_send_command_success(mock_mqtt, mock_get_pool):
     assert response.json()["status"] == "sent"
     mock_mqtt.publish.assert_called_with("home/outdoor/garden/set", "ON", qos=1)
 
+@patch('web_api.main.get_db_conn')
+@patch('web_api.main.release_db_conn')
+def test_get_solar_generation_curve_success(mock_release, mock_get_conn):
+    mock_conn = MagicMock()
+    mock_cur = MagicMock()
+    mock_get_conn.return_value = mock_conn
+    mock_conn.cursor.return_value = mock_cur
+
+    from datetime import datetime, timezone, timedelta
+    today_d = datetime.now(timezone(timedelta(hours=-3))).date()
+    mock_cur.fetchall.return_value = [
+        (today_d, "12:00", 1500.0, 5.0),
+        (today_d, "13:00", 2200.0, 8.5)
+    ]
+
+    response = client.get("/api/solar/generation/curve")
+    assert response.status_code == 200
+    data = response.json()
+    assert "time_slots" in data
+    assert "today" in data
+    assert "yesterday" in data
+    assert data["today"]["peak_power_w"] == 2200.0
+
 @patch('web_api.main.mqtt_client')
 def test_send_command_mqtt_offline(mock_mqtt):
     mock_mqtt.is_connected.return_value = False

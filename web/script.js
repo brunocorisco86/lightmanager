@@ -587,11 +587,106 @@ async function updateSolarForecast() {
     }
 }
 
+let solarCurveChartInstance = null;
+
+async function loadSolarCurveChart() {
+    const canvas = document.getElementById('solarCurveChart');
+    const summaryEl = document.getElementById('solar-curve-summary');
+    if (!canvas) return;
+
+    try {
+        const curve = await fetchData('solar/generation/curve');
+        if (!curve || !curve.time_slots) {
+            if (summaryEl) summaryEl.innerText = 'Sem dados de curva sino.';
+            return;
+        }
+
+        if (summaryEl) {
+            summaryEl.innerText = `Pico Hoje: ${Math.round(curve.today.peak_power_w)} W | Pico Ontem: ${Math.round(curve.yesterday.peak_power_w)} W`;
+        }
+
+        const ctx = canvas.getContext('2d');
+        if (solarCurveChartInstance) {
+            solarCurveChartInstance.destroy();
+        }
+
+        const gradientToday = ctx.createLinearGradient(0, 0, 0, 250);
+        gradientToday.addColorStop(0, 'rgba(251, 191, 36, 0.45)');
+        gradientToday.addColorStop(1, 'rgba(251, 191, 36, 0.0)');
+
+        solarCurveChartInstance = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: curve.time_slots,
+                datasets: [
+                    {
+                        label: `Hoje (${curve.today.date})`,
+                        data: curve.today.data,
+                        borderColor: '#fbbf24',
+                        backgroundColor: gradientToday,
+                        fill: true,
+                        tension: 0.35,
+                        borderWidth: 2.5,
+                        pointRadius: 0,
+                        pointHoverRadius: 5
+                    },
+                    {
+                        label: `Ontem (${curve.yesterday.date})`,
+                        data: curve.yesterday.data,
+                        borderColor: '#818cf8',
+                        borderDash: [4, 4],
+                        backgroundColor: 'transparent',
+                        fill: false,
+                        tension: 0.35,
+                        borderWidth: 1.8,
+                        pointRadius: 0,
+                        pointHoverRadius: 4
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        labels: { color: '#cbd5e1', font: { family: 'Inter', size: 12 } }
+                    },
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false,
+                        callbacks: {
+                            label: function(context) {
+                                return ` ${context.dataset.label}: ${context.parsed.y} W`;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        ticks: { color: '#94a3b8', font: { size: 10 }, maxTicksLimit: 12 },
+                        grid: { color: '#334155', drawBorder: false }
+                    },
+                    y: {
+                        title: { display: true, text: 'Potência (W)', color: '#94a3b8' },
+                        ticks: { color: '#94a3b8', font: { size: 10 } },
+                        grid: { color: '#334155', drawBorder: false },
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    } catch (e) {
+        console.error('Erro ao carregar gráfico da curva sino solar:', e);
+        if (summaryEl) summaryEl.innerText = 'Erro ao carregar gráfico.';
+    }
+}
+
 // Inicialização
 updateSunInfo();
 updateStatus();
 updateSolarGeneration();
 updateSolarForecast();
+loadSolarCurveChart();
 loadCharts();
 loadMonthlyStats();
 if (document.getElementById("log-service-selector")) {

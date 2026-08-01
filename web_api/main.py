@@ -3,7 +3,7 @@ import requests
 import psycopg2
 from psycopg2 import pool
 import json
-from datetime import date
+from datetime import datetime, date, timezone, timedelta
 from fastapi import FastAPI, HTTPException, Response
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import StreamingResponse, FileResponse
@@ -444,6 +444,95 @@ def get_solar_forecast_endpoint(force: bool = False):
     except Exception as e:
         print(f"Erro Endpoint Previsão Solar: {e}")
         raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        if conn:
+            release_db_conn(conn)
+
+@app.get("/api/solar/generation/curve")
+def get_solar_generation_curve():
+    """
+    Retorna os pontos da curva sino de geração solar (Potência W x Horário) para Hoje e Ontem.
+    Bucketiza as leituras entre 06:00 e 19:00 em intervalos de 15 minutos.
+    """
+    conn = None
+    try:
+        conn = get_db_conn()
+        cur = conn.cursor()
+        
+        # Define janela de 15 minutos (53 slots: 06:00, 06:15, ..., 19:00)
+        time_slots = []
+        for h in range(6, 19 + 1):
+            for m in (0, 15, 30, 45):
+                if h == 19 and m > 0:
+                    break
+                time_slots.append(f"{h:02d}:{m:02d}")
+
+        # Busca dados do dia de hoje e ontem
+        cur.execute("""
+            SELECT 
+                DATE(timestamp AT TIME ZONE 'America/Sao_Paulo') as d,
+                TO_CHAR(timestamp AT TIME ZONE 'America/Sao_Paulo', 'HH24:MI') as t_str,
+                power_w,
+                today_kwh
+            FROM solar_generation
+            WHERE timestamp AT TIME ZONE 'America/Sao_Paulo' >= CURRENT_DATE - INTERVAL '1 day'
+            ORDER BY timestamp ASC;
+        """)
+        rows = cur.fetchall()
+        cur.close()
+
+        # Separa por data
+        today_date = datetime.now(timezone(timedelta(hours=-3))).date()
+        yesterday_date = today_date - timedelta(days=1)
+
+        today_readings = {}
+        yesterday_readings = {}
+        today_max_kwh = 0.0
+        yesterday_max_kwh = 0.0
+
+        for r in rows:
+            r_date = r[0]
+            t_str = r[1]
+            pw = float(r[2]) if r[2] is not None else 0.0
+            kwh = float(r[3]) if r[3] is not None else 0.0
+
+            h_m = t_str.split(':')
+            h, m = int(h_m[0]), int(h_m[1])
+            m_bucket = (m // 15) * 15
+            bucket_str = f"{h:02d}:{m_bucket:02d}"
+
+            if r_date == today_date:
+                today_readings[bucket_str] = max(today_readings.get(bucket_str, 0.0), pw)
+                today_max_kwh = max(today_max_kwh, kwh)
+            elif r_date == yesterday_date:
+                yesterday_readings[bucket_str] = max(yesterday_readings.get(bucket_str, 0.0), pw)
+                yesterday_max_kwh = max(yesterday_max_kwh, kwh)
+
+        today_data = [round(today_readings.get(slot, 0.0), 1) for slot in time_slots]
+        yesterday_data = [round(yesterday_readings.get(slot, 0.0), 1) for slot in time_slots]
+
+        return {
+            "time_slots": time_slots,
+            "today": {
+                "date": today_date.strftime("%d/%m/%Y"),
+                "data": today_data,
+                "peak_power_w": max(today_data, default=0.0),
+                "today_kwh": today_max_kwh
+            },
+            "yesterday": {
+                "date": yesterday_date.strftime("%d/%m/%Y"),
+                "data": yesterday_data,
+                "peak_power_w": max(yesterday_data, default=0.0),
+                "today_kwh": yesterday_max_kwh
+            }
+        }
+    except Exception as e:
+        print(f"Erro DB Solar Curve: {e}")
+        return {
+            "time_slots": [],
+            "today": {"date": "", "data": [], "peak_power_w": 0, "today_kwh": 0},
+            "yesterday": {"date": "", "data": [], "peak_power_w": 0, "today_kwh": 0}
+        }
     finally:
         if conn:
             release_db_conn(conn)
