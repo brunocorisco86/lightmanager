@@ -283,7 +283,9 @@ async function loadSolarHistory() {
     if (!body) return;
     try {
         body.innerHTML = '<tr><td colspan="3">Carregando...</td></tr>';
-        const history = await fetchData('config/solar_history');
+        const limitSelector = document.getElementById('solar-limit-selector');
+        const limit = limitSelector ? limitSelector.value : 50;
+        const history = await fetchData(`config/solar_history?limit=${limit}`);
         
         body.innerHTML = '';
         if (!history || history.length === 0) {
@@ -312,13 +314,28 @@ window.onclick = function(event) {
     if (event.target == modal) closeConfigModal();
 }
 
+let durationChartInstance = null;
+let consumptionChartInstance = null;
+
 async function loadCharts() {
     const durationEl = document.getElementById('durationChart');
     const consumptionEl = document.getElementById('consumptionChart');
     if (!durationEl || !consumptionEl) return;
 
     try {
-        const history = await fetchData('history/consumption');
+        const daysSelector = document.getElementById('consumption-days-selector');
+        const days = daysSelector ? daysSelector.value : 7;
+        const history = await fetchData(`history/consumption?days=${days}`);
+
+        if (durationChartInstance) {
+            durationChartInstance.destroy();
+            durationChartInstance = null;
+        }
+        if (consumptionChartInstance) {
+            consumptionChartInstance.destroy();
+            consumptionChartInstance = null;
+        }
+
         if (!history || history.length === 0) return;
 
         // A API retorna do mais novo para o mais antigo (ordem decrescente).
@@ -376,7 +393,7 @@ async function loadCharts() {
 
         // Inicializa Gráfico 1: Horas de Uso (Empilhado)
         const ctxDuration = durationEl.getContext('2d');
-        new Chart(ctxDuration, {
+        durationChartInstance = new Chart(ctxDuration, {
             type: 'bar',
             data: {
                 labels: labels,
@@ -421,7 +438,7 @@ async function loadCharts() {
 
         // Inicializa Gráfico 2: Consumo em kWh (Esverdeado)
         const ctxConsumption = consumptionEl.getContext('2d');
-        new Chart(ctxConsumption, {
+        consumptionChartInstance = new Chart(ctxConsumption, {
             type: 'bar',
             data: {
                 labels: labels,

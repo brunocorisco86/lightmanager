@@ -53,7 +53,17 @@
                     </div>
 
                     <div id="tab-solar" class="tab-content">
-                        <h3>Últimos Acionamentos Automáticos</h3>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
+                            <h3 style="margin: 0;">Últimos Acionamentos Automáticos</h3>
+                            <div>
+                                <select id="solar-limit-selector" class="select-period" onchange="loadSolarHistory()">
+                                    <option value="20">20 registros</option>
+                                    <option value="50" selected>50 registros (Padrão)</option>
+                                    <option value="100">100 registros</option>
+                                    <option value="500">500 registros</option>
+                                </select>
+                            </div>
+                        </div>
                         <div class="table-container">
                             <table id="solar-history-table">
                                <thead>
@@ -182,7 +192,20 @@
         </section>
 
         <section class="stats">
-            <h2>Histórico de Uso e Consumo (Últimos 7 dias)</h2>
+            <div class="section-title-with-control" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
+                <h2 style="margin: 0;">Histórico de Uso e Consumo</h2>
+                <div class="control-group" style="display: flex; align-items: center; gap: 8px;">
+                    <label for="consumption-days-selector" style="font-size: 0.9em; color: #94a3b8; font-weight: 500;">Período:</label>
+                    <select id="consumption-days-selector" class="select-period" onchange="loadCharts()">
+                        <option value="7" selected>Últimos 7 dias (Padrão)</option>
+                        <option value="15">Últimos 15 dias</option>
+                        <option value="30">Últimos 30 dias</option>
+                        <option value="90">Últimos 90 dias</option>
+                        <option value="365">Último 1 ano</option>
+                        <option value="0">Todo o Histórico</option>
+                    </select>
+                </div>
+            </div>
             <div class="charts-grid">
                 <div class="chart-container">
                     <h3>Tempo Ligado por Lâmpada (Horas)</h3>

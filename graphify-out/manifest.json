@@ -245,13 +245,13 @@
     "semantic_hash": ""
   },
   "web/script.js": {
-    "mtime": 1785605627.4218438,
-    "ast_hash": "674884127592dd9a11b5ca36f3016db8",
+    "mtime": 1785620441.5066721,
+    "ast_hash": "7d1cf83cfd1491eb54f472a7e4165e90",
     "semantic_hash": ""
   },
   "web_api/main.py": {
-    "mtime": 1785605643.2688658,
-    "ast_hash": "b5e2361e893c1246223a842dcd446465",
+    "mtime": 1785620416.3735673,
+    "ast_hash": "455a7589936425a16abb289b4ee7389f",
     "semantic_hash": ""
   },
   ".agents/AGENTS.md": {
@@ -370,8 +370,8 @@
     "semantic_hash": ""
   },
   "web/index.html": {
-    "mtime": 1785607267.79026,
-    "ast_hash": "5db29c993493a1dcda7d586d1259bfee",
+    "mtime": 1785620428.631132,
+    "ast_hash": "0cecc241149f2cb6d1492c3c65397794",
     "semantic_hash": ""
   },
   "web/login.html": {

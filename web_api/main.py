@@ -243,21 +243,32 @@ def delete_point(point_id: int):
         release_db_conn(conn)
 
 @app.get("/api/config/solar_history")
-def get_solar_history():
+def get_solar_history(limit: int = 50, days: int = 7):
     conn = get_db_conn()
     try:
         cur = conn.cursor()
-        # Busca acionamentos da última semana filtrando por solar_trigger
-        query = """
-            SELECT le.timestamp, lp.name, le.event_type 
-            FROM light_events le
-            JOIN light_points lp ON le.point_id = lp.id
-            WHERE le.source = 'solar_trigger' 
-            AND le.timestamp > CURRENT_DATE - INTERVAL '7 days'
-            ORDER BY le.timestamp DESC
-            LIMIT 50;
-        """
-        cur.execute(query)
+        # Busca acionamentos filtrando por solar_trigger com limite e intervalo configuráveis
+        if days > 0:
+            query = """
+                SELECT le.timestamp, lp.name, le.event_type 
+                FROM light_events le
+                JOIN light_points lp ON le.point_id = lp.id
+                WHERE le.source = 'solar_trigger' 
+                AND le.timestamp > CURRENT_DATE - INTERVAL '%s days'
+                ORDER BY le.timestamp DESC
+                LIMIT %s;
+            """
+            cur.execute(query % (int(days), int(limit)))
+        else:
+            query = """
+                SELECT le.timestamp, lp.name, le.event_type 
+                FROM light_events le
+                JOIN light_points lp ON le.point_id = lp.id
+                WHERE le.source = 'solar_trigger' 
+                ORDER BY le.timestamp DESC
+                LIMIT %s;
+            """
+            cur.execute(query % int(limit))
         rows = cur.fetchall()
         cur.close()
         # Formata o timestamp (considerando que o banco já está em America/Sao_Paulo na sessão)
@@ -538,25 +549,39 @@ def get_solar_generation_curve():
             release_db_conn(conn)
 
 @app.get("/api/history/consumption")
-def get_consumption_history():
+def get_consumption_history(days: int = 7):
     conn = None
     try:
         conn = get_db_conn()
         cur = conn.cursor()
         cur.execute("SET timezone TO 'America/Sao_Paulo';")
-        query = """
-            SELECT 
-                DATE(lc.off_timestamp AT TIME ZONE 'America/Sao_Paulo') AS date_br,
-                lp.name,
-                SUM(lc.duration_seconds) AS total_seconds,
-                SUM(lc.consumption_kwh) AS total_kwh
-            FROM light_consumption lc
-            JOIN light_points lp ON lc.point_id = lp.id
-            WHERE lc.off_timestamp >= (CURRENT_DATE - INTERVAL '7 days') AT TIME ZONE 'America/Sao_Paulo'
-            GROUP BY date_br, lp.name
-            ORDER BY date_br DESC, lp.name ASC;
-        """
-        cur.execute(query)
+        if days > 0:
+            query = """
+                SELECT 
+                    DATE(lc.off_timestamp AT TIME ZONE 'America/Sao_Paulo') AS date_br,
+                    lp.name,
+                    SUM(lc.duration_seconds) AS total_seconds,
+                    SUM(lc.consumption_kwh) AS total_kwh
+                FROM light_consumption lc
+                JOIN light_points lp ON lc.point_id = lp.id
+                WHERE lc.off_timestamp >= (CURRENT_DATE - INTERVAL '%s days') AT TIME ZONE 'America/Sao_Paulo'
+                GROUP BY date_br, lp.name
+                ORDER BY date_br DESC, lp.name ASC;
+            """
+            cur.execute(query % int(days))
+        else:
+            query = """
+                SELECT 
+                    DATE(lc.off_timestamp AT TIME ZONE 'America/Sao_Paulo') AS date_br,
+                    lp.name,
+                    SUM(lc.duration_seconds) AS total_seconds,
+                    SUM(lc.consumption_kwh) AS total_kwh
+                FROM light_consumption lc
+                JOIN light_points lp ON lc.point_id = lp.id
+                GROUP BY date_br, lp.name
+                ORDER BY date_br DESC, lp.name ASC;
+            """
+            cur.execute(query)
         rows = cur.fetchall()
         cur.close()
         

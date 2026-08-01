@@ -1,16 +1,16 @@
 # Graph Report - 9_LIGHT_MANAGER  (2026-08-01)
 
 ## Corpus Check
-- 86 files · ~51,248 words
+- 86 files · ~51,047 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 585 nodes · 801 edges · 73 communities (45 shown, 28 thin omitted)
+- 584 nodes · 798 edges · 72 communities (44 shown, 28 thin omitted)
 - Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 8 edges (avg confidence: 0.5)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `9678e1e7`
+- Built from commit: `1506076f`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -35,7 +35,6 @@
 - backup_r2.sh
 - Stack do Sistema - Light Manager
 - test_bot_integrity.py
-- test_command_reliability.py
 - ⚡ Fluxo de Trabalho do Agente
 - test_timezone.py
 - tariff_sync.py
@@ -98,9 +97,7 @@
 10. `run_solar_scraping_cycle()` - 10 edges
 
 ## Surprising Connections (you probably didn't know these)
-- `test_prune_database_dry_run()` --calls--> `prune_database()`  [EXTRACTED]
-  tests/test_housekeeping.py → scripts/housekeeping.py
-- `test_prune_database_execution()` --calls--> `prune_database()`  [EXTRACTED]
+- `test_prune_database_preserves_data()` --calls--> `prune_database()`  [EXTRACTED]
   tests/test_housekeeping.py → scripts/housekeeping.py
 - `test_prune_logs()` --calls--> `prune_logs()`  [EXTRACTED]
   tests/test_housekeeping.py → scripts/housekeeping.py
@@ -108,23 +105,25 @@
   tests/test_housekeeping.py → scripts/housekeeping.py
 - `test_solar_ai_expert_no_key()` --calls--> `analyze_solar_anomaly_with_ai()`  [EXTRACTED]
   tests/test_solar_ai_expert.py → scripts/solar_ai_expert.py
+- `test_calculate_system_efficiency_factor_default()` --calls--> `calculate_system_efficiency_factor()`  [EXTRACTED]
+  tests/test_solar_forecast.py → scripts/solar_forecast.py
 
 ## Import Cycles
 - None detected.
 
-## Communities (73 total, 28 thin omitted)
+## Communities (72 total, 28 thin omitted)
 
 ### Community 0 - "Diário de Alterações (Changelog) - 21/06/2026"
 Cohesion: 0.06
 Nodes (31): 🔍 1. Problemas Identificados (Erros em Produção), 1. Refatoração do Watchdog do Bot do Telegram, 2. Criação do Watchdog Local de Firmware (Resiliência do Wemos), 🛠️ 2. Melhorias e Correções Implementadas, 3. Desenvolvimento do Relatório Diário de Consumo via Telegram, ⛅ 3. Implementações do Dia 22/06/2026 (Sincronização Meteorológica), 💡 4. Implementações do Dia 23/06/2026 (Consumo e Resiliência), ⚡ 5. Implementações do Dia 24/06/2026 (Time Sync Híbrido, Rollover e Tarifas ANEEL) (+23 more)
 
 ### Community 1 - "main.py"
-Cohesion: 0.14
-Nodes (33): BaseModel, delete, get, post, put, check_password(), CommandRequest, create_point() (+25 more)
+Cohesion: 0.11
+Nodes (39): BaseModel, delete, get, post, put, Valida se o comando é enviado com sucesso via API e se o MQTT está conectado., Valida rejeição de payloads malformados, Valida se a API aguenta múltiplos comandos rápidos sem travar o loop MQTT (+31 more)
 
 ### Community 2 - "solar_worker.py"
-Cohesion: 0.13
-Nodes (25): Ciclo principal de coleta de telemetria solar:     1. Scraping via HTTP (POST st, run_solar_scraping_cycle(), fetch_sun_data_with_retry(), get_db_conn(), get_db_pool(), get_today_sun_data(), log_event_to_db(), on_message() (+17 more)
+Cohesion: 0.14
+Nodes (23): fetch_sun_data_with_retry(), get_db_conn(), get_db_pool(), get_today_sun_data(), log_event_to_db(), on_message(), Salva um evento de estado no banco de dados com fonte e timestamp correto., Realiza a virada de dia virtual para fracionar o consumo de luzes que permanecem (+15 more)
 
 ### Community 3 - "script.js"
 Cohesion: 0.16
@@ -136,7 +135,7 @@ Nodes (18): check_auth(), cmd_desliga(), cmd_liga(), cmd_relatorio(), cmd_solar(
 
 ### Community 5 - "test_housekeeping.py"
 Cohesion: 0.24
-Nodes (13): check_mosquitto_health(), get_db_connection(), main(), prune_database(), prune_logs(), Verifica e reporta a integridade do diretório de dados e log do Mosquitto., Tenta conectar ao PostgreSQL usando variáveis de ambiente do .env., Pruna os eventos na tabela light_events e registros de solar_generation mais ant (+5 more)
+Nodes (12): check_mosquitto_health(), get_db_connection(), main(), prune_database(), prune_logs(), Tenta conectar ao PostgreSQL usando variáveis de ambiente do .env., Preserva integralmente todos os registros de tabelas no banco de dados (PostgreS, Roda logrotate e deleta arquivos de log rotacionados/comprimidos mais antigos qu (+4 more)
 
 ### Community 6 - "⚡ Comandos Úteis e Operação em Produção"
 Cohesion: 0.17
@@ -189,10 +188,6 @@ Nodes (6): Arquitetura e Hardware, Infraestrutura de Backups, Lógica e Automaç
 ### Community 19 - "test_bot_integrity.py"
 Cohesion: 0.29
 Nodes (6): Valida se as bibliotecas críticas do bot estão instaladas., Verifica se as variáveis mínimas do bot existem no .env, Verifica se o arquivo bot.py não tem erros de sintaxe e pode ser carregado., test_bot_dependencies(), test_bot_env_vars(), test_bot_syntax()
-
-### Community 20 - "test_command_reliability.py"
-Cohesion: 0.29
-Nodes (6): Valida se o comando é enviado com sucesso via API e se o MQTT está conectado., Valida rejeição de payloads malformados, Valida se a API aguenta múltiplos comandos rápidos sem travar o loop MQTT, test_command_invalid_payload(), test_command_mqtt_qos_delivery(), test_rapid_commands()
 
 ### Community 21 - "⚡ Fluxo de Trabalho do Agente"
 Cohesion: 0.33
@@ -255,8 +250,8 @@ Cohesion: 0.50
 Nodes (3): For --cluster-only, For --update (incremental re-extraction), graphify reference: incremental update and cluster-only
 
 ### Community 67 - "test_solar_scraper.py"
-Cohesion: 0.12
-Nodes (30): cache_working_ip(), fetch_solar_telemetry(), find_ip_in_arp(), get_inverter_ip_hint(), get_inverter_mac(), init_solar_db(), parse_solar_csv(), publish_solar_mqtt() (+22 more)
+Cohesion: 0.11
+Nodes (32): cache_working_ip(), fetch_solar_telemetry(), find_ip_in_arp(), get_inverter_ip_hint(), get_inverter_mac(), init_solar_db(), parse_solar_csv(), publish_solar_mqtt() (+24 more)
 
 ### Community 68 - "run_monthly_report_flow"
 Cohesion: 0.15
@@ -288,7 +283,7 @@ _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `fetch_solar_forecast()` connect `fetch_solar_forecast` to `main.py`, `send_daily_solar_telegram_report`?**
   _High betweenness centrality (0.063) - this node is a cross-community bridge._
-- **Why does `check_abrupt_power_drop_and_rain()` connect `fetch_solar_forecast` to `solar_worker.py`, `test_solar_scraper.py`?**
+- **Why does `check_abrupt_power_drop_and_rain()` connect `fetch_solar_forecast` to `test_solar_scraper.py`?**
   _High betweenness centrality (0.031) - this node is a cross-community bridge._
 - **Why does `send_daily_solar_telegram_report()` connect `send_daily_solar_telegram_report` to `solar_worker.py`, `fetch_solar_forecast`?**
   _High betweenness centrality (0.022) - this node is a cross-community bridge._
@@ -297,6 +292,6 @@ _Questions this graph is uniquely positioned to answer:_
 - **Should `Diário de Alterações (Changelog) - 21/06/2026` be split into smaller, more focused modules?**
   _Cohesion score 0.06451612903225806 - nodes in this community are weakly interconnected._
 - **Should `main.py` be split into smaller, more focused modules?**
-  _Cohesion score 0.14444444444444443 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.10852713178294573 - nodes in this community are weakly interconnected._
 - **Should `solar_worker.py` be split into smaller, more focused modules?**
-  _Cohesion score 0.12561576354679804 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.13675213675213677 - nodes in this community are weakly interconnected._
