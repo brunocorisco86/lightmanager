@@ -222,6 +222,25 @@ def send_daily_solar_telegram_report(target_date=None, dry_run=False, conn=None)
 
     chart_path = generate_solar_chart_png(records, summary)
 
+    # Integração com a previsão solar (Etapa 2)
+    forecast_str = ""
+    try:
+        from scripts.solar_forecast import fetch_solar_forecast
+    except ImportError:
+        try:
+            from solar_forecast import fetch_solar_forecast
+        except ImportError:
+            fetch_solar_forecast = None
+
+    if fetch_solar_forecast:
+        try:
+            fc_data = fetch_solar_forecast(conn=conn)
+            if fc_data and "tomorrow" in fc_data:
+                tom = fc_data["tomorrow"]
+                forecast_str = f"\n\n🔮 *Previsão para Amanhã:* `~{tom['estimated_kwh']:.2f} kWh` ({tom['condition_full']})"
+        except Exception as efc:
+            logging.warning(f"Não foi possível obter a previsão solar para o relatório: {efc}")
+
     peak_time_str = f" (às `{summary['peak_time']}`)" if summary.get('peak_time') else ""
     caption = (
         f"☀️ *Relatório Diário de Geração Solar*\n"
@@ -231,6 +250,7 @@ def send_daily_solar_telegram_report(target_date=None, dry_run=False, conn=None)
         f"🔋 *Energia Gerada:* `{summary['today_kwh']:.2f} kWh`\n"
         f"⏱ *Janela Ativa:* `{summary['start_time'] or 'N/A'}` às `{summary['end_time'] or 'N/A'}`\n"
         f"🌡 *Temp. Máx Inversor:* `{summary['max_temp']:.1f} °C`"
+        f"{forecast_str}"
     )
 
     if dry_run:

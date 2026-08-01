@@ -568,10 +568,30 @@ async function updateSolarGeneration() {
     }
 }
 
+async function updateSolarForecast() {
+    try {
+        const fcEl = document.getElementById('solar-forecast-kwh');
+        const condEl = document.getElementById('solar-forecast-condition');
+        if (!fcEl || !condEl) return;
+
+        const forecast = await fetchData('solar/forecast');
+        if (forecast && forecast.tomorrow) {
+            fcEl.innerText = forecast.tomorrow.estimated_kwh.toFixed(2);
+            condEl.innerText = forecast.tomorrow.condition_full;
+        } else {
+            fcEl.innerText = '--';
+            condEl.innerText = 'Indisponível';
+        }
+    } catch (e) {
+        console.error('Erro ao atualizar previsão solar:', e);
+    }
+}
+
 // Inicialização
 updateSunInfo();
 updateStatus();
 updateSolarGeneration();
+updateSolarForecast();
 loadCharts();
 loadMonthlyStats();
 if (document.getElementById("log-service-selector")) {

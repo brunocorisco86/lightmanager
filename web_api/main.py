@@ -417,6 +417,32 @@ def get_solar_generation_history(limit: int = 100):
         if conn:
             release_db_conn(conn)
 
+@app.get("/api/solar/forecast")
+def get_solar_forecast_endpoint(force: bool = False):
+    try:
+        from scripts.solar_forecast import fetch_solar_forecast
+    except ImportError:
+        try:
+            from solar_forecast import fetch_solar_forecast
+        except ImportError:
+            raise HTTPException(status_code=500, detail="Módulo de previsão solar indisponível.")
+
+    conn = None
+    try:
+        conn = get_db_conn()
+        forecast = fetch_solar_forecast(conn=conn, force_refresh=force)
+        if not forecast:
+            raise HTTPException(status_code=503, detail="Não foi possível obter dados da Open-Meteo.")
+        return forecast
+    except HTTPException:
+        raise
+    except Exception as e:
+        print(f"Erro Endpoint Previsão Solar: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        if conn:
+            release_db_conn(conn)
+
 @app.get("/api/history/consumption")
 def get_consumption_history():
     conn = None
