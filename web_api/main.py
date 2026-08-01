@@ -16,8 +16,13 @@ import bcrypt
 import time
 import threading
 
-# Carrega o .env da raiz do projeto
-load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), '..', '.env'))
+import sys
+
+# Carrega o .env e insere a raiz do projeto no sys.path
+PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+if PROJECT_ROOT not in sys.path:
+    sys.path.insert(0, PROJECT_ROOT)
+load_dotenv(dotenv_path=os.path.join(PROJECT_ROOT, '.env'))
 
 app = FastAPI()
 
