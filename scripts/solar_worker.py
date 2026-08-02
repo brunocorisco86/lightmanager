@@ -443,15 +443,15 @@ def run_automation_cycle(client):
                 min_offset_on = int(os.getenv("GLOBAL_SUNSET_OFFSET", -5)) - 1
                 max_offset_off = int(os.getenv("GLOBAL_SUNRISE_OFFSET", 5)) + 1
 
-            # Envia horários de fallback em UTC para que o embarcado (que lê relógio interno em UTC) interprete perfeitamente sem necessidade de reflash imediato
-            fallback_on_utc = (sunset_br + timedelta(minutes=min_offset_on)).astimezone(timezone.utc)
-            fallback_off_utc = (sunrise_br + timedelta(minutes=max_offset_off)).astimezone(timezone.utc)
-            fallback_on_str = fallback_on_utc.strftime("%H:%M")
-            fallback_off_str = fallback_off_utc.strftime("%H:%M")
+            # Envia horários de fallback em hora local BRT para que o embarcado (que usa TZ=BRT3) interprete corretamente
+            fallback_on_dt = sunset_br + timedelta(minutes=min_offset_on)
+            fallback_off_dt = sunrise_br + timedelta(minutes=max_offset_off)
+            fallback_on_str = fallback_on_dt.strftime("%H:%M")
+            fallback_off_str = fallback_off_dt.strftime("%H:%M")
             
             client.publish("home/outdoor/fallback/on", fallback_on_str, qos=1, retain=True)
             client.publish("home/outdoor/fallback/off", fallback_off_str, qos=1, retain=True)
-            logging.info(f"📤 Horários de fallback (UTC) enviados via MQTT: ON={fallback_on_str}, OFF={fallback_off_str}")
+            logging.info(f"📤 Horários de fallback (BRT) enviados via MQTT: ON={fallback_on_str}, OFF={fallback_off_str}")
 
             # Usa .copy() para evitar erro de 'dictionary changed size during iteration'
             for topic, state in current_states.copy().items():

@@ -59,9 +59,9 @@ class TestAutomationImprovements(unittest.TestCase):
             client = MagicMock()
             solar_worker.run_automation_cycle(client)
 
-            # Verifica se os payloads MQTT publicados usam os horários calculados dinamicamente em UTC
-            client.publish.assert_any_call("home/outdoor/fallback/on", "21:04", qos=1, retain=True)
-            client.publish.assert_any_call("home/outdoor/fallback/off", "08:51", qos=1, retain=True)
+            # Verifica se os payloads MQTT publicados usam os horários calculados dinamicamente em hora local BRT
+            client.publish.assert_any_call("home/outdoor/fallback/on", "18:04", qos=1, retain=True)
+            client.publish.assert_any_call("home/outdoor/fallback/off", "05:51", qos=1, retain=True)
 
     @patch("solar_worker.get_db_pool")
     @patch("solar_worker.get_db_conn")
