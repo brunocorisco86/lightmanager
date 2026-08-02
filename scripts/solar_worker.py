@@ -32,7 +32,7 @@ MQTT_BROKER = os.getenv("MQTT_BROKER", "192.168.1.7")
 MQTT_PORT = int(os.getenv("MQTT_PORT", 1883))
 MQTT_USER = os.getenv("MQTT_USER")
 MQTT_PASS = os.getenv("MQTT_PASSWORD")
-CACHE_FILE = os.path.join(os.path.dirname(__file__), "sun_cache.json")
+CACHE_FILE = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "sun_cache.json"))
 
 # Telegram
 TG_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
@@ -353,19 +353,20 @@ def on_message(client, userdata, msg):
 
 def fetch_sun_data_with_retry(max_retries=5):
     url = f"https://api.sunrise-sunset.org/json?lat={LAT}&lng={LONG}&formatted=0"
+    today_str = str(datetime.now(BR_TZ).date())
     for i in range(max_retries):
         try:
             res = requests.get(url, timeout=10).json()
             if res["status"] == "OK":
                 with open(CACHE_FILE, 'w') as f:
-                    json.dump({"date": str(date.today()), "results": res["results"]}, f)
+                    json.dump({"date": today_str, "results": res["results"]}, f)
                 return res["results"]
         except:
             time.sleep(2 ** i)
     return None
 
 def get_today_sun_data():
-    today_str = str(date.today())
+    today_str = str(datetime.now(BR_TZ).date())
     if os.path.exists(CACHE_FILE):
         try:
             with open(CACHE_FILE, 'r') as f:

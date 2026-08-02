@@ -51,7 +51,7 @@ except ValueError:
 
 # Cache de estados
 light_states = {}
-SUN_CACHE_FILE = os.path.join(os.path.dirname(__file__), 'sun_cache.json')
+SUN_CACHE_FILE = os.path.abspath(os.path.join(PROJECT_ROOT, 'sun_cache.json'))
 sun_cache = {"date": None, "results": None}
 
 # MQTT Setup
@@ -285,30 +285,45 @@ def get_solar_history(limit: int = 50, days: int = 7):
 
 @app.get("/api/sun")
 def get_sun_times():
-    today = str(date.today())
-    if sun_cache["date"] == today: return sun_cache["results"]
+    today = str(datetime.now(timezone(timedelta(hours=-3))).date())
+    if sun_cache.get("date") == today and sun_cache.get("results"):
+        return sun_cache["results"]
     try:
         if os.path.exists(SUN_CACHE_FILE):
-            with open(SUN_CACHE_FILE, "r") as f:
+            with open(SUN_CACHE_FILE, "r", encoding="utf-8") as f:
                 data = json.load(f)
-                if data.get("date") == today:
+                if data.get("date") == today and data.get("results"):
                     sun_cache.update(data)
                     return sun_cache["results"]
-                if not sun_cache["results"]: sun_cache.update(data)
+                if data.get("results"):
+                    sun_cache.update(data)
     except Exception:
         pass
     try:
         url = f"https://api.sunrise-sunset.org/json?lat={LAT}&lng={LONG}&formatted=0"
-        res = requests.get(url, timeout=5).json()
+        res = requests.get(url, timeout=2.5).json()
         if res.get("status") == "OK":
             sun_cache.update({"date": today, "results": res["results"]})
-            with open(SUN_CACHE_FILE, "w") as f:
-                json.dump(sun_cache, f)
+            try:
+                with open(SUN_CACHE_FILE, "w", encoding="utf-8") as f:
+                    json.dump(sun_cache, f)
+            except Exception:
+                pass
             return res["results"]
     except Exception:
         pass
-    if sun_cache["results"]: return sun_cache["results"]
-    raise HTTPException(status_code=500, detail="Sun data unavailable")
+    if sun_cache.get("results"):
+        return sun_cache["results"]
+
+    fallback_results = {
+        "sunrise": f"{today}T06:45:00-03:00",
+        "sunset": f"{today}T18:00:00-03:00",
+        "solar_noon": f"{today}T12:22:00-03:00",
+        "day_length": 40500,
+        "civil_twilight_begin": f"{today}T06:22:00-03:00",
+        "civil_twilight_end": f"{today}T18:22:00-03:00"
+    }
+    return fallback_results
 
 @app.get("/api/status")
 def get_status():
@@ -469,6 +484,7 @@ def get_solar_generation_curve():
     try:
         conn = get_db_conn()
         cur = conn.cursor()
+        cur.execute("SET timezone TO 'America/Sao_Paulo';")
         
         # Define janela de 15 minutos (53 slots: 06:00, 06:15, ..., 19:00)
         time_slots = []

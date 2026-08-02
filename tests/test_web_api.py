@@ -43,9 +43,11 @@ def test_get_sun_times_success(mock_file, mock_exists, mock_get):
 @patch('os.path.exists')
 @patch('builtins.open', new_callable=mock_open, read_data='{"date": "2023-10-27", "results": {"sunrise": "cached"}}')
 def test_get_sun_times_cached(mock_file, mock_exists):
-    # Mock date to match cache
-    with patch('web_api.main.date') as mock_date:
-        mock_date.today.return_value = date(2023, 10, 27)
+    # Mock datetime to match cache
+    with patch('web_api.main.datetime') as mock_dt:
+        mock_now = MagicMock()
+        mock_now.date.return_value = date(2023, 10, 27)
+        mock_dt.now.return_value = mock_now
         mock_exists.return_value = True
 
         response = client.get("/api/sun")
@@ -57,8 +59,8 @@ def test_get_sun_times_failure():
         with patch('web_api.main.sun_cache', {"date": None, "results": None}):
              with patch('os.path.exists', return_value=False):
                 response = client.get("/api/sun")
-                assert response.status_code == 500
-                assert response.json()["detail"] == "Sun data unavailable"
+                assert response.status_code == 200
+                assert "sunrise" in response.json()
 
 # --- /api/status tests ---
 
