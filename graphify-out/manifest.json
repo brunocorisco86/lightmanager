@@ -145,8 +145,8 @@
     "semantic_hash": ""
   },
   "scripts/solar_worker.py": {
-    "mtime": 1785683315.6463883,
-    "ast_hash": "c7a6f5ec935741d80633ff3533259fc3",
+    "mtime": 1785709184.212957,
+    "ast_hash": "85f6d412b9ab0f3fe858f89627016666",
     "semantic_hash": ""
   },
   "scripts/tariff_sync.py": {
@@ -195,8 +195,8 @@
     "semantic_hash": ""
   },
   "tests/test_automation_improvements.py": {
-    "mtime": 1785113102.717534,
-    "ast_hash": "31e2a37ffd48ed2a88f7ae7b11de5eca",
+    "mtime": 1785709193.339165,
+    "ast_hash": "d8a2c139da70a76b77ed98c669a5c3ac",
     "semantic_hash": ""
   },
   "tests/test_backup.py": {
@@ -255,8 +255,8 @@
     "semantic_hash": ""
   },
   ".agents/AGENTS.md": {
-    "mtime": 1785620213.5641794,
-    "ast_hash": "9a3c9f29112fb77161a06254f621d44a",
+    "mtime": 1785709370.0717492,
+    "ast_hash": "066d2582d9db39385415cdb8d0ce26a2",
     "semantic_hash": ""
   },
   ".agents/rules/graphify.md": {
@@ -275,8 +275,8 @@
     "semantic_hash": ""
   },
   ".agents/skills/lightmanager/SKILL.md": {
-    "mtime": 1782255518.7965226,
-    "ast_hash": "cd6a9f481674593eca8bf78fc23108d5",
+    "mtime": 1785709372.5728295,
+    "ast_hash": "68cc636af8e4c0063f417ea0f339109c",
     "semantic_hash": ""
   },
   ".agents/workflows/graphify.md": {
@@ -315,8 +315,8 @@
     "semantic_hash": ""
   },
   "DIARIO_ALTERACOES.md": {
-    "mtime": 1785607028.4673843,
-    "ast_hash": "d9c896df27594dc9f68a157faa99882c",
+    "mtime": 1785709378.0430052,
+    "ast_hash": "38f4a275ab3fae7909f89784a3b73e7e",
     "semantic_hash": ""
   },
   "README.md": {

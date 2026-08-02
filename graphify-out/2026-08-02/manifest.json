@@ -145,8 +145,8 @@
     "semantic_hash": ""
   },
   "scripts/solar_worker.py": {
-    "mtime": 1785604644.0075128,
-    "ast_hash": "b365da09cf0c978feb104ec596280c38",
+    "mtime": 1785709184.212957,
+    "ast_hash": "85f6d412b9ab0f3fe858f89627016666",
     "semantic_hash": ""
   },
   "scripts/tariff_sync.py": {
@@ -195,8 +195,8 @@
     "semantic_hash": ""
   },
   "tests/test_automation_improvements.py": {
-    "mtime": 1785113102.717534,
-    "ast_hash": "31e2a37ffd48ed2a88f7ae7b11de5eca",
+    "mtime": 1785709193.339165,
+    "ast_hash": "d8a2c139da70a76b77ed98c669a5c3ac",
     "semantic_hash": ""
   },
   "tests/test_backup.py": {
@@ -235,8 +235,8 @@
     "semantic_hash": ""
   },
   "tests/test_web_api.py": {
-    "mtime": 1785605634.5248535,
-    "ast_hash": "0cc0515867cb004d8d12773881f2879e",
+    "mtime": 1785683339.7844732,
+    "ast_hash": "31fa70642201616e91b9edc766387ede",
     "semantic_hash": ""
   },
   "tests/test_web_config.py": {
@@ -250,8 +250,8 @@
     "semantic_hash": ""
   },
   "web_api/main.py": {
-    "mtime": 1785620416.3735673,
-    "ast_hash": "455a7589936425a16abb289b4ee7389f",
+    "mtime": 1785683305.843942,
+    "ast_hash": "16a2bac7f7308e59d77a0b3b2827d547",
     "semantic_hash": ""
   },
   ".agents/AGENTS.md": {
@@ -370,8 +370,8 @@
     "semantic_hash": ""
   },
   "web/index.html": {
-    "mtime": 1785620428.631132,
-    "ast_hash": "0cecc241149f2cb6d1492c3c65397794",
+    "mtime": 1785683287.8121123,
+    "ast_hash": "f8d75c635c3b6b8c3b130f960803b2d7",
     "semantic_hash": ""
   },
   "web/login.html": {
@@ -492,6 +492,11 @@
   "web/favicon.svg": {
     "mtime": 1785607260.4916887,
     "ast_hash": "2422701a44331f88e2839ee8c3cf35a0",
+    "semantic_hash": ""
+  },
+  "web/chart.min.js": {
+    "mtime": 1785683275.6745474,
+    "ast_hash": "283d65ad75eca387c3fc8d0f8d37ae3b",
     "semantic_hash": ""
   }
 }

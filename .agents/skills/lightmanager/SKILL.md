@@ -135,6 +135,7 @@ Para simular o ambiente e testar novas funcionalidades no repositório local:
 ## ⚠️ Regras Cruciais de Desenvolvimento
 
 * **Fuso Horário:** Use sempre `America/Sao_Paulo` (GMT-3) para todas as transações, logs e registros de banco de dados (`TIMESTAMPTZ` no PostgreSQL).
+* **Horários de Fallback MQTT:** Os horários de fallback enviados pelo `solar_worker.py` nos tópicos `home/outdoor/fallback/on` e `off` devem ser **estritamente em fuso horário local BRT (GMT-3)**. O firmware do Wemos (`wemos_light.ino`) utiliza `TZ=BRT3` e compara o relógio local (`localtime`) diretamente com esse payload `HH:MM`. Enviar horários em UTC faz o Wemos considerar que é dia e desligar os relés a cada minuto.
 * **Watchdogs:** Os watchdogs rodam a cada 15 minutos via cron. Qualquer serviço Python deve escrever logs de status claros e ser reiniciável de forma idempotente via scripts em `scripts/restart_*.sh`.
 * **Hardware Reconnect:** O ESP8266 Wemos D1 R1 deve enviar mensagens em tópicos MQTT específicos. Lembre-se de que o relé físico é **Active Low** (acionamento enviando nível lógico `LOW`).
 * **Segurança:** Todas as rotas administrativas devem exigir autenticação robusta (BCrypt). Nunca guarde senhas em texto plano.

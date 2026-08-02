@@ -4,6 +4,18 @@ Este documento registra a implementação, testes e deploy em produção do **Ro
 
 ---
 
+## ⚡ 02/08/2026 - Correção de Oscilação de Luzes (Fuso Horário de Fallback MQTT BRT)
+
+### 🐛 Diagnóstico do Problema (Luzes Piscando a Cada Minuto)
+* **Causa Raiz:** O script `solar_worker.py` estava enviando os horários dinâmicos de fallback nos tópicos `home/outdoor/fallback/on` e `off` formatados em UTC (ex: `21:02` UTC para pôr do sol às 18:02 BRT). O firmware do ESP8266 Wemos (`wemos_light.ino`), por sua vez, opera com fuso horário `BRT3` (`America/Sao_Paulo`). Ao executar a rotina de segurança a cada 60 segundos, o Wemos comparava a hora local (`19:17` BRT) com o horário de fallback (`21:02`) e determinava erroneamente `isNightTime() = FALSE` (pensava ser dia), desligando os relés fisicamente. Em seguida, o `solar_worker.py` detectava a divergência e religava as luzes, causando oscilação constante.
+
+### 🛠️ Correções e Ajustes
+* **`scripts/solar_worker.py`**: Ajustado para calcular e publicar os horários de fallback estritamente no fuso horário local BRT (`sunset_br` e `sunrise_br`), garantindo alinhamento perfeito com o relógio local do Wemos.
+* **`tests/test_automation_improvements.py`**: Atualizadas as asserções dos testes automatizados para validar a formatação em horário BRT.
+* **Regras de Agentes & Documentação**: Atualizados `.agents/AGENTS.md` e `.agents/skills/lightmanager/SKILL.md` documentando a obrigatoriedade do fuso BRT nos tópicos de fallback MQTT para prevenir regressões futuras.
+
+---
+
 ## ☀️ 1. Resumo das Etapas Implementadas (Roadmap Solar)
 
 ### 🚀 Resiliência de Scraping por Endereço MAC (Inversor Solar)

@@ -12,6 +12,7 @@ Estas regras se aplicam a todas as interações e modificações no espaço de t
 ## 🕒 Fuso Horário e Registro
 * Toda lógica de tempo e agendamento deve usar explicitamente o fuso horário de Brasília (GMT-3), correspondente a `America/Sao_Paulo` (ou `timezone(timedelta(hours=-3))`).
 * O banco de dados PostgreSQL deve utilizar o tipo de dados `TIMESTAMPTZ` para armazenar registros de data/hora para garantir integridade.
+* **Horários de Fallback MQTT:** Os horários calculados pelo Solar Worker e publicados nos tópicos `home/outdoor/fallback/on` e `home/outdoor/fallback/off` DEVEM SEMPRE ser enviados no fuso horário local de Brasília (BRT, GMT-3), em formato `HH:MM` (**NUNCA em UTC**). O firmware do Wemos (`wemos_light.ino`) configura seu relógio interno para o fuso `BRT3` e compara a hora local lida via `localtime(&now)` diretamente contra esses horários. O envio em UTC faz o Wemos interpretar o horário noturno como diurno e desligar fisicamente as lâmpadas a cada minuto.
 
 ## 🔌 Lógica de Hardware (ESP8266 Wemos D1 R1)
 * Os relés controlados pelo Wemos operam em lógica **Active Low** (acionamento enviando sinal lógico `LOW`/`0`, e desligamento com `HIGH`/`1`).

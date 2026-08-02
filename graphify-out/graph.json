@@ -4051,8 +4051,8 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "web_chart_min_s",
-      "community": 74,
-      "community_name": "s",
+      "community": 27,
+      "community_name": "test_web_config.py",
       "norm_label": "s()"
     },
     {
@@ -4062,8 +4062,8 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "web_chart_min_n",
-      "community": 27,
-      "community_name": "test_web_config.py",
+      "community": 104,
+      "community_name": "n",
       "norm_label": "n()"
     },
     {
@@ -4139,8 +4139,8 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "web_chart_min_f",
-      "community": 76,
-      "community_name": "va",
+      "community": 110,
+      "community_name": "f",
       "norm_label": "f()"
     },
     {
@@ -4150,8 +4150,8 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "web_chart_min_g",
-      "community": 86,
-      "community_name": "xa",
+      "community": 105,
+      "community_name": "Si",
       "norm_label": "g()"
     },
     {
@@ -4161,7 +4161,7 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "web_chart_min_p",
-      "community": 81,
+      "community": 105,
       "community_name": "Si",
       "norm_label": "p()"
     },
@@ -4172,8 +4172,8 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "web_chart_min_m",
-      "community": 74,
-      "community_name": "s",
+      "community": 27,
+      "community_name": "test_web_config.py",
       "norm_label": "m()"
     },
     {
@@ -4183,8 +4183,8 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "web_chart_min_b",
-      "community": 74,
-      "community_name": "s",
+      "community": 27,
+      "community_name": "test_web_config.py",
       "norm_label": "b()"
     },
     {
@@ -4205,8 +4205,8 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "web_chart_min_v",
-      "community": 74,
-      "community_name": "s",
+      "community": 27,
+      "community_name": "test_web_config.py",
       "norm_label": "v()"
     },
     {
@@ -4216,8 +4216,8 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "web_chart_min_w",
-      "community": 74,
-      "community_name": "s",
+      "community": 27,
+      "community_name": "test_web_config.py",
       "norm_label": "w()"
     },
     {
@@ -4227,8 +4227,8 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "web_chart_min_h",
-      "community": 74,
-      "community_name": "s",
+      "community": 27,
+      "community_name": "test_web_config.py",
       "norm_label": "h()"
     },
     {
@@ -4238,8 +4238,8 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "web_chart_min_j",
-      "community": 74,
-      "community_name": "s",
+      "community": 27,
+      "community_name": "test_web_config.py",
       "norm_label": "j()"
     },
     {
@@ -4304,8 +4304,8 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "web_chart_min_et",
-      "community": 74,
-      "community_name": "s",
+      "community": 27,
+      "community_name": "test_web_config.py",
       "norm_label": "et()"
     },
     {
@@ -4337,8 +4337,8 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "web_chart_min_rt",
-      "community": 97,
-      "community_name": ".getDataset",
+      "community": 77,
+      "community_name": "bn",
       "norm_label": "rt()"
     },
     {
@@ -4348,8 +4348,8 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "web_chart_min_lt",
-      "community": 87,
-      "community_name": ".getDataTimestamps",
+      "community": 20,
+      "community_name": "chart.min.js",
       "norm_label": "lt()"
     },
     {
@@ -4370,8 +4370,8 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "web_chart_min_dt",
-      "community": 74,
-      "community_name": "s",
+      "community": 92,
+      "community_name": "de",
       "norm_label": "dt()"
     },
     {
@@ -4513,8 +4513,8 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "web_chart_min_bt_running",
-      "community": 14,
-      "community_name": "test_auth.py",
+      "community": 97,
+      "community_name": ".getDataset",
       "norm_label": ".running()"
     },
     {
@@ -4887,8 +4887,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_ne",
-      "community": 74,
-      "community_name": "s",
+      "community": 104,
+      "community_name": "n",
       "norm_label": "ne()"
     },
     {
@@ -4898,8 +4898,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_numeric",
-      "community": 74,
-      "community_name": "s",
+      "community": 104,
+      "community_name": "n",
       "norm_label": "numeric()"
     },
     {
@@ -5019,8 +5019,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_de_apply",
-      "community": 74,
-      "community_name": "s",
+      "community": 92,
+      "community_name": "de",
       "norm_label": ".apply()"
     },
     {
@@ -5096,8 +5096,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_ke",
-      "community": 14,
-      "community_name": "test_auth.py",
+      "community": 97,
+      "community_name": ".getDataset",
       "norm_label": "ke()"
     },
     {
@@ -5129,8 +5129,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_ae",
-      "community": 95,
-      "community_name": ".isHorizontal",
+      "community": 101,
+      "community_name": "beforeUpdate",
       "norm_label": "ae()"
     },
     {
@@ -5173,8 +5173,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_ie",
-      "community": 20,
-      "community_name": "chart.min.js",
+      "community": 81,
+      "community_name": "Si",
       "norm_label": "ie()"
     },
     {
@@ -5184,8 +5184,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_ze",
-      "community": 14,
-      "community_name": "test_auth.py",
+      "community": 81,
+      "community_name": "Si",
       "norm_label": "ze()"
     },
     {
@@ -5371,8 +5371,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_pi",
-      "community": 27,
-      "community_name": "test_web_config.py",
+      "community": 104,
+      "community_name": "n",
       "norm_label": "pi()"
     },
     {
@@ -5415,8 +5415,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_wi",
-      "community": 81,
-      "community_name": "Si",
+      "community": 99,
+      "community_name": "._layers",
       "norm_label": "wi()"
     },
     {
@@ -5426,7 +5426,7 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_ki",
-      "community": 81,
+      "community": 105,
       "community_name": "Si",
       "norm_label": "ki()"
     },
@@ -5437,7 +5437,7 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_si",
-      "community": 81,
+      "community": 105,
       "community_name": "Si",
       "norm_label": "si()"
     },
@@ -5492,8 +5492,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_fi",
-      "community": 90,
-      "community_name": ".getContext",
+      "community": 27,
+      "community_name": "test_web_config.py",
       "norm_label": "fi()"
     },
     {
@@ -5503,8 +5503,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_bi",
-      "community": 90,
-      "community_name": ".getContext",
+      "community": 76,
+      "community_name": "va",
       "norm_label": "bi()"
     },
     {
@@ -5635,8 +5635,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_ss",
-      "community": 20,
-      "community_name": "chart.min.js",
+      "community": 76,
+      "community_name": "va",
       "norm_label": "ss()"
     },
     {
@@ -5646,8 +5646,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_ns",
-      "community": 78,
-      "community_name": "ns",
+      "community": 77,
+      "community_name": "bn",
       "norm_label": "ns()"
     },
     {
@@ -5668,8 +5668,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_addbox",
-      "community": 14,
-      "community_name": "test_auth.py",
+      "community": 20,
+      "community_name": "chart.min.js",
       "norm_label": "addbox()"
     },
     {
@@ -5679,8 +5679,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_removebox",
-      "community": 14,
-      "community_name": "test_auth.py",
+      "community": 106,
+      "community_name": ".buildOrUpdateControllers",
       "norm_label": "removebox()"
     },
     {
@@ -5690,8 +5690,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_configure",
-      "community": 14,
-      "community_name": "test_auth.py",
+      "community": 74,
+      "community_name": "s",
       "norm_label": "configure()"
     },
     {
@@ -5855,8 +5855,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_gs",
-      "community": 84,
-      "community_name": ".bindResponsiveEvents",
+      "community": 105,
+      "community_name": "Si",
       "norm_label": "gs()"
     },
     {
@@ -6174,8 +6174,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_zs",
-      "community": 27,
-      "community_name": "test_web_config.py",
+      "community": 93,
+      "community_name": "parse",
       "norm_label": "zs()"
     },
     {
@@ -6185,8 +6185,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_ns_constructor",
-      "community": 101,
-      "community_name": "beforeUpdate",
+      "community": 77,
+      "community_name": "bn",
       "norm_label": ".constructor()"
     },
     {
@@ -6196,8 +6196,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_ns_initialize",
-      "community": 14,
-      "community_name": "test_auth.py",
+      "community": 70,
+      "community_name": "\u2600\ufe0f 1. Resumo das Etapas Implementadas (Roadmap Solar)",
       "norm_label": ".initialize()"
     },
     {
@@ -6207,8 +6207,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_ns_updateindex",
-      "community": 14,
-      "community_name": "test_auth.py",
+      "community": 106,
+      "community_name": ".buildOrUpdateControllers",
       "norm_label": ".updateindex()"
     },
     {
@@ -6218,8 +6218,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_ns_linkscales",
-      "community": 97,
-      "community_name": ".getDataset",
+      "community": 77,
+      "community_name": "bn",
       "norm_label": ".linkscales()"
     },
     {
@@ -6229,8 +6229,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_ns_getdataset",
-      "community": 97,
-      "community_name": ".getDataset",
+      "community": 77,
+      "community_name": "bn",
       "norm_label": ".getdataset()"
     },
     {
@@ -6240,8 +6240,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_ns_getmeta",
-      "community": 101,
-      "community_name": "beforeUpdate",
+      "community": 77,
+      "community_name": "bn",
       "norm_label": ".getmeta()"
     },
     {
@@ -6251,8 +6251,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_ns_getscaleforid",
-      "community": 97,
-      "community_name": ".getDataset",
+      "community": 77,
+      "community_name": "bn",
       "norm_label": ".getscaleforid()"
     },
     {
@@ -6262,8 +6262,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_ns_getotherscale",
-      "community": 78,
-      "community_name": "ns",
+      "community": 77,
+      "community_name": "bn",
       "norm_label": "._getotherscale()"
     },
     {
@@ -6284,8 +6284,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_ns_destroy",
-      "community": 97,
-      "community_name": ".getDataset",
+      "community": 77,
+      "community_name": "bn",
       "norm_label": "._destroy()"
     },
     {
@@ -6295,8 +6295,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_ns_datacheck",
-      "community": 97,
-      "community_name": ".getDataset",
+      "community": 77,
+      "community_name": "bn",
       "norm_label": "._datacheck()"
     },
     {
@@ -6306,8 +6306,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_ns_addelements",
-      "community": 97,
-      "community_name": ".getDataset",
+      "community": 77,
+      "community_name": "bn",
       "norm_label": ".addelements()"
     },
     {
@@ -6317,8 +6317,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_ns_buildorupdateelements",
-      "community": 97,
-      "community_name": ".getDataset",
+      "community": 77,
+      "community_name": "bn",
       "norm_label": ".buildorupdateelements()"
     },
     {
@@ -6339,8 +6339,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_ns_parse",
-      "community": 27,
-      "community_name": "test_web_config.py",
+      "community": 93,
+      "community_name": "parse",
       "norm_label": ".parse()"
     },
     {
@@ -6383,8 +6383,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_ns_getparsed",
-      "community": 71,
-      "community_name": "send_daily_solar_telegram_report",
+      "community": 102,
+      "community_name": "ca",
       "norm_label": ".getparsed()"
     },
     {
@@ -6394,8 +6394,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_ns_getdataelement",
-      "community": 78,
-      "community_name": "ns",
+      "community": 77,
+      "community_name": "bn",
       "norm_label": ".getdataelement()"
     },
     {
@@ -6405,8 +6405,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_ns_applystack",
-      "community": 71,
-      "community_name": "send_daily_solar_telegram_report",
+      "community": 101,
+      "community_name": "beforeUpdate",
       "norm_label": ".applystack()"
     },
     {
@@ -6416,8 +6416,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_ns_updaterangefromparsed",
-      "community": 78,
-      "community_name": "ns",
+      "community": 77,
+      "community_name": "bn",
       "norm_label": ".updaterangefromparsed()"
     },
     {
@@ -6427,8 +6427,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_ns_getminmax",
-      "community": 78,
-      "community_name": "ns",
+      "community": 77,
+      "community_name": "bn",
       "norm_label": ".getminmax()"
     },
     {
@@ -6438,8 +6438,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_ns_getallparsedvalues",
-      "community": 87,
-      "community_name": ".getDataTimestamps",
+      "community": 20,
+      "community_name": "chart.min.js",
       "norm_label": ".getallparsedvalues()"
     },
     {
@@ -6449,8 +6449,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_ns_getmaxoverflow",
-      "community": 78,
-      "community_name": "ns",
+      "community": 77,
+      "community_name": "bn",
       "norm_label": ".getmaxoverflow()"
     },
     {
@@ -6460,8 +6460,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_ns_getlabelandvalue",
-      "community": 71,
-      "community_name": "send_daily_solar_telegram_report",
+      "community": 102,
+      "community_name": "ca",
       "norm_label": ".getlabelandvalue()"
     },
     {
@@ -6482,8 +6482,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_ns_draw",
-      "community": 78,
-      "community_name": "ns",
+      "community": 99,
+      "community_name": "._layers",
       "norm_label": ".draw()"
     },
     {
@@ -6493,8 +6493,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_ns_getstyle",
-      "community": 100,
-      "community_name": "._resolveElementOptions",
+      "community": 77,
+      "community_name": "bn",
       "norm_label": ".getstyle()"
     },
     {
@@ -6515,8 +6515,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_ns_resolvedatasetelementoptions",
-      "community": 100,
-      "community_name": "._resolveElementOptions",
+      "community": 77,
+      "community_name": "bn",
       "norm_label": ".resolvedatasetelementoptions()"
     },
     {
@@ -6526,8 +6526,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_ns_resolvedataelementoptions",
-      "community": 100,
-      "community_name": "._resolveElementOptions",
+      "community": 77,
+      "community_name": "bn",
       "norm_label": ".resolvedataelementoptions()"
     },
     {
@@ -6537,8 +6537,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_ns_resolveelementoptions",
-      "community": 100,
-      "community_name": "._resolveElementOptions",
+      "community": 77,
+      "community_name": "bn",
       "norm_label": "._resolveelementoptions()"
     },
     {
@@ -6559,8 +6559,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_ns_getsharedoptions",
-      "community": 71,
-      "community_name": "send_daily_solar_telegram_report",
+      "community": 101,
+      "community_name": "beforeUpdate",
       "norm_label": ".getsharedoptions()"
     },
     {
@@ -6570,8 +6570,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_ns_includeoptions",
-      "community": 71,
-      "community_name": "send_daily_solar_telegram_report",
+      "community": 101,
+      "community_name": "beforeUpdate",
       "norm_label": ".includeoptions()"
     },
     {
@@ -6592,8 +6592,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_ns_updatesharedoptions",
-      "community": 71,
-      "community_name": "send_daily_solar_telegram_report",
+      "community": 101,
+      "community_name": "beforeUpdate",
       "norm_label": ".updatesharedoptions()"
     },
     {
@@ -6603,8 +6603,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_ns_setstyle",
-      "community": 78,
-      "community_name": "ns",
+      "community": 77,
+      "community_name": "bn",
       "norm_label": "._setstyle()"
     },
     {
@@ -6614,8 +6614,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_ns_removehoverstyle",
-      "community": 78,
-      "community_name": "ns",
+      "community": 77,
+      "community_name": "bn",
       "norm_label": ".removehoverstyle()"
     },
     {
@@ -6625,8 +6625,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_ns_sethoverstyle",
-      "community": 78,
-      "community_name": "ns",
+      "community": 77,
+      "community_name": "bn",
       "norm_label": ".sethoverstyle()"
     },
     {
@@ -6636,8 +6636,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_ns_removedatasethoverstyle",
-      "community": 78,
-      "community_name": "ns",
+      "community": 77,
+      "community_name": "bn",
       "norm_label": "._removedatasethoverstyle()"
     },
     {
@@ -6647,8 +6647,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_ns_setdatasethoverstyle",
-      "community": 78,
-      "community_name": "ns",
+      "community": 77,
+      "community_name": "bn",
       "norm_label": "._setdatasethoverstyle()"
     },
     {
@@ -6658,8 +6658,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_ns_resyncelements",
-      "community": 93,
-      "community_name": "parse",
+      "community": 77,
+      "community_name": "bn",
       "norm_label": "._resyncelements()"
     },
     {
@@ -6669,8 +6669,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_ns_insertelements",
-      "community": 93,
-      "community_name": "parse",
+      "community": 77,
+      "community_name": "bn",
       "norm_label": "._insertelements()"
     },
     {
@@ -6680,8 +6680,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_ns_updateelements",
-      "community": 78,
-      "community_name": "ns",
+      "community": 77,
+      "community_name": "bn",
       "norm_label": ".updateelements()"
     },
     {
@@ -6691,8 +6691,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_ns_removeelements",
-      "community": 93,
-      "community_name": "parse",
+      "community": 77,
+      "community_name": "bn",
       "norm_label": "._removeelements()"
     },
     {
@@ -6702,8 +6702,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_ns_sync",
-      "community": 78,
-      "community_name": "ns",
+      "community": 77,
+      "community_name": "bn",
       "norm_label": "._sync()"
     },
     {
@@ -6713,8 +6713,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_ns_ondatapush",
-      "community": 78,
-      "community_name": "ns",
+      "community": 77,
+      "community_name": "bn",
       "norm_label": "._ondatapush()"
     },
     {
@@ -6724,8 +6724,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_ns_ondatapop",
-      "community": 78,
-      "community_name": "ns",
+      "community": 77,
+      "community_name": "bn",
       "norm_label": "._ondatapop()"
     },
     {
@@ -6735,8 +6735,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_ns_ondatashift",
-      "community": 78,
-      "community_name": "ns",
+      "community": 77,
+      "community_name": "bn",
       "norm_label": "._ondatashift()"
     },
     {
@@ -6746,8 +6746,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_ns_ondatasplice",
-      "community": 78,
-      "community_name": "ns",
+      "community": 77,
+      "community_name": "bn",
       "norm_label": "._ondatasplice()"
     },
     {
@@ -6757,8 +6757,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_ns_ondataunshift",
-      "community": 78,
-      "community_name": "ns",
+      "community": 77,
+      "community_name": "bn",
       "norm_label": "._ondataunshift()"
     },
     {
@@ -6812,8 +6812,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_xs",
-      "community": 20,
-      "community_name": "chart.min.js",
+      "community": 95,
+      "community_name": ".isHorizontal",
       "norm_label": "xs()"
     },
     {
@@ -6823,8 +6823,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_qs",
-      "community": 20,
-      "community_name": "chart.min.js",
+      "community": 108,
+      "community_name": "._computeGridLineItems",
       "norm_label": "qs()"
     },
     {
@@ -6878,8 +6878,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_js_getminmax",
-      "community": 27,
-      "community_name": "test_web_config.py",
+      "community": 20,
+      "community_name": "chart.min.js",
       "norm_label": ".getminmax()"
     },
     {
@@ -6922,8 +6922,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_js_getlabelitems",
-      "community": 20,
-      "community_name": "chart.min.js",
+      "community": 95,
+      "community_name": ".isHorizontal",
       "norm_label": ".getlabelitems()"
     },
     {
@@ -7186,8 +7186,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_js_fit",
-      "community": 20,
-      "community_name": "chart.min.js",
+      "community": 95,
+      "community_name": ".isHorizontal",
       "norm_label": ".fit()"
     },
     {
@@ -7208,8 +7208,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_js_handlemargins",
-      "community": 20,
-      "community_name": "chart.min.js",
+      "community": 95,
+      "community_name": ".isHorizontal",
       "norm_label": "._handlemargins()"
     },
     {
@@ -7263,8 +7263,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_js_getlabelsizes",
-      "community": 20,
-      "community_name": "chart.min.js",
+      "community": 95,
+      "community_name": ".isHorizontal",
       "norm_label": "._getlabelsizes()"
     },
     {
@@ -7274,8 +7274,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_js_computelabelsizes",
-      "community": 20,
-      "community_name": "chart.min.js",
+      "community": 95,
+      "community_name": ".isHorizontal",
       "norm_label": "._computelabelsizes()"
     },
     {
@@ -7329,8 +7329,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_js_getpixelfordecimal",
-      "community": 71,
-      "community_name": "send_daily_solar_telegram_report",
+      "community": 101,
+      "community_name": "beforeUpdate",
       "norm_label": ".getpixelfordecimal()"
     },
     {
@@ -7340,8 +7340,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_js_getdecimalforpixel",
-      "community": 71,
-      "community_name": "send_daily_solar_telegram_report",
+      "community": 100,
+      "community_name": "._resolveElementOptions",
       "norm_label": ".getdecimalforpixel()"
     },
     {
@@ -7362,8 +7362,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_js_getbasevalue",
-      "community": 80,
-      "community_name": "eo",
+      "community": 20,
+      "community_name": "chart.min.js",
       "norm_label": ".getbasevalue()"
     },
     {
@@ -7384,8 +7384,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_js_ticksize",
-      "community": 20,
-      "community_name": "chart.min.js",
+      "community": 95,
+      "community_name": ".isHorizontal",
       "norm_label": "._ticksize()"
     },
     {
@@ -7406,8 +7406,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_js_computegridlineitems",
-      "community": 20,
-      "community_name": "chart.min.js",
+      "community": 108,
+      "community_name": "._computeGridLineItems",
       "norm_label": "._computegridlineitems()"
     },
     {
@@ -7417,8 +7417,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_js_computelabelitems",
-      "community": 20,
-      "community_name": "chart.min.js",
+      "community": 95,
+      "community_name": ".isHorizontal",
       "norm_label": "._computelabelitems()"
     },
     {
@@ -7428,8 +7428,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_js_getxaxislabelalignment",
-      "community": 20,
-      "community_name": "chart.min.js",
+      "community": 95,
+      "community_name": ".isHorizontal",
       "norm_label": "._getxaxislabelalignment()"
     },
     {
@@ -7439,8 +7439,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_js_getyaxislabelalignment",
-      "community": 20,
-      "community_name": "chart.min.js",
+      "community": 95,
+      "community_name": ".isHorizontal",
       "norm_label": "._getyaxislabelalignment()"
     },
     {
@@ -7450,8 +7450,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_js_computelabelarea",
-      "community": 20,
-      "community_name": "chart.min.js",
+      "community": 81,
+      "community_name": "Si",
       "norm_label": "._computelabelarea()"
     },
     {
@@ -7472,8 +7472,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_js_getlinewidthforvalue",
-      "community": 71,
-      "community_name": "send_daily_solar_telegram_report",
+      "community": 101,
+      "community_name": "beforeUpdate",
       "norm_label": ".getlinewidthforvalue()"
     },
     {
@@ -7483,8 +7483,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_js_drawgrid",
-      "community": 20,
-      "community_name": "chart.min.js",
+      "community": 108,
+      "community_name": "._computeGridLineItems",
       "norm_label": ".drawgrid()"
     },
     {
@@ -7494,8 +7494,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_js_drawborder",
-      "community": 95,
-      "community_name": ".isHorizontal",
+      "community": 101,
+      "community_name": "beforeUpdate",
       "norm_label": ".drawborder()"
     },
     {
@@ -7505,8 +7505,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_js_drawlabels",
-      "community": 20,
-      "community_name": "chart.min.js",
+      "community": 81,
+      "community_name": "Si",
       "norm_label": ".drawlabels()"
     },
     {
@@ -7516,7 +7516,7 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_js_drawtitle",
-      "community": 81,
+      "community": 105,
       "community_name": "Si",
       "norm_label": ".drawtitle()"
     },
@@ -7560,8 +7560,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_js_resolvetickfontoptions",
-      "community": 20,
-      "community_name": "chart.min.js",
+      "community": 95,
+      "community_name": ".isHorizontal",
       "norm_label": "._resolvetickfontoptions()"
     },
     {
@@ -7571,8 +7571,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_js_maxdigits",
-      "community": 20,
-      "community_name": "chart.min.js",
+      "community": 95,
+      "community_name": ".isHorizontal",
       "norm_label": "._maxdigits()"
     },
     {
@@ -7582,8 +7582,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_qs_constructor",
-      "community": 20,
-      "community_name": "chart.min.js",
+      "community": 108,
+      "community_name": "._computeGridLineItems",
       "norm_label": ".constructor()"
     },
     {
@@ -7604,8 +7604,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_qs_register",
-      "community": 74,
-      "community_name": "s",
+      "community": 108,
+      "community_name": "._computeGridLineItems",
       "norm_label": ".register()"
     },
     {
@@ -7626,8 +7626,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_qs_unregister",
-      "community": 20,
-      "community_name": "chart.min.js",
+      "community": 108,
+      "community_name": "._computeGridLineItems",
       "norm_label": ".unregister()"
     },
     {
@@ -7945,8 +7945,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_on",
-      "community": 74,
-      "community_name": "s",
+      "community": 27,
+      "community_name": "test_web_config.py",
       "norm_label": "on()"
     },
     {
@@ -7967,8 +7967,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_rn",
-      "community": 27,
-      "community_name": "test_web_config.py",
+      "community": 20,
+      "community_name": "chart.min.js",
       "norm_label": "rn()"
     },
     {
@@ -7978,8 +7978,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_ln",
-      "community": 27,
-      "community_name": "test_web_config.py",
+      "community": 20,
+      "community_name": "chart.min.js",
       "norm_label": "ln()"
     },
     {
@@ -8209,8 +8209,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_bn_chartoptionscopes",
-      "community": 14,
-      "community_name": "test_auth.py",
+      "community": 97,
+      "community_name": ".getDataset",
       "norm_label": ".chartoptionscopes()"
     },
     {
@@ -8264,8 +8264,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_mn",
-      "community": 14,
-      "community_name": "test_auth.py",
+      "community": 106,
+      "community_name": ".buildOrUpdateControllers",
       "norm_label": "mn()"
     },
     {
@@ -8275,8 +8275,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_wn",
-      "community": 14,
-      "community_name": "test_auth.py",
+      "community": 97,
+      "community_name": ".getDataset",
       "norm_label": "wn()"
     },
     {
@@ -8286,8 +8286,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_kn",
-      "community": 14,
-      "community_name": "test_auth.py",
+      "community": 97,
+      "community_name": ".getDataset",
       "norm_label": "kn()"
     },
     {
@@ -8319,8 +8319,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_an_constructor",
-      "community": 14,
-      "community_name": "test_auth.py",
+      "community": 97,
+      "community_name": ".getDataset",
       "norm_label": ".constructor()"
     },
     {
@@ -8374,8 +8374,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_an_initialize",
-      "community": 14,
-      "community_name": "test_auth.py",
+      "community": 97,
+      "community_name": ".getDataset",
       "norm_label": "._initialize()"
     },
     {
@@ -8385,8 +8385,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_an_clear",
-      "community": 14,
-      "community_name": "test_auth.py",
+      "community": 97,
+      "community_name": ".getDataset",
       "norm_label": ".clear()"
     },
     {
@@ -8396,8 +8396,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_an_stop",
-      "community": 14,
-      "community_name": "test_auth.py",
+      "community": 106,
+      "community_name": ".buildOrUpdateControllers",
       "norm_label": ".stop()"
     },
     {
@@ -8407,8 +8407,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_an_resize",
-      "community": 14,
-      "community_name": "test_auth.py",
+      "community": 97,
+      "community_name": ".getDataset",
       "norm_label": ".resize()"
     },
     {
@@ -8440,8 +8440,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_an_updatemetasets",
-      "community": 14,
-      "community_name": "test_auth.py",
+      "community": 106,
+      "community_name": ".buildOrUpdateControllers",
       "norm_label": "._updatemetasets()"
     },
     {
@@ -8451,8 +8451,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_an_removeunreferencedmetasets",
-      "community": 14,
-      "community_name": "test_auth.py",
+      "community": 106,
+      "community_name": ".buildOrUpdateControllers",
       "norm_label": "._removeunreferencedmetasets()"
     },
     {
@@ -8462,8 +8462,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_an_buildorupdatecontrollers",
-      "community": 14,
-      "community_name": "test_auth.py",
+      "community": 106,
+      "community_name": ".buildOrUpdateControllers",
       "norm_label": ".buildorupdatecontrollers()"
     },
     {
@@ -8561,8 +8561,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_an_updatedatasets",
-      "community": 14,
-      "community_name": "test_auth.py",
+      "community": 97,
+      "community_name": ".getDataset",
       "norm_label": "._updatedatasets()"
     },
     {
@@ -8572,8 +8572,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_an_updatedataset",
-      "community": 14,
-      "community_name": "test_auth.py",
+      "community": 97,
+      "community_name": ".getDataset",
       "norm_label": "._updatedataset()"
     },
     {
@@ -8583,8 +8583,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_an_render",
-      "community": 14,
-      "community_name": "test_auth.py",
+      "community": 97,
+      "community_name": ".getDataset",
       "norm_label": ".render()"
     },
     {
@@ -8594,8 +8594,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_an_draw",
-      "community": 14,
-      "community_name": "test_auth.py",
+      "community": 97,
+      "community_name": ".getDataset",
       "norm_label": ".draw()"
     },
     {
@@ -8627,8 +8627,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_an_drawdatasets",
-      "community": 14,
-      "community_name": "test_auth.py",
+      "community": 97,
+      "community_name": ".getDataset",
       "norm_label": "._drawdatasets()"
     },
     {
@@ -8638,8 +8638,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_an_drawdataset",
-      "community": 14,
-      "community_name": "test_auth.py",
+      "community": 97,
+      "community_name": ".getDataset",
       "norm_label": "._drawdataset()"
     },
     {
@@ -8671,8 +8671,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_an_getdatasetmeta",
-      "community": 14,
-      "community_name": "test_auth.py",
+      "community": 103,
+      "community_name": ".getDatasetMeta",
       "norm_label": ".getdatasetmeta()"
     },
     {
@@ -8693,8 +8693,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_an_getvisibledatasetcount",
-      "community": 71,
-      "community_name": "send_daily_solar_telegram_report",
+      "community": 104,
+      "community_name": "n",
       "norm_label": ".getvisibledatasetcount()"
     },
     {
@@ -8704,8 +8704,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_an_isdatasetvisible",
-      "community": 14,
-      "community_name": "test_auth.py",
+      "community": 103,
+      "community_name": ".getDatasetMeta",
       "norm_label": ".isdatasetvisible()"
     },
     {
@@ -8715,8 +8715,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_an_setdatasetvisibility",
-      "community": 14,
-      "community_name": "test_auth.py",
+      "community": 103,
+      "community_name": ".getDatasetMeta",
       "norm_label": ".setdatasetvisibility()"
     },
     {
@@ -8726,8 +8726,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_an_toggledatavisibility",
-      "community": 14,
-      "community_name": "test_auth.py",
+      "community": 103,
+      "community_name": ".getDatasetMeta",
       "norm_label": ".toggledatavisibility()"
     },
     {
@@ -8737,8 +8737,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_an_getdatavisibility",
-      "community": 14,
-      "community_name": "test_auth.py",
+      "community": 103,
+      "community_name": ".getDatasetMeta",
       "norm_label": ".getdatavisibility()"
     },
     {
@@ -8748,8 +8748,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_an_updatevisibility",
-      "community": 14,
-      "community_name": "test_auth.py",
+      "community": 103,
+      "community_name": ".getDatasetMeta",
       "norm_label": "._updatevisibility()"
     },
     {
@@ -8759,8 +8759,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_an_hide",
-      "community": 14,
-      "community_name": "test_auth.py",
+      "community": 103,
+      "community_name": ".getDatasetMeta",
       "norm_label": ".hide()"
     },
     {
@@ -8770,8 +8770,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_an_show",
-      "community": 14,
-      "community_name": "test_auth.py",
+      "community": 103,
+      "community_name": ".getDatasetMeta",
       "norm_label": ".show()"
     },
     {
@@ -8781,8 +8781,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_an_destroydatasetmeta",
-      "community": 14,
-      "community_name": "test_auth.py",
+      "community": 106,
+      "community_name": ".buildOrUpdateControllers",
       "norm_label": "._destroydatasetmeta()"
     },
     {
@@ -8858,8 +8858,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_an_updatehoverstyle",
-      "community": 14,
-      "community_name": "test_auth.py",
+      "community": 110,
+      "community_name": "f",
       "norm_label": ".updatehoverstyle()"
     },
     {
@@ -8880,8 +8880,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_an_setactiveelements",
-      "community": 14,
-      "community_name": "test_auth.py",
+      "community": 110,
+      "community_name": "f",
       "norm_label": ".setactiveelements()"
     },
     {
@@ -8891,8 +8891,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_an_notifyplugins",
-      "community": 14,
-      "community_name": "test_auth.py",
+      "community": 97,
+      "community_name": ".getDataset",
       "norm_label": ".notifyplugins()"
     },
     {
@@ -8913,8 +8913,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_an_updatehoverstyles",
-      "community": 14,
-      "community_name": "test_auth.py",
+      "community": 110,
+      "community_name": "f",
       "norm_label": "._updatehoverstyles()"
     },
     {
@@ -8935,8 +8935,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_an_handleevent",
-      "community": 14,
-      "community_name": "test_auth.py",
+      "community": 110,
+      "community_name": "f",
       "norm_label": "._handleevent()"
     },
     {
@@ -8957,8 +8957,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_en_override",
-      "community": 74,
-      "community_name": "s",
+      "community": 108,
+      "community_name": "._computeGridLineItems",
       "norm_label": ".override()"
     },
     {
@@ -9078,8 +9078,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_zn",
-      "community": 27,
-      "community_name": "test_web_config.py",
+      "community": 93,
+      "community_name": "parse",
       "norm_label": "zn()"
     },
     {
@@ -9089,8 +9089,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_fn",
-      "community": 27,
-      "community_name": "test_web_config.py",
+      "community": 93,
+      "community_name": "parse",
       "norm_label": "fn()"
     },
     {
@@ -9111,8 +9111,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_generatelabels",
-      "community": 14,
-      "community_name": "test_auth.py",
+      "community": 103,
+      "community_name": ".getDatasetMeta",
       "norm_label": "generatelabels()"
     },
     {
@@ -9122,8 +9122,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_onclick",
-      "community": 14,
-      "community_name": "test_auth.py",
+      "community": 103,
+      "community_name": ".getDatasetMeta",
       "norm_label": "onclick()"
     },
     {
@@ -9144,8 +9144,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_jn_linkscales",
-      "community": 14,
-      "community_name": "test_auth.py",
+      "community": 70,
+      "community_name": "\u2600\ufe0f 1. Resumo das Etapas Implementadas (Roadmap Solar)",
       "norm_label": ".linkscales()"
     },
     {
@@ -9254,8 +9254,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_jn_getlabelandvalue",
-      "community": 74,
-      "community_name": "s",
+      "community": 104,
+      "community_name": "n",
       "norm_label": ".getlabelandvalue()"
     },
     {
@@ -9265,8 +9265,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_jn_getmaxborderwidth",
-      "community": 14,
-      "community_name": "test_auth.py",
+      "community": 71,
+      "community_name": "send_daily_solar_telegram_report",
       "norm_label": ".getmaxborderwidth()"
     },
     {
@@ -9320,8 +9320,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_n_constructor",
-      "community": 27,
-      "community_name": "test_web_config.py",
+      "community": 104,
+      "community_name": "n",
       "norm_label": ".constructor()"
     },
     {
@@ -9331,8 +9331,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_n_getlabelandvalue",
-      "community": 74,
-      "community_name": "s",
+      "community": 104,
+      "community_name": "n",
       "norm_label": ".getlabelandvalue()"
     },
     {
@@ -9342,8 +9342,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_n_parseobjectdata",
-      "community": 27,
-      "community_name": "test_web_config.py",
+      "community": 104,
+      "community_name": "n",
       "norm_label": ".parseobjectdata()"
     },
     {
@@ -9353,8 +9353,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_n_update",
-      "community": 71,
-      "community_name": "send_daily_solar_telegram_report",
+      "community": 104,
+      "community_name": "n",
       "norm_label": ".update()"
     },
     {
@@ -9364,8 +9364,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_n_getminmax",
-      "community": 27,
-      "community_name": "test_web_config.py",
+      "community": 100,
+      "community_name": "._resolveElementOptions",
       "norm_label": ".getminmax()"
     },
     {
@@ -9375,8 +9375,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_n_updateradius",
-      "community": 71,
-      "community_name": "send_daily_solar_telegram_report",
+      "community": 104,
+      "community_name": "n",
       "norm_label": "._updateradius()"
     },
     {
@@ -9386,8 +9386,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_n_updateelements",
-      "community": 71,
-      "community_name": "send_daily_solar_telegram_report",
+      "community": 102,
+      "community_name": "ca",
       "norm_label": ".updateelements()"
     },
     {
@@ -9397,8 +9397,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_n_countvisibleelements",
-      "community": 71,
-      "community_name": "send_daily_solar_telegram_report",
+      "community": 102,
+      "community_name": "ca",
       "norm_label": ".countvisibleelements()"
     },
     {
@@ -9408,8 +9408,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_n_computeangle",
-      "community": 71,
-      "community_name": "send_daily_solar_telegram_report",
+      "community": 102,
+      "community_name": "ca",
       "norm_label": "._computeangle()"
     },
     {
@@ -9419,8 +9419,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_parseprimitivedata",
-      "community": 27,
-      "community_name": "test_web_config.py",
+      "community": 93,
+      "community_name": "parse",
       "norm_label": "parseprimitivedata()"
     },
     {
@@ -9430,8 +9430,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_parsearraydata",
-      "community": 27,
-      "community_name": "test_web_config.py",
+      "community": 93,
+      "community_name": "parse",
       "norm_label": "parsearraydata()"
     },
     {
@@ -9441,8 +9441,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_parseobjectdata",
-      "community": 27,
-      "community_name": "test_web_config.py",
+      "community": 93,
+      "community_name": "parse",
       "norm_label": "parseobjectdata()"
     },
     {
@@ -9452,8 +9452,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_updaterangefromparsed",
-      "community": 78,
-      "community_name": "ns",
+      "community": 77,
+      "community_name": "bn",
       "norm_label": "updaterangefromparsed()"
     },
     {
@@ -9463,8 +9463,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_getmaxoverflow",
-      "community": 83,
-      "community_name": "da",
+      "community": 78,
+      "community_name": "ns",
       "norm_label": "getmaxoverflow()"
     },
     {
@@ -9474,8 +9474,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_getlabelandvalue",
-      "community": 71,
-      "community_name": "send_daily_solar_telegram_report",
+      "community": 102,
+      "community_name": "ca",
       "norm_label": "getlabelandvalue()"
     },
     {
@@ -9485,8 +9485,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_initialize",
-      "community": 101,
-      "community_name": "beforeUpdate",
+      "community": 77,
+      "community_name": "bn",
       "norm_label": "initialize()"
     },
     {
@@ -9496,8 +9496,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_updateelements",
-      "community": 71,
-      "community_name": "send_daily_solar_telegram_report",
+      "community": 101,
+      "community_name": "beforeUpdate",
       "norm_label": "updateelements()"
     },
     {
@@ -9551,8 +9551,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_calculatebarvaluepixels",
-      "community": 71,
-      "community_name": "send_daily_solar_telegram_report",
+      "community": 101,
+      "community_name": "beforeUpdate",
       "norm_label": "_calculatebarvaluepixels()"
     },
     {
@@ -9573,8 +9573,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_draw",
-      "community": 83,
-      "community_name": "da",
+      "community": 27,
+      "community_name": "test_web_config.py",
       "norm_label": "draw()"
     },
     {
@@ -9584,8 +9584,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_resolvedataelementoptions",
-      "community": 71,
-      "community_name": "send_daily_solar_telegram_report",
+      "community": 102,
+      "community_name": "ca",
       "norm_label": "resolvedataelementoptions()"
     },
     {
@@ -9606,8 +9606,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_qn",
-      "community": 74,
-      "community_name": "s",
+      "community": 27,
+      "community_name": "test_web_config.py",
       "norm_label": "qn()"
     },
     {
@@ -9628,7 +9628,7 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_to",
-      "community": 81,
+      "community": 105,
       "community_name": "Si",
       "norm_label": "to()"
     },
@@ -9804,8 +9804,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_ro",
-      "community": 75,
-      "community_name": "inRange",
+      "community": 27,
+      "community_name": "test_web_config.py",
       "norm_label": "ro()"
     },
     {
@@ -9815,8 +9815,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_lo",
-      "community": 75,
-      "community_name": "inRange",
+      "community": 27,
+      "community_name": "test_web_config.py",
       "norm_label": "lo()"
     },
     {
@@ -9848,8 +9848,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_uo",
-      "community": 83,
-      "community_name": "da",
+      "community": 27,
+      "community_name": "test_web_config.py",
       "norm_label": "uo()"
     },
     {
@@ -9936,8 +9936,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_size",
-      "community": 83,
-      "community_name": "da",
+      "community": 78,
+      "community_name": "ns",
       "norm_label": "size()"
     },
     {
@@ -9969,8 +9969,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_mo",
-      "community": 74,
-      "community_name": "s",
+      "community": 27,
+      "community_name": "test_web_config.py",
       "norm_label": "mo()"
     },
     {
@@ -10046,8 +10046,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_bo_buildticks",
-      "community": 74,
-      "community_name": "s",
+      "community": 27,
+      "community_name": "test_web_config.py",
       "norm_label": ".buildticks()"
     },
     {
@@ -10057,8 +10057,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_bo_configure",
-      "community": 14,
-      "community_name": "test_auth.py",
+      "community": 74,
+      "community_name": "s",
       "norm_label": ".configure()"
     },
     {
@@ -10079,8 +10079,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_xo",
-      "community": 71,
-      "community_name": "send_daily_solar_telegram_report",
+      "community": 100,
+      "community_name": "._resolveElementOptions",
       "norm_label": "xo"
     },
     {
@@ -10090,8 +10090,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_xo_determinedatalimits",
-      "community": 27,
-      "community_name": "test_web_config.py",
+      "community": 100,
+      "community_name": "._resolveElementOptions",
       "norm_label": ".determinedatalimits()"
     },
     {
@@ -10101,8 +10101,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_xo_computeticklimit",
-      "community": 71,
-      "community_name": "send_daily_solar_telegram_report",
+      "community": 100,
+      "community_name": "._resolveElementOptions",
       "norm_label": ".computeticklimit()"
     },
     {
@@ -10112,8 +10112,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_xo_getpixelforvalue",
-      "community": 71,
-      "community_name": "send_daily_solar_telegram_report",
+      "community": 101,
+      "community_name": "beforeUpdate",
       "norm_label": ".getpixelforvalue()"
     },
     {
@@ -10123,8 +10123,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_xo_getvalueforpixel",
-      "community": 71,
-      "community_name": "send_daily_solar_telegram_report",
+      "community": 100,
+      "community_name": "._resolveElementOptions",
       "norm_label": ".getvalueforpixel()"
     },
     {
@@ -10134,8 +10134,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_vo",
-      "community": 76,
-      "community_name": "va",
+      "community": 110,
+      "community_name": "f",
       "norm_label": "vo()"
     },
     {
@@ -10145,8 +10145,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_wo",
-      "community": 76,
-      "community_name": "va",
+      "community": 110,
+      "community_name": "f",
       "norm_label": "wo()"
     },
     {
@@ -10156,8 +10156,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_ko",
-      "community": 74,
-      "community_name": "s",
+      "community": 100,
+      "community_name": "._resolveElementOptions",
       "norm_label": "ko"
     },
     {
@@ -10167,8 +10167,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_ko_constructor",
-      "community": 74,
-      "community_name": "s",
+      "community": 100,
+      "community_name": "._resolveElementOptions",
       "norm_label": ".constructor()"
     },
     {
@@ -10178,8 +10178,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_ko_parse",
-      "community": 74,
-      "community_name": "s",
+      "community": 92,
+      "community_name": "de",
       "norm_label": ".parse()"
     },
     {
@@ -10189,8 +10189,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_ko_determinedatalimits",
-      "community": 27,
-      "community_name": "test_web_config.py",
+      "community": 100,
+      "community_name": "._resolveElementOptions",
       "norm_label": ".determinedatalimits()"
     },
     {
@@ -10200,8 +10200,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_ko_handletickrangeoptions",
-      "community": 27,
-      "community_name": "test_web_config.py",
+      "community": 100,
+      "community_name": "._resolveElementOptions",
       "norm_label": ".handletickrangeoptions()"
     },
     {
@@ -10211,8 +10211,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_ko_buildticks",
-      "community": 74,
-      "community_name": "s",
+      "community": 100,
+      "community_name": "._resolveElementOptions",
       "norm_label": ".buildticks()"
     },
     {
@@ -10222,8 +10222,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_ko_getlabelforvalue",
-      "community": 74,
-      "community_name": "s",
+      "community": 100,
+      "community_name": "._resolveElementOptions",
       "norm_label": ".getlabelforvalue()"
     },
     {
@@ -10233,8 +10233,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_ko_configure",
-      "community": 14,
-      "community_name": "test_auth.py",
+      "community": 74,
+      "community_name": "s",
       "norm_label": ".configure()"
     },
     {
@@ -10244,8 +10244,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_ko_getpixelforvalue",
-      "community": 71,
-      "community_name": "send_daily_solar_telegram_report",
+      "community": 101,
+      "community_name": "beforeUpdate",
       "norm_label": ".getpixelforvalue()"
     },
     {
@@ -10255,8 +10255,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_ko_getvalueforpixel",
-      "community": 71,
-      "community_name": "send_daily_solar_telegram_report",
+      "community": 100,
+      "community_name": "._resolveElementOptions",
       "norm_label": ".getvalueforpixel()"
     },
     {
@@ -10288,8 +10288,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_eo_setdimensions",
-      "community": 80,
-      "community_name": "eo",
+      "community": 105,
+      "community_name": "Si",
       "norm_label": ".setdimensions()"
     },
     {
@@ -10299,8 +10299,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_eo_determinedatalimits",
-      "community": 27,
-      "community_name": "test_web_config.py",
+      "community": 100,
+      "community_name": "._resolveElementOptions",
       "norm_label": ".determinedatalimits()"
     },
     {
@@ -10453,8 +10453,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_eo_drawgrid",
-      "community": 80,
-      "community_name": "eo",
+      "community": 90,
+      "community_name": ".getContext",
       "norm_label": ".drawgrid()"
     },
     {
@@ -10475,8 +10475,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_eo_drawlabels",
-      "community": 80,
-      "community_name": "eo",
+      "community": 99,
+      "community_name": "._layers",
       "norm_label": ".drawlabels()"
     },
     {
@@ -10563,8 +10563,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_no_getlabelbounds",
-      "community": 87,
-      "community_name": ".getDataTimestamps",
+      "community": 82,
+      "community_name": "no",
       "norm_label": "._getlabelbounds()"
     },
     {
@@ -10640,8 +10640,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_no_tickformatfunction",
-      "community": 82,
-      "community_name": "no",
+      "community": 117,
+      "community_name": "._getLabelCapacity",
       "norm_label": "._tickformatfunction()"
     },
     {
@@ -10651,8 +10651,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_no_generateticklabels",
-      "community": 79,
-      "community_name": "d",
+      "community": 117,
+      "community_name": "._getLabelCapacity",
       "norm_label": ".generateticklabels()"
     },
     {
@@ -10684,8 +10684,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_no_getvalueforpixel",
-      "community": 71,
-      "community_name": "send_daily_solar_telegram_report",
+      "community": 100,
+      "community_name": "._resolveElementOptions",
       "norm_label": ".getvalueforpixel()"
     },
     {
@@ -10695,8 +10695,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_no_getlabelsize",
-      "community": 82,
-      "community_name": "no",
+      "community": 117,
+      "community_name": "._getLabelCapacity",
       "norm_label": "._getlabelsize()"
     },
     {
@@ -10706,8 +10706,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_no_getlabelcapacity",
-      "community": 82,
-      "community_name": "no",
+      "community": 117,
+      "community_name": "._getLabelCapacity",
       "norm_label": "._getlabelcapacity()"
     },
     {
@@ -10717,8 +10717,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_no_getdatatimestamps",
-      "community": 87,
-      "community_name": ".getDataTimestamps",
+      "community": 82,
+      "community_name": "no",
       "norm_label": ".getdatatimestamps()"
     },
     {
@@ -10728,8 +10728,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_no_getlabeltimestamps",
-      "community": 87,
-      "community_name": ".getDataTimestamps",
+      "community": 82,
+      "community_name": "no",
       "norm_label": ".getlabeltimestamps()"
     },
     {
@@ -10739,8 +10739,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_no_normalize",
-      "community": 87,
-      "community_name": ".getDataTimestamps",
+      "community": 82,
+      "community_name": "no",
       "norm_label": ".normalize()"
     },
     {
@@ -10772,8 +10772,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_determinedatalimits",
-      "community": 27,
-      "community_name": "test_web_config.py",
+      "community": 96,
+      "community_name": ".getLabels",
       "norm_label": "determinedatalimits()"
     },
     {
@@ -10794,8 +10794,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_getlabelforvalue",
-      "community": 71,
-      "community_name": "send_daily_solar_telegram_report",
+      "community": 102,
+      "community_name": "ca",
       "norm_label": "getlabelforvalue()"
     },
     {
@@ -10827,8 +10827,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_getvalueforpixel",
-      "community": 71,
-      "community_name": "send_daily_solar_telegram_report",
+      "community": 101,
+      "community_name": "beforeUpdate",
       "norm_label": "getvalueforpixel()"
     },
     {
@@ -10838,8 +10838,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_getbasepixel",
-      "community": 71,
-      "community_name": "send_daily_solar_telegram_report",
+      "community": 102,
+      "community_name": "ca",
       "norm_label": "getbasepixel()"
     },
     {
@@ -10882,8 +10882,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_gettimestampsfortable",
-      "community": 87,
-      "community_name": ".getDataTimestamps",
+      "community": 82,
+      "community_name": "no",
       "norm_label": "_gettimestampsfortable()"
     },
     {
@@ -10970,8 +10970,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_ia",
-      "community": 74,
-      "community_name": "s",
+      "community": 108,
+      "community_name": "._computeGridLineItems",
       "norm_label": "ia()"
     },
     {
@@ -10981,8 +10981,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_sa",
-      "community": 91,
-      "community_name": "fa",
+      "community": 102,
+      "community_name": "ca",
       "norm_label": "sa()"
     },
     {
@@ -11003,8 +11003,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_oa",
-      "community": 14,
-      "community_name": "test_auth.py",
+      "community": 105,
+      "community_name": "Si",
       "norm_label": "oa()"
     },
     {
@@ -11025,8 +11025,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_ra",
-      "community": 27,
-      "community_name": "test_web_config.py",
+      "community": 75,
+      "community_name": "inRange",
       "norm_label": "ra()"
     },
     {
@@ -11036,8 +11036,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_la",
-      "community": 27,
-      "community_name": "test_web_config.py",
+      "community": 75,
+      "community_name": "inRange",
       "norm_label": "la()"
     },
     {
@@ -11091,8 +11091,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_ca",
-      "community": 80,
-      "community_name": "eo",
+      "community": 102,
+      "community_name": "ca",
       "norm_label": "ca()"
     },
     {
@@ -11157,8 +11157,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_afterdatasetsupdate",
-      "community": 14,
-      "community_name": "test_auth.py",
+      "community": 103,
+      "community_name": ".getDatasetMeta",
       "norm_label": "afterdatasetsupdate()"
     },
     {
@@ -11289,8 +11289,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_xa_adjusthitboxes",
-      "community": 81,
-      "community_name": "Si",
+      "community": 86,
+      "community_name": "xa",
       "norm_label": ".adjusthitboxes()"
     },
     {
@@ -11322,7 +11322,7 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_xa_drawtitle",
-      "community": 81,
+      "community": 105,
       "community_name": "Si",
       "norm_label": ".drawtitle()"
     },
@@ -11333,7 +11333,7 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_xa_computetitleheight",
-      "community": 81,
+      "community": 105,
       "community_name": "Si",
       "norm_label": "._computetitleheight()"
     },
@@ -11366,8 +11366,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_start",
-      "community": 14,
-      "community_name": "test_auth.py",
+      "community": 20,
+      "community_name": "chart.min.js",
       "norm_label": "start()"
     },
     {
@@ -11377,8 +11377,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_stop",
-      "community": 14,
-      "community_name": "test_auth.py",
+      "community": 106,
+      "community_name": ".buildOrUpdateControllers",
       "norm_label": "stop()"
     },
     {
@@ -11388,8 +11388,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_beforeupdate",
-      "community": 101,
-      "community_name": "beforeUpdate",
+      "community": 77,
+      "community_name": "bn",
       "norm_label": "beforeupdate()"
     },
     {
@@ -11465,8 +11465,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_va_drawargs",
-      "community": 95,
-      "community_name": ".isHorizontal",
+      "community": 99,
+      "community_name": "._layers",
       "norm_label": "._drawargs()"
     },
     {
@@ -11476,8 +11476,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_va_draw",
-      "community": 81,
-      "community_name": "Si",
+      "community": 99,
+      "community_name": "._layers",
       "norm_label": ".draw()"
     },
     {
@@ -11498,8 +11498,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_label",
-      "community": 74,
-      "community_name": "s",
+      "community": 27,
+      "community_name": "test_web_config.py",
       "norm_label": "label()"
     },
     {
@@ -11509,8 +11509,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_labelcolor",
-      "community": 100,
-      "community_name": "._resolveElementOptions",
+      "community": 77,
+      "community_name": "bn",
       "norm_label": "labelcolor()"
     },
     {
@@ -11531,8 +11531,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_labelpointstyle",
-      "community": 100,
-      "community_name": "._resolveElementOptions",
+      "community": 77,
+      "community_name": "bn",
       "norm_label": "labelpointstyle()"
     },
     {
@@ -11542,8 +11542,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_va_initialize",
-      "community": 101,
-      "community_name": "beforeUpdate",
+      "community": 77,
+      "community_name": "bn",
       "norm_label": ".initialize()"
     },
     {
@@ -11663,8 +11663,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_va_drawtitle",
-      "community": 81,
-      "community_name": "Si",
+      "community": 99,
+      "community_name": "._layers",
       "norm_label": ".drawtitle()"
     },
     {
@@ -11729,8 +11729,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_va_willrender",
-      "community": 76,
-      "community_name": "va",
+      "community": 97,
+      "community_name": ".getDataset",
       "norm_label": "._willrender()"
     },
     {
@@ -11740,8 +11740,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_va_getactiveelements",
-      "community": 71,
-      "community_name": "send_daily_solar_telegram_report",
+      "community": 102,
+      "community_name": "ca",
       "norm_label": ".getactiveelements()"
     },
     {
@@ -11806,8 +11806,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_afterdraw",
-      "community": 76,
-      "community_name": "va",
+      "community": 97,
+      "community_name": ".getDataset",
       "norm_label": "afterdraw()"
     },
     {
@@ -12518,7 +12518,7 @@
       "label": "\ud83d\udd0c L\u00f3gica de Hardware (ESP8266 Wemos D1 R1)",
       "file_type": "document",
       "source_file": ".agents/AGENTS.md",
-      "source_location": "L16",
+      "source_location": "L17",
       "_origin": "ast",
       "id": "agents_agents_l\u00f3gica_de_hardware_esp8266_wemos_d1_r1",
       "community": 12,
@@ -12529,7 +12529,7 @@
       "label": "\u2699\ufe0f Manuten\u00e7\u00e3o de Servi\u00e7os",
       "file_type": "document",
       "source_file": ".agents/AGENTS.md",
-      "source_location": "L20",
+      "source_location": "L21",
       "_origin": "ast",
       "id": "agents_agents_manuten\u00e7\u00e3o_de_servi\u00e7os",
       "community": 12,
@@ -12540,7 +12540,7 @@
       "label": "\ud83e\uddea Testes de Integridade",
       "file_type": "document",
       "source_file": ".agents/AGENTS.md",
-      "source_location": "L26",
+      "source_location": "L27",
       "_origin": "ast",
       "id": "agents_agents_testes_de_integridade",
       "community": 12,
@@ -12551,7 +12551,7 @@
       "label": "\u26a1 Gest\u00e3o de Consumo e Tarifas",
       "file_type": "document",
       "source_file": ".agents/AGENTS.md",
-      "source_location": "L29",
+      "source_location": "L30",
       "_origin": "ast",
       "id": "agents_agents_gest\u00e3o_de_consumo_e_tarifas",
       "community": 12,
@@ -12562,7 +12562,7 @@
       "label": "\ud83d\udee1\ufe0f Guardrails & Resili\u00eancia",
       "file_type": "document",
       "source_file": ".agents/AGENTS.md",
-      "source_location": "L34",
+      "source_location": "L35",
       "_origin": "ast",
       "id": "agents_agents_guardrails_resili\u00eancia",
       "community": 12,
@@ -13577,8 +13577,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "diario_alteracoes",
-      "community": 0,
-      "community_name": "Di\u00e1rio de Altera\u00e7\u00f5es (Changelog) - 21/06/2026",
+      "community": 109,
+      "community_name": "\ud83d\udd0d 1. Problemas e Solicita\u00e7\u00f5es",
       "norm_label": "diario_alteracoes.md"
     },
     {
@@ -13588,180 +13588,213 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "diario_alteracoes_di\u00e1rio_de_altera\u00e7\u00f5es_changelog_01_08_2026_roadmap_fotovoltaico_completo",
-      "community": 0,
-      "community_name": "Di\u00e1rio de Altera\u00e7\u00f5es (Changelog) - 21/06/2026",
+      "community": 111,
+      "community_name": "Di\u00e1rio de Altera\u00e7\u00f5es (Changelog) - 01/08/2026 (Roadmap Fotovoltaico Completo)",
       "norm_label": "diario de alteracoes (changelog) - 01/08/2026 (roadmap fotovoltaico completo)"
+    },
+    {
+      "label": "\u26a1 02/08/2026 - Corre\u00e7\u00e3o de Oscila\u00e7\u00e3o de Luzes (Fuso Hor\u00e1rio de Fallback MQTT BRT)",
+      "file_type": "document",
+      "source_file": "DIARIO_ALTERACOES.md",
+      "source_location": "L7",
+      "_origin": "ast",
+      "id": "diario_alteracoes_02_08_2026_corre\u00e7\u00e3o_de_oscila\u00e7\u00e3o_de_luzes_fuso_hor\u00e1rio_de_fallback_mqtt_brt",
+      "community": 111,
+      "community_name": "Di\u00e1rio de Altera\u00e7\u00f5es (Changelog) - 01/08/2026 (Roadmap Fotovoltaico Completo)",
+      "norm_label": "\u26a1 02/08/2026 - correcao de oscilacao de luzes (fuso horario de fallback mqtt brt)"
+    },
+    {
+      "label": "\ud83d\udc1b Diagn\u00f3stico do Problema (Luzes Piscando a Cada Minuto)",
+      "file_type": "document",
+      "source_file": "DIARIO_ALTERACOES.md",
+      "source_location": "L9",
+      "_origin": "ast",
+      "id": "diario_alteracoes_diagn\u00f3stico_do_problema_luzes_piscando_a_cada_minuto",
+      "community": 111,
+      "community_name": "Di\u00e1rio de Altera\u00e7\u00f5es (Changelog) - 01/08/2026 (Roadmap Fotovoltaico Completo)",
+      "norm_label": "\ud83d\udc1b diagnostico do problema (luzes piscando a cada minuto)"
+    },
+    {
+      "label": "\ud83d\udee0\ufe0f Corre\u00e7\u00f5es e Ajustes",
+      "file_type": "document",
+      "source_file": "DIARIO_ALTERACOES.md",
+      "source_location": "L12",
+      "_origin": "ast",
+      "id": "diario_alteracoes_corre\u00e7\u00f5es_e_ajustes",
+      "community": 111,
+      "community_name": "Di\u00e1rio de Altera\u00e7\u00f5es (Changelog) - 01/08/2026 (Roadmap Fotovoltaico Completo)",
+      "norm_label": "\ud83d\udee0\ufe0f correcoes e ajustes"
     },
     {
       "label": "\u2600\ufe0f 1. Resumo das Etapas Implementadas (Roadmap Solar)",
       "file_type": "document",
       "source_file": "DIARIO_ALTERACOES.md",
-      "source_location": "L7",
+      "source_location": "L19",
       "_origin": "ast",
       "id": "diario_alteracoes_1_resumo_das_etapas_implementadas_roadmap_solar",
-      "community": 0,
-      "community_name": "Di\u00e1rio de Altera\u00e7\u00f5es (Changelog) - 21/06/2026",
+      "community": 107,
+      "community_name": "\u2600\ufe0f 1. Resumo das Etapas Implementadas (Roadmap Solar)",
       "norm_label": "\u2600\ufe0f 1. resumo das etapas implementadas (roadmap solar)"
     },
     {
       "label": "\ud83d\ude80 Resili\u00eancia de Scraping por Endere\u00e7o MAC (Inversor Solar)",
       "file_type": "document",
       "source_file": "DIARIO_ALTERACOES.md",
-      "source_location": "L9",
+      "source_location": "L21",
       "_origin": "ast",
       "id": "diario_alteracoes_resili\u00eancia_de_scraping_por_endere\u00e7o_mac_inversor_solar",
-      "community": 0,
-      "community_name": "Di\u00e1rio de Altera\u00e7\u00f5es (Changelog) - 21/06/2026",
+      "community": 107,
+      "community_name": "\u2600\ufe0f 1. Resumo das Etapas Implementadas (Roadmap Solar)",
       "norm_label": "\ud83d\ude80 resiliencia de scraping por endereco mac (inversor solar)"
     },
     {
       "label": "\ud83d\udcc8 Etapa 1: Relat\u00f3rio P\u00f3s-P\u00f4r do Sol com Gr\u00e1fico Matplotlib Headless",
       "file_type": "document",
       "source_file": "DIARIO_ALTERACOES.md",
-      "source_location": "L12",
+      "source_location": "L24",
       "_origin": "ast",
       "id": "diario_alteracoes_etapa_1_relat\u00f3rio_p\u00f3s_p\u00f4r_do_sol_com_gr\u00e1fico_matplotlib_headless",
-      "community": 0,
-      "community_name": "Di\u00e1rio de Altera\u00e7\u00f5es (Changelog) - 21/06/2026",
+      "community": 107,
+      "community_name": "\u2600\ufe0f 1. Resumo das Etapas Implementadas (Roadmap Solar)",
       "norm_label": "\ud83d\udcc8 etapa 1: relatorio pos-por do sol com grafico matplotlib headless"
     },
     {
       "label": "\ud83d\udd2e Etapa 2: Previs\u00e3o Solar via Open-Meteo & Calibra\u00e7\u00e3o Din\u00e2mica",
       "file_type": "document",
       "source_file": "DIARIO_ALTERACOES.md",
-      "source_location": "L15",
+      "source_location": "L27",
       "_origin": "ast",
       "id": "diario_alteracoes_etapa_2_previs\u00e3o_solar_via_open_meteo_calibra\u00e7\u00e3o_din\u00e2mica",
-      "community": 0,
-      "community_name": "Di\u00e1rio de Altera\u00e7\u00f5es (Changelog) - 21/06/2026",
+      "community": 107,
+      "community_name": "\u2600\ufe0f 1. Resumo das Etapas Implementadas (Roadmap Solar)",
       "norm_label": "\ud83d\udd2e etapa 2: previsao solar via open-meteo & calibracao dinamica"
     },
     {
       "label": "\ud83d\udcca Etapa 3: Curva Sino de Pot\u00eancia no Dashboard Frontend Web",
       "file_type": "document",
       "source_file": "DIARIO_ALTERACOES.md",
-      "source_location": "L18",
+      "source_location": "L30",
       "_origin": "ast",
       "id": "diario_alteracoes_etapa_3_curva_sino_de_pot\u00eancia_no_dashboard_frontend_web",
-      "community": 0,
-      "community_name": "Di\u00e1rio de Altera\u00e7\u00f5es (Changelog) - 21/06/2026",
+      "community": 107,
+      "community_name": "\u2600\ufe0f 1. Resumo das Etapas Implementadas (Roadmap Solar)",
       "norm_label": "\ud83d\udcca etapa 3: curva sino de potencia no dashboard frontend web"
     },
     {
       "label": "\ud83d\udea8 Etapa 4: Alertas de Anomalia + Agente IA Especialista em El\u00e9trica Solar (Gemini API)",
       "file_type": "document",
       "source_file": "DIARIO_ALTERACOES.md",
-      "source_location": "L21",
+      "source_location": "L33",
       "_origin": "ast",
       "id": "diario_alteracoes_etapa_4_alertas_de_anomalia_agente_ia_especialista_em_el\u00e9trica_solar_gemini_api",
-      "community": 0,
-      "community_name": "Di\u00e1rio de Altera\u00e7\u00f5es (Changelog) - 21/06/2026",
+      "community": 107,
+      "community_name": "\u2600\ufe0f 1. Resumo das Etapas Implementadas (Roadmap Solar)",
       "norm_label": "\ud83d\udea8 etapa 4: alertas de anomalia + agente ia especialista em eletrica solar (gemini api)"
     },
     {
       "label": "\ud83c\udf27\ufe0f Etapa 5: Alerta Preventivo de Chuva (Drop Solar + Open-Meteo)",
       "file_type": "document",
       "source_file": "DIARIO_ALTERACOES.md",
-      "source_location": "L25",
+      "source_location": "L37",
       "_origin": "ast",
       "id": "diario_alteracoes_etapa_5_alerta_preventivo_de_chuva_drop_solar_open_meteo",
-      "community": 0,
-      "community_name": "Di\u00e1rio de Altera\u00e7\u00f5es (Changelog) - 21/06/2026",
+      "community": 107,
+      "community_name": "\u2600\ufe0f 1. Resumo das Etapas Implementadas (Roadmap Solar)",
       "norm_label": "\ud83c\udf27\ufe0f etapa 5: alerta preventivo de chuva (drop solar + open-meteo)"
     },
     {
       "label": "\ud83d\udcca Etapa 6: Relat\u00f3rio Mensal Consolidado + Agente Consultor IA (Cron Dia 01 \u00e0s 06:30h)",
       "file_type": "document",
       "source_file": "DIARIO_ALTERACOES.md",
-      "source_location": "L28",
+      "source_location": "L40",
       "_origin": "ast",
       "id": "diario_alteracoes_etapa_6_relat\u00f3rio_mensal_consolidado_agente_consultor_ia_cron_dia_01_\u00e0s_06_30h",
-      "community": 0,
-      "community_name": "Di\u00e1rio de Altera\u00e7\u00f5es (Changelog) - 21/06/2026",
+      "community": 107,
+      "community_name": "\u2600\ufe0f 1. Resumo das Etapas Implementadas (Roadmap Solar)",
       "norm_label": "\ud83d\udcca etapa 6: relatorio mensal consolidado + agente consultor ia (cron dia 01 as 06:30h)"
     },
     {
       "label": "\ud83e\uddea 2. Valida\u00e7\u00e3o & Deploy em Produ\u00e7\u00e3o",
       "file_type": "document",
       "source_file": "DIARIO_ALTERACOES.md",
-      "source_location": "L33",
+      "source_location": "L45",
       "_origin": "ast",
       "id": "diario_alteracoes_2_valida\u00e7\u00e3o_deploy_em_produ\u00e7\u00e3o",
-      "community": 0,
-      "community_name": "Di\u00e1rio de Altera\u00e7\u00f5es (Changelog) - 21/06/2026",
+      "community": 111,
+      "community_name": "Di\u00e1rio de Altera\u00e7\u00f5es (Changelog) - 01/08/2026 (Roadmap Fotovoltaico Completo)",
       "norm_label": "\ud83e\uddea 2. validacao & deploy em producao"
     },
     {
       "label": "Di\u00e1rio de Altera\u00e7\u00f5es (Changelog) - 19/07/2026",
       "file_type": "document",
       "source_file": "DIARIO_ALTERACOES.md",
-      "source_location": "L41",
+      "source_location": "L53",
       "_origin": "ast",
       "id": "diario_alteracoes_di\u00e1rio_de_altera\u00e7\u00f5es_changelog_19_07_2026",
-      "community": 0,
-      "community_name": "Di\u00e1rio de Altera\u00e7\u00f5es (Changelog) - 21/06/2026",
+      "community": 109,
+      "community_name": "\ud83d\udd0d 1. Problemas e Solicita\u00e7\u00f5es",
       "norm_label": "diario de alteracoes (changelog) - 19/07/2026"
     },
     {
       "label": "\ud83d\udd0d 1. Problemas e Solicita\u00e7\u00f5es",
       "file_type": "document",
       "source_file": "DIARIO_ALTERACOES.md",
-      "source_location": "L47",
+      "source_location": "L59",
       "_origin": "ast",
       "id": "diario_alteracoes_1_problemas_e_solicita\u00e7\u00f5es",
-      "community": 0,
-      "community_name": "Di\u00e1rio de Altera\u00e7\u00f5es (Changelog) - 21/06/2026",
+      "community": 109,
+      "community_name": "\ud83d\udd0d 1. Problemas e Solicita\u00e7\u00f5es",
       "norm_label": "\ud83d\udd0d 1. problemas e solicitacoes"
     },
     {
       "label": "\ud83e\uddf9 Prunagem de Banco de Dados e Logs (Housekeeping)",
       "file_type": "document",
       "source_file": "DIARIO_ALTERACOES.md",
-      "source_location": "L49",
+      "source_location": "L61",
       "_origin": "ast",
       "id": "diario_alteracoes_prunagem_de_banco_de_dados_e_logs_housekeeping",
-      "community": 0,
-      "community_name": "Di\u00e1rio de Altera\u00e7\u00f5es (Changelog) - 21/06/2026",
+      "community": 109,
+      "community_name": "\ud83d\udd0d 1. Problemas e Solicita\u00e7\u00f5es",
       "norm_label": "\ud83e\uddf9 prunagem de banco de dados e logs (housekeeping)"
     },
     {
       "label": "\ud83d\udcbe Mosquitto persistence & Desgaste de Cart\u00e3o SD (Overhead de I/O)",
       "file_type": "document",
       "source_file": "DIARIO_ALTERACOES.md",
-      "source_location": "L53",
+      "source_location": "L65",
       "_origin": "ast",
       "id": "diario_alteracoes_mosquitto_persistence_desgaste_de_cart\u00e3o_sd_overhead_de_i_o",
-      "community": 0,
-      "community_name": "Di\u00e1rio de Altera\u00e7\u00f5es (Changelog) - 21/06/2026",
+      "community": 109,
+      "community_name": "\ud83d\udd0d 1. Problemas e Solicita\u00e7\u00f5es",
       "norm_label": "\ud83d\udcbe mosquitto persistence & desgaste de cartao sd (overhead de i/o)"
     },
     {
       "label": "\ud83d\udee1\ufe0f Defini\u00e7\u00e3o de Guardrails do Agente",
       "file_type": "document",
       "source_file": "DIARIO_ALTERACOES.md",
-      "source_location": "L58",
+      "source_location": "L70",
       "_origin": "ast",
       "id": "diario_alteracoes_defini\u00e7\u00e3o_de_guardrails_do_agente",
-      "community": 0,
-      "community_name": "Di\u00e1rio de Altera\u00e7\u00f5es (Changelog) - 21/06/2026",
+      "community": 109,
+      "community_name": "\ud83d\udd0d 1. Problemas e Solicita\u00e7\u00f5es",
       "norm_label": "\ud83d\udee1\ufe0f definicao de guardrails do agente"
     },
     {
       "label": "\ud83d\udee0\ufe0f 2. Resumo de Execu\u00e7\u00e3o em Produ\u00e7\u00e3o",
       "file_type": "document",
       "source_file": "DIARIO_ALTERACOES.md",
-      "source_location": "L63",
+      "source_location": "L75",
       "_origin": "ast",
       "id": "diario_alteracoes_2_resumo_de_execu\u00e7\u00e3o_em_produ\u00e7\u00e3o",
-      "community": 0,
-      "community_name": "Di\u00e1rio de Altera\u00e7\u00f5es (Changelog) - 21/06/2026",
+      "community": 109,
+      "community_name": "\ud83d\udd0d 1. Problemas e Solicita\u00e7\u00f5es",
       "norm_label": "\ud83d\udee0\ufe0f 2. resumo de execucao em producao"
     },
     {
       "label": "Di\u00e1rio de Altera\u00e7\u00f5es (Changelog) - 21/06/2026",
       "file_type": "document",
       "source_file": "DIARIO_ALTERACOES.md",
-      "source_location": "L71",
+      "source_location": "L83",
       "_origin": "ast",
       "id": "diario_alteracoes_di\u00e1rio_de_altera\u00e7\u00f5es_changelog_21_06_2026",
       "community": 0,
@@ -13772,95 +13805,95 @@
       "label": "\ud83d\udd0d 1. Problemas Identificados (Erros em Produ\u00e7\u00e3o)",
       "file_type": "document",
       "source_file": "DIARIO_ALTERACOES.md",
-      "source_location": "L77",
+      "source_location": "L89",
       "_origin": "ast",
       "id": "diario_alteracoes_1_problemas_identificados_erros_em_produ\u00e7\u00e3o",
-      "community": 0,
-      "community_name": "Di\u00e1rio de Altera\u00e7\u00f5es (Changelog) - 21/06/2026",
+      "community": 114,
+      "community_name": "\ud83d\udd0d 1. Problemas Identificados (Erros em Produ\u00e7\u00e3o)",
       "norm_label": "\ud83d\udd0d 1. problemas identificados (erros em producao)"
     },
     {
       "label": "\ud83e\udd16 Telegram Bot Inativo",
       "file_type": "document",
       "source_file": "DIARIO_ALTERACOES.md",
-      "source_location": "L79",
+      "source_location": "L91",
       "_origin": "ast",
       "id": "diario_alteracoes_telegram_bot_inativo",
-      "community": 0,
-      "community_name": "Di\u00e1rio de Altera\u00e7\u00f5es (Changelog) - 21/06/2026",
+      "community": 114,
+      "community_name": "\ud83d\udd0d 1. Problemas Identificados (Erros em Produ\u00e7\u00e3o)",
       "norm_label": "\ud83e\udd16 telegram bot inativo"
     },
     {
       "label": "\ud83d\udd0c Dispositivo Wemos Sem Comunica\u00e7\u00e3o (MQTT Timeout)",
       "file_type": "document",
       "source_file": "DIARIO_ALTERACOES.md",
-      "source_location": "L83",
+      "source_location": "L95",
       "_origin": "ast",
       "id": "diario_alteracoes_dispositivo_wemos_sem_comunica\u00e7\u00e3o_mqtt_timeout",
-      "community": 0,
-      "community_name": "Di\u00e1rio de Altera\u00e7\u00f5es (Changelog) - 21/06/2026",
+      "community": 114,
+      "community_name": "\ud83d\udd0d 1. Problemas Identificados (Erros em Produ\u00e7\u00e3o)",
       "norm_label": "\ud83d\udd0c dispositivo wemos sem comunicacao (mqtt timeout)"
     },
     {
       "label": "\ud83d\udcc5 Erros Cr\u00edticos de Script Inexistente no Cron",
       "file_type": "document",
       "source_file": "DIARIO_ALTERACOES.md",
-      "source_location": "L87",
+      "source_location": "L99",
       "_origin": "ast",
       "id": "diario_alteracoes_erros_cr\u00edticos_de_script_inexistente_no_cron",
-      "community": 0,
-      "community_name": "Di\u00e1rio de Altera\u00e7\u00f5es (Changelog) - 21/06/2026",
+      "community": 114,
+      "community_name": "\ud83d\udd0d 1. Problemas Identificados (Erros em Produ\u00e7\u00e3o)",
       "norm_label": "\ud83d\udcc5 erros criticos de script inexistente no cron"
     },
     {
       "label": "\ud83d\udee0\ufe0f 2. Melhorias e Corre\u00e7\u00f5es Implementadas",
       "file_type": "document",
       "source_file": "DIARIO_ALTERACOES.md",
-      "source_location": "L92",
+      "source_location": "L104",
       "_origin": "ast",
       "id": "diario_alteracoes_2_melhorias_e_corre\u00e7\u00f5es_implementadas",
-      "community": 0,
-      "community_name": "Di\u00e1rio de Altera\u00e7\u00f5es (Changelog) - 21/06/2026",
+      "community": 115,
+      "community_name": "\ud83d\udee0\ufe0f 2. Melhorias e Corre\u00e7\u00f5es Implementadas",
       "norm_label": "\ud83d\udee0\ufe0f 2. melhorias e correcoes implementadas"
     },
     {
       "label": "1. Refatora\u00e7\u00e3o do Watchdog do Bot do Telegram",
       "file_type": "document",
       "source_file": "DIARIO_ALTERACOES.md",
-      "source_location": "L94",
+      "source_location": "L106",
       "_origin": "ast",
       "id": "diario_alteracoes_1_refatora\u00e7\u00e3o_do_watchdog_do_bot_do_telegram",
-      "community": 0,
-      "community_name": "Di\u00e1rio de Altera\u00e7\u00f5es (Changelog) - 21/06/2026",
+      "community": 115,
+      "community_name": "\ud83d\udee0\ufe0f 2. Melhorias e Corre\u00e7\u00f5es Implementadas",
       "norm_label": "1. refatoracao do watchdog do bot do telegram"
     },
     {
       "label": "2. Cria\u00e7\u00e3o do Watchdog Local de Firmware (Resili\u00eancia do Wemos)",
       "file_type": "document",
       "source_file": "DIARIO_ALTERACOES.md",
-      "source_location": "L99",
+      "source_location": "L111",
       "_origin": "ast",
       "id": "diario_alteracoes_2_cria\u00e7\u00e3o_do_watchdog_local_de_firmware_resili\u00eancia_do_wemos",
-      "community": 0,
-      "community_name": "Di\u00e1rio de Altera\u00e7\u00f5es (Changelog) - 21/06/2026",
+      "community": 115,
+      "community_name": "\ud83d\udee0\ufe0f 2. Melhorias e Corre\u00e7\u00f5es Implementadas",
       "norm_label": "2. criacao do watchdog local de firmware (resiliencia do wemos)"
     },
     {
       "label": "3. Desenvolvimento do Relat\u00f3rio Di\u00e1rio de Consumo via Telegram",
       "file_type": "document",
       "source_file": "DIARIO_ALTERACOES.md",
-      "source_location": "L105",
+      "source_location": "L117",
       "_origin": "ast",
       "id": "diario_alteracoes_3_desenvolvimento_do_relat\u00f3rio_di\u00e1rio_de_consumo_via_telegram",
-      "community": 0,
-      "community_name": "Di\u00e1rio de Altera\u00e7\u00f5es (Changelog) - 21/06/2026",
+      "community": 115,
+      "community_name": "\ud83d\udee0\ufe0f 2. Melhorias e Corre\u00e7\u00f5es Implementadas",
       "norm_label": "3. desenvolvimento do relatorio diario de consumo via telegram"
     },
     {
       "label": "\u26c5 3. Implementa\u00e7\u00f5es do Dia 22/06/2026 (Sincroniza\u00e7\u00e3o Meteorol\u00f3gica)",
       "file_type": "document",
       "source_file": "DIARIO_ALTERACOES.md",
-      "source_location": "L113",
+      "source_location": "L125",
       "_origin": "ast",
       "id": "diario_alteracoes_3_implementa\u00e7\u00f5es_do_dia_22_06_2026_sincroniza\u00e7\u00e3o_meteorol\u00f3gica",
       "community": 0,
@@ -13871,7 +13904,7 @@
       "label": "\ud83c\udf27\ufe0f Sincroniza\u00e7\u00e3o Inteligente de Offsets baseada em Cobertura de Nuvens",
       "file_type": "document",
       "source_file": "DIARIO_ALTERACOES.md",
-      "source_location": "L115",
+      "source_location": "L127",
       "_origin": "ast",
       "id": "diario_alteracoes_sincroniza\u00e7\u00e3o_inteligente_de_offsets_baseada_em_cobertura_de_nuvens",
       "community": 0,
@@ -13882,106 +13915,106 @@
       "label": "\ud83d\udca1 4. Implementa\u00e7\u00f5es do Dia 23/06/2026 (Consumo e Resili\u00eancia)",
       "file_type": "document",
       "source_file": "DIARIO_ALTERACOES.md",
-      "source_location": "L131",
+      "source_location": "L143",
       "_origin": "ast",
       "id": "diario_alteracoes_4_implementa\u00e7\u00f5es_do_dia_23_06_2026_consumo_e_resili\u00eancia",
-      "community": 0,
-      "community_name": "Di\u00e1rio de Altera\u00e7\u00f5es (Changelog) - 21/06/2026",
+      "community": 116,
+      "community_name": "\ud83d\udca1 4. Implementa\u00e7\u00f5es do Dia 23/06/2026 (Consumo e Resili\u00eancia)",
       "norm_label": "\ud83d\udca1 4. implementacoes do dia 23/06/2026 (consumo e resiliencia)"
     },
     {
       "label": "\ud83d\udd0c Corre\u00e7\u00e3o do Desligamento Precoce da Luz (Bug de Limite NTP)",
       "file_type": "document",
       "source_file": "DIARIO_ALTERACOES.md",
-      "source_location": "L133",
+      "source_location": "L145",
       "_origin": "ast",
       "id": "diario_alteracoes_corre\u00e7\u00e3o_do_desligamento_precoce_da_luz_bug_de_limite_ntp",
-      "community": 0,
-      "community_name": "Di\u00e1rio de Altera\u00e7\u00f5es (Changelog) - 21/06/2026",
+      "community": 116,
+      "community_name": "\ud83d\udca1 4. Implementa\u00e7\u00f5es do Dia 23/06/2026 (Consumo e Resili\u00eancia)",
       "norm_label": "\ud83d\udd0c correcao do desligamento precoce da luz (bug de limite ntp)"
     },
     {
       "label": "\ud83d\udcca Registro de Dura\u00e7\u00e3o e Consumo de Energia em kWh",
       "file_type": "document",
       "source_file": "DIARIO_ALTERACOES.md",
-      "source_location": "L141",
+      "source_location": "L153",
       "_origin": "ast",
       "id": "diario_alteracoes_registro_de_dura\u00e7\u00e3o_e_consumo_de_energia_em_kwh",
-      "community": 0,
-      "community_name": "Di\u00e1rio de Altera\u00e7\u00f5es (Changelog) - 21/06/2026",
+      "community": 116,
+      "community_name": "\ud83d\udca1 4. Implementa\u00e7\u00f5es do Dia 23/06/2026 (Consumo e Resili\u00eancia)",
       "norm_label": "\ud83d\udcca registro de duracao e consumo de energia em kwh"
     },
     {
       "label": "\ud83d\udee1\ufe0f Fallback Local de Cronograma no Firmware (Wemos Offline)",
       "file_type": "document",
       "source_file": "DIARIO_ALTERACOES.md",
-      "source_location": "L153",
+      "source_location": "L165",
       "_origin": "ast",
       "id": "diario_alteracoes_fallback_local_de_cronograma_no_firmware_wemos_offline",
-      "community": 0,
-      "community_name": "Di\u00e1rio de Altera\u00e7\u00f5es (Changelog) - 21/06/2026",
+      "community": 116,
+      "community_name": "\ud83d\udca1 4. Implementa\u00e7\u00f5es do Dia 23/06/2026 (Consumo e Resili\u00eancia)",
       "norm_label": "\ud83d\udee1\ufe0f fallback local de cronograma no firmware (wemos offline)"
     },
     {
       "label": "\u26a1 5. Implementa\u00e7\u00f5es do Dia 24/06/2026 (Time Sync H\u00edbrido, Rollover e Tarifas ANEEL)",
       "file_type": "document",
       "source_file": "DIARIO_ALTERACOES.md",
-      "source_location": "L162",
+      "source_location": "L174",
       "_origin": "ast",
       "id": "diario_alteracoes_5_implementa\u00e7\u00f5es_do_dia_24_06_2026_time_sync_h\u00edbrido_rollover_e_tarifas_aneel",
-      "community": 0,
-      "community_name": "Di\u00e1rio de Altera\u00e7\u00f5es (Changelog) - 21/06/2026",
+      "community": 112,
+      "community_name": "\u26a1 5. Implementa\u00e7\u00f5es do Dia 24/06/2026 (Time Sync H\u00edbrido, Rollover e Tarifas ANEEL)",
       "norm_label": "\u26a1 5. implementacoes do dia 24/06/2026 (time sync hibrido, rollover e tarifas aneel)"
     },
     {
       "label": "\u23f0 Sincroniza\u00e7\u00e3o de Tempo H\u00edbrida (Remo\u00e7\u00e3o do NTP no Embarcado)",
       "file_type": "document",
       "source_file": "DIARIO_ALTERACOES.md",
-      "source_location": "L164",
+      "source_location": "L176",
       "_origin": "ast",
       "id": "diario_alteracoes_sincroniza\u00e7\u00e3o_de_tempo_h\u00edbrida_remo\u00e7\u00e3o_do_ntp_no_embarcado",
-      "community": 0,
-      "community_name": "Di\u00e1rio de Altera\u00e7\u00f5es (Changelog) - 21/06/2026",
+      "community": 112,
+      "community_name": "\u26a1 5. Implementa\u00e7\u00f5es do Dia 24/06/2026 (Time Sync H\u00edbrido, Rollover e Tarifas ANEEL)",
       "norm_label": "\u23f0 sincronizacao de tempo hibrida (remocao do ntp no embarcado)"
     },
     {
       "label": "\u26a1 Corre\u00e7\u00e3o de Dura\u00e7\u00e3o Truncada por Refor\u00e7o Hor\u00e1rio",
       "file_type": "document",
       "source_file": "DIARIO_ALTERACOES.md",
-      "source_location": "L171",
+      "source_location": "L183",
       "_origin": "ast",
       "id": "diario_alteracoes_corre\u00e7\u00e3o_de_dura\u00e7\u00e3o_truncada_por_refor\u00e7o_hor\u00e1rio",
-      "community": 0,
-      "community_name": "Di\u00e1rio de Altera\u00e7\u00f5es (Changelog) - 21/06/2026",
+      "community": 112,
+      "community_name": "\u26a1 5. Implementa\u00e7\u00f5es do Dia 24/06/2026 (Time Sync H\u00edbrido, Rollover e Tarifas ANEEL)",
       "norm_label": "\u26a1 correcao de duracao truncada por reforco horario"
     },
     {
       "label": "\ud83c\udf19 Mecanismo de Virada de Dia (Rollover)",
       "file_type": "document",
       "source_file": "DIARIO_ALTERACOES.md",
-      "source_location": "L177",
+      "source_location": "L189",
       "_origin": "ast",
       "id": "diario_alteracoes_mecanismo_de_virada_de_dia_rollover",
-      "community": 0,
-      "community_name": "Di\u00e1rio de Altera\u00e7\u00f5es (Changelog) - 21/06/2026",
+      "community": 112,
+      "community_name": "\u26a1 5. Implementa\u00e7\u00f5es do Dia 24/06/2026 (Time Sync H\u00edbrido, Rollover e Tarifas ANEEL)",
       "norm_label": "\ud83c\udf19 mecanismo de virada de dia (rollover)"
     },
     {
       "label": "\ud83d\udcb0 Integra\u00e7\u00e3o Tarif\u00e1ria e Financeira (ANEEL & Impostos)",
       "file_type": "document",
       "source_file": "DIARIO_ALTERACOES.md",
-      "source_location": "L183",
+      "source_location": "L195",
       "_origin": "ast",
       "id": "diario_alteracoes_integra\u00e7\u00e3o_tarif\u00e1ria_e_financeira_aneel_impostos",
-      "community": 0,
-      "community_name": "Di\u00e1rio de Altera\u00e7\u00f5es (Changelog) - 21/06/2026",
+      "community": 112,
+      "community_name": "\u26a1 5. Implementa\u00e7\u00f5es do Dia 24/06/2026 (Time Sync H\u00edbrido, Rollover e Tarifas ANEEL)",
       "norm_label": "\ud83d\udcb0 integracao tarifaria e financeira (aneel & impostos)"
     },
     {
       "label": "\u26a1 6. Implementa\u00e7\u00f5es do Dia 25/06/2026 (Persist\u00eancia de Override Manual e Corre\u00e7\u00e3o de Oscila\u00e7\u00e3o de Fallback)",
       "file_type": "document",
       "source_file": "DIARIO_ALTERACOES.md",
-      "source_location": "L192",
+      "source_location": "L204",
       "_origin": "ast",
       "id": "diario_alteracoes_6_implementa\u00e7\u00f5es_do_dia_25_06_2026_persist\u00eancia_de_override_manual_e_corre\u00e7\u00e3o_de_oscila\u00e7\u00e3o_de_fallback",
       "community": 0,
@@ -13992,7 +14025,7 @@
       "label": "\ud83d\udd04 Corre\u00e7\u00e3o de Oscila\u00e7\u00e3o ao Ligar (Conflito de Fallback e Trigger Solar)",
       "file_type": "document",
       "source_file": "DIARIO_ALTERACOES.md",
-      "source_location": "L194",
+      "source_location": "L206",
       "_origin": "ast",
       "id": "diario_alteracoes_corre\u00e7\u00e3o_de_oscila\u00e7\u00e3o_ao_ligar_conflito_de_fallback_e_trigger_solar",
       "community": 0,
@@ -14003,7 +14036,7 @@
       "label": "\ud83d\udcbe Persist\u00eancia de Decis\u00e3o (Override Manual)",
       "file_type": "document",
       "source_file": "DIARIO_ALTERACOES.md",
-      "source_location": "L201",
+      "source_location": "L213",
       "_origin": "ast",
       "id": "diario_alteracoes_persist\u00eancia_de_decis\u00e3o_override_manual",
       "community": 0,
@@ -14014,7 +14047,7 @@
       "label": "\ud83c\udf99\ufe0f 7. Implementa\u00e7\u00f5es do Dia 11/07/2026 (Comandos de Voz via Gemini API e Reorganiza\u00e7\u00e3o de Documentos)",
       "file_type": "document",
       "source_file": "DIARIO_ALTERACOES.md",
-      "source_location": "L212",
+      "source_location": "L224",
       "_origin": "ast",
       "id": "diario_alteracoes_7_implementa\u00e7\u00f5es_do_dia_11_07_2026_comandos_de_voz_via_gemini_api_e_reorganiza\u00e7\u00e3o_de_documentos",
       "community": 0,
@@ -14025,7 +14058,7 @@
       "label": "\ud83d\udde3\ufe0f Reconhecimento de Comandos de Voz via Telegram Bot",
       "file_type": "document",
       "source_file": "DIARIO_ALTERACOES.md",
-      "source_location": "L214",
+      "source_location": "L226",
       "_origin": "ast",
       "id": "diario_alteracoes_reconhecimento_de_comandos_de_voz_via_telegram_bot",
       "community": 0,
@@ -14036,7 +14069,7 @@
       "label": "\ud83d\udcc2 Reorganiza\u00e7\u00e3o e Limpeza de Documentos (Elimina\u00e7\u00e3o de Redund\u00e2ncias)",
       "file_type": "document",
       "source_file": "DIARIO_ALTERACOES.md",
-      "source_location": "L222",
+      "source_location": "L234",
       "_origin": "ast",
       "id": "diario_alteracoes_reorganiza\u00e7\u00e3o_e_limpeza_de_documentos_elimina\u00e7\u00e3o_de_redund\u00e2ncias",
       "community": 0,
@@ -14047,55 +14080,55 @@
       "label": "\ud83e\udde0 8. Implementa\u00e7\u00f5es do Dia 12/07/2026 (Housekeeping, Resili\u00eancia de DNS Unbound e Rate-limiting no Telegram)",
       "file_type": "document",
       "source_file": "DIARIO_ALTERACOES.md",
-      "source_location": "L233",
+      "source_location": "L245",
       "_origin": "ast",
       "id": "diario_alteracoes_8_implementa\u00e7\u00f5es_do_dia_12_07_2026_housekeeping_resili\u00eancia_de_dns_unbound_e_rate_limiting_no_telegram",
-      "community": 0,
-      "community_name": "Di\u00e1rio de Altera\u00e7\u00f5es (Changelog) - 21/06/2026",
+      "community": 113,
+      "community_name": "\ud83e\udde0 8. Implementa\u00e7\u00f5es do Dia 12/07/2026 (Housekeeping, Resili\u00eancia de DNS Unbound e Rate-limiting no Telegram)",
       "norm_label": "\ud83e\udde0 8. implementacoes do dia 12/07/2026 (housekeeping, resiliencia de dns unbound e rate-limiting no telegram)"
     },
     {
       "label": "\ud83e\uddf9 Housekeeping de Logs (logrotate e copytruncate)",
       "file_type": "document",
       "source_file": "DIARIO_ALTERACOES.md",
-      "source_location": "L235",
+      "source_location": "L247",
       "_origin": "ast",
       "id": "diario_alteracoes_housekeeping_de_logs_logrotate_e_copytruncate",
-      "community": 0,
-      "community_name": "Di\u00e1rio de Altera\u00e7\u00f5es (Changelog) - 21/06/2026",
+      "community": 113,
+      "community_name": "\ud83e\udde0 8. Implementa\u00e7\u00f5es do Dia 12/07/2026 (Housekeeping, Resili\u00eancia de DNS Unbound e Rate-limiting no Telegram)",
       "norm_label": "\ud83e\uddf9 housekeeping de logs (logrotate e copytruncate)"
     },
     {
       "label": "\ud83e\udd16 An\u00e1lise e Notifica\u00e7\u00e3o Inteligente de Erros (Gemini 2.5 Flash + Telegram)",
       "file_type": "document",
       "source_file": "DIARIO_ALTERACOES.md",
-      "source_location": "L243",
+      "source_location": "L255",
       "_origin": "ast",
       "id": "diario_alteracoes_an\u00e1lise_e_notifica\u00e7\u00e3o_inteligente_de_erros_gemini_2_5_flash_telegram",
-      "community": 0,
-      "community_name": "Di\u00e1rio de Altera\u00e7\u00f5es (Changelog) - 21/06/2026",
+      "community": 113,
+      "community_name": "\ud83e\udde0 8. Implementa\u00e7\u00f5es do Dia 12/07/2026 (Housekeeping, Resili\u00eancia de DNS Unbound e Rate-limiting no Telegram)",
       "norm_label": "\ud83e\udd16 analise e notificacao inteligente de erros (gemini 2.5 flash + telegram)"
     },
     {
       "label": "\ud83c\udf10 Watchdog H\u00edbrido de Internet e DNS Local Unbound (Governan\u00e7a e Autorrecupera\u00e7\u00e3o)",
       "file_type": "document",
       "source_file": "DIARIO_ALTERACOES.md",
-      "source_location": "L252",
+      "source_location": "L264",
       "_origin": "ast",
       "id": "diario_alteracoes_watchdog_h\u00edbrido_de_internet_e_dns_local_unbound_governan\u00e7a_e_autorrecupera\u00e7\u00e3o",
-      "community": 0,
-      "community_name": "Di\u00e1rio de Altera\u00e7\u00f5es (Changelog) - 21/06/2026",
+      "community": 113,
+      "community_name": "\ud83e\udde0 8. Implementa\u00e7\u00f5es do Dia 12/07/2026 (Housekeeping, Resili\u00eancia de DNS Unbound e Rate-limiting no Telegram)",
       "norm_label": "\ud83c\udf10 watchdog hibrido de internet e dns local unbound (governanca e autorrecuperacao)"
     },
     {
       "label": "\u2600\ufe0f Coleta e Scraping de Dados de Gera\u00e7\u00e3o Solar (Inversor LAN 192.168.1.13)",
       "file_type": "document",
       "source_file": "DIARIO_ALTERACOES.md",
-      "source_location": "L260",
+      "source_location": "L272",
       "_origin": "ast",
       "id": "diario_alteracoes_coleta_e_scraping_de_dados_de_gera\u00e7\u00e3o_solar_inversor_lan_192_168_1_13",
-      "community": 0,
-      "community_name": "Di\u00e1rio de Altera\u00e7\u00f5es (Changelog) - 21/06/2026",
+      "community": 113,
+      "community_name": "\ud83e\udde0 8. Implementa\u00e7\u00f5es do Dia 12/07/2026 (Housekeeping, Resili\u00eancia de DNS Unbound e Rate-limiting no Telegram)",
       "norm_label": "\u2600\ufe0f coleta e scraping de dados de geracao solar (inversor lan 192.168.1.13)"
     },
     {
@@ -46762,7 +46795,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": ".agents/AGENTS.md",
-      "source_location": "L29",
+      "source_location": "L30",
       "weight": 1.0,
       "_origin": "ast",
       "source": "agents_agents_light_manager_workspace_rules",
@@ -46773,7 +46806,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": ".agents/AGENTS.md",
-      "source_location": "L34",
+      "source_location": "L35",
       "weight": 1.0,
       "_origin": "ast",
       "source": "agents_agents_light_manager_workspace_rules",
@@ -46784,7 +46817,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": ".agents/AGENTS.md",
-      "source_location": "L16",
+      "source_location": "L17",
       "weight": 1.0,
       "_origin": "ast",
       "source": "agents_agents_light_manager_workspace_rules",
@@ -46795,7 +46828,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": ".agents/AGENTS.md",
-      "source_location": "L20",
+      "source_location": "L21",
       "weight": 1.0,
       "_origin": "ast",
       "source": "agents_agents_light_manager_workspace_rules",
@@ -46806,7 +46839,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": ".agents/AGENTS.md",
-      "source_location": "L26",
+      "source_location": "L27",
       "weight": 1.0,
       "_origin": "ast",
       "source": "agents_agents_light_manager_workspace_rules",
@@ -47675,7 +47708,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "DIARIO_ALTERACOES.md",
-      "source_location": "L41",
+      "source_location": "L53",
       "weight": 1.0,
       "_origin": "ast",
       "source": "diario_alteracoes",
@@ -47686,7 +47719,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "DIARIO_ALTERACOES.md",
-      "source_location": "L71",
+      "source_location": "L83",
       "weight": 1.0,
       "_origin": "ast",
       "source": "diario_alteracoes",
@@ -47701,6 +47734,17 @@
       "weight": 1.0,
       "_origin": "ast",
       "source": "diario_alteracoes_di\u00e1rio_de_altera\u00e7\u00f5es_changelog_01_08_2026_roadmap_fotovoltaico_completo",
+      "target": "diario_alteracoes_02_08_2026_corre\u00e7\u00e3o_de_oscila\u00e7\u00e3o_de_luzes_fuso_hor\u00e1rio_de_fallback_mqtt_brt",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "DIARIO_ALTERACOES.md",
+      "source_location": "L19",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "diario_alteracoes_di\u00e1rio_de_altera\u00e7\u00f5es_changelog_01_08_2026_roadmap_fotovoltaico_completo",
       "target": "diario_alteracoes_1_resumo_das_etapas_implementadas_roadmap_solar",
       "confidence_score": 1.0
     },
@@ -47708,7 +47752,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "DIARIO_ALTERACOES.md",
-      "source_location": "L33",
+      "source_location": "L45",
       "weight": 1.0,
       "_origin": "ast",
       "source": "diario_alteracoes_di\u00e1rio_de_altera\u00e7\u00f5es_changelog_01_08_2026_roadmap_fotovoltaico_completo",
@@ -47722,6 +47766,28 @@
       "source_location": "L12",
       "weight": 1.0,
       "_origin": "ast",
+      "source": "diario_alteracoes_02_08_2026_corre\u00e7\u00e3o_de_oscila\u00e7\u00e3o_de_luzes_fuso_hor\u00e1rio_de_fallback_mqtt_brt",
+      "target": "diario_alteracoes_corre\u00e7\u00f5es_e_ajustes",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "DIARIO_ALTERACOES.md",
+      "source_location": "L9",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "diario_alteracoes_02_08_2026_corre\u00e7\u00e3o_de_oscila\u00e7\u00e3o_de_luzes_fuso_hor\u00e1rio_de_fallback_mqtt_brt",
+      "target": "diario_alteracoes_diagn\u00f3stico_do_problema_luzes_piscando_a_cada_minuto",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "DIARIO_ALTERACOES.md",
+      "source_location": "L24",
+      "weight": 1.0,
+      "_origin": "ast",
       "source": "diario_alteracoes_1_resumo_das_etapas_implementadas_roadmap_solar",
       "target": "diario_alteracoes_etapa_1_relat\u00f3rio_p\u00f3s_p\u00f4r_do_sol_com_gr\u00e1fico_matplotlib_headless",
       "confidence_score": 1.0
@@ -47730,7 +47796,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "DIARIO_ALTERACOES.md",
-      "source_location": "L15",
+      "source_location": "L27",
       "weight": 1.0,
       "_origin": "ast",
       "source": "diario_alteracoes_1_resumo_das_etapas_implementadas_roadmap_solar",
@@ -47741,7 +47807,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "DIARIO_ALTERACOES.md",
-      "source_location": "L18",
+      "source_location": "L30",
       "weight": 1.0,
       "_origin": "ast",
       "source": "diario_alteracoes_1_resumo_das_etapas_implementadas_roadmap_solar",
@@ -47752,7 +47818,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "DIARIO_ALTERACOES.md",
-      "source_location": "L21",
+      "source_location": "L33",
       "weight": 1.0,
       "_origin": "ast",
       "source": "diario_alteracoes_1_resumo_das_etapas_implementadas_roadmap_solar",
@@ -47763,7 +47829,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "DIARIO_ALTERACOES.md",
-      "source_location": "L25",
+      "source_location": "L37",
       "weight": 1.0,
       "_origin": "ast",
       "source": "diario_alteracoes_1_resumo_das_etapas_implementadas_roadmap_solar",
@@ -47774,7 +47840,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "DIARIO_ALTERACOES.md",
-      "source_location": "L28",
+      "source_location": "L40",
       "weight": 1.0,
       "_origin": "ast",
       "source": "diario_alteracoes_1_resumo_das_etapas_implementadas_roadmap_solar",
@@ -47785,7 +47851,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "DIARIO_ALTERACOES.md",
-      "source_location": "L9",
+      "source_location": "L21",
       "weight": 1.0,
       "_origin": "ast",
       "source": "diario_alteracoes_1_resumo_das_etapas_implementadas_roadmap_solar",
@@ -47796,7 +47862,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "DIARIO_ALTERACOES.md",
-      "source_location": "L47",
+      "source_location": "L59",
       "weight": 1.0,
       "_origin": "ast",
       "source": "diario_alteracoes_di\u00e1rio_de_altera\u00e7\u00f5es_changelog_19_07_2026",
@@ -47807,7 +47873,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "DIARIO_ALTERACOES.md",
-      "source_location": "L63",
+      "source_location": "L75",
       "weight": 1.0,
       "_origin": "ast",
       "source": "diario_alteracoes_di\u00e1rio_de_altera\u00e7\u00f5es_changelog_19_07_2026",
@@ -47818,7 +47884,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "DIARIO_ALTERACOES.md",
-      "source_location": "L58",
+      "source_location": "L70",
       "weight": 1.0,
       "_origin": "ast",
       "source": "diario_alteracoes_1_problemas_e_solicita\u00e7\u00f5es",
@@ -47829,7 +47895,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "DIARIO_ALTERACOES.md",
-      "source_location": "L53",
+      "source_location": "L65",
       "weight": 1.0,
       "_origin": "ast",
       "source": "diario_alteracoes_1_problemas_e_solicita\u00e7\u00f5es",
@@ -47840,7 +47906,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "DIARIO_ALTERACOES.md",
-      "source_location": "L49",
+      "source_location": "L61",
       "weight": 1.0,
       "_origin": "ast",
       "source": "diario_alteracoes_1_problemas_e_solicita\u00e7\u00f5es",
@@ -47851,7 +47917,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "DIARIO_ALTERACOES.md",
-      "source_location": "L77",
+      "source_location": "L89",
       "weight": 1.0,
       "_origin": "ast",
       "source": "diario_alteracoes_di\u00e1rio_de_altera\u00e7\u00f5es_changelog_21_06_2026",
@@ -47862,7 +47928,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "DIARIO_ALTERACOES.md",
-      "source_location": "L92",
+      "source_location": "L104",
       "weight": 1.0,
       "_origin": "ast",
       "source": "diario_alteracoes_di\u00e1rio_de_altera\u00e7\u00f5es_changelog_21_06_2026",
@@ -47873,7 +47939,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "DIARIO_ALTERACOES.md",
-      "source_location": "L113",
+      "source_location": "L125",
       "weight": 1.0,
       "_origin": "ast",
       "source": "diario_alteracoes_di\u00e1rio_de_altera\u00e7\u00f5es_changelog_21_06_2026",
@@ -47884,7 +47950,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "DIARIO_ALTERACOES.md",
-      "source_location": "L131",
+      "source_location": "L143",
       "weight": 1.0,
       "_origin": "ast",
       "source": "diario_alteracoes_di\u00e1rio_de_altera\u00e7\u00f5es_changelog_21_06_2026",
@@ -47895,7 +47961,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "DIARIO_ALTERACOES.md",
-      "source_location": "L162",
+      "source_location": "L174",
       "weight": 1.0,
       "_origin": "ast",
       "source": "diario_alteracoes_di\u00e1rio_de_altera\u00e7\u00f5es_changelog_21_06_2026",
@@ -47906,7 +47972,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "DIARIO_ALTERACOES.md",
-      "source_location": "L192",
+      "source_location": "L204",
       "weight": 1.0,
       "_origin": "ast",
       "source": "diario_alteracoes_di\u00e1rio_de_altera\u00e7\u00f5es_changelog_21_06_2026",
@@ -47917,7 +47983,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "DIARIO_ALTERACOES.md",
-      "source_location": "L212",
+      "source_location": "L224",
       "weight": 1.0,
       "_origin": "ast",
       "source": "diario_alteracoes_di\u00e1rio_de_altera\u00e7\u00f5es_changelog_21_06_2026",
@@ -47928,7 +47994,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "DIARIO_ALTERACOES.md",
-      "source_location": "L233",
+      "source_location": "L245",
       "weight": 1.0,
       "_origin": "ast",
       "source": "diario_alteracoes_di\u00e1rio_de_altera\u00e7\u00f5es_changelog_21_06_2026",
@@ -47939,7 +48005,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "DIARIO_ALTERACOES.md",
-      "source_location": "L83",
+      "source_location": "L95",
       "weight": 1.0,
       "_origin": "ast",
       "source": "diario_alteracoes_1_problemas_identificados_erros_em_produ\u00e7\u00e3o",
@@ -47950,7 +48016,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "DIARIO_ALTERACOES.md",
-      "source_location": "L87",
+      "source_location": "L99",
       "weight": 1.0,
       "_origin": "ast",
       "source": "diario_alteracoes_1_problemas_identificados_erros_em_produ\u00e7\u00e3o",
@@ -47961,7 +48027,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "DIARIO_ALTERACOES.md",
-      "source_location": "L79",
+      "source_location": "L91",
       "weight": 1.0,
       "_origin": "ast",
       "source": "diario_alteracoes_1_problemas_identificados_erros_em_produ\u00e7\u00e3o",
@@ -47972,7 +48038,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "DIARIO_ALTERACOES.md",
-      "source_location": "L94",
+      "source_location": "L106",
       "weight": 1.0,
       "_origin": "ast",
       "source": "diario_alteracoes_2_melhorias_e_corre\u00e7\u00f5es_implementadas",
@@ -47983,7 +48049,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "DIARIO_ALTERACOES.md",
-      "source_location": "L99",
+      "source_location": "L111",
       "weight": 1.0,
       "_origin": "ast",
       "source": "diario_alteracoes_2_melhorias_e_corre\u00e7\u00f5es_implementadas",
@@ -47994,7 +48060,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "DIARIO_ALTERACOES.md",
-      "source_location": "L105",
+      "source_location": "L117",
       "weight": 1.0,
       "_origin": "ast",
       "source": "diario_alteracoes_2_melhorias_e_corre\u00e7\u00f5es_implementadas",
@@ -48005,7 +48071,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "DIARIO_ALTERACOES.md",
-      "source_location": "L115",
+      "source_location": "L127",
       "weight": 1.0,
       "_origin": "ast",
       "source": "diario_alteracoes_3_implementa\u00e7\u00f5es_do_dia_22_06_2026_sincroniza\u00e7\u00e3o_meteorol\u00f3gica",
@@ -48016,7 +48082,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "DIARIO_ALTERACOES.md",
-      "source_location": "L133",
+      "source_location": "L145",
       "weight": 1.0,
       "_origin": "ast",
       "source": "diario_alteracoes_4_implementa\u00e7\u00f5es_do_dia_23_06_2026_consumo_e_resili\u00eancia",
@@ -48027,7 +48093,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "DIARIO_ALTERACOES.md",
-      "source_location": "L153",
+      "source_location": "L165",
       "weight": 1.0,
       "_origin": "ast",
       "source": "diario_alteracoes_4_implementa\u00e7\u00f5es_do_dia_23_06_2026_consumo_e_resili\u00eancia",
@@ -48038,7 +48104,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "DIARIO_ALTERACOES.md",
-      "source_location": "L141",
+      "source_location": "L153",
       "weight": 1.0,
       "_origin": "ast",
       "source": "diario_alteracoes_4_implementa\u00e7\u00f5es_do_dia_23_06_2026_consumo_e_resili\u00eancia",
@@ -48049,7 +48115,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "DIARIO_ALTERACOES.md",
-      "source_location": "L171",
+      "source_location": "L183",
       "weight": 1.0,
       "_origin": "ast",
       "source": "diario_alteracoes_5_implementa\u00e7\u00f5es_do_dia_24_06_2026_time_sync_h\u00edbrido_rollover_e_tarifas_aneel",
@@ -48060,7 +48126,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "DIARIO_ALTERACOES.md",
-      "source_location": "L183",
+      "source_location": "L195",
       "weight": 1.0,
       "_origin": "ast",
       "source": "diario_alteracoes_5_implementa\u00e7\u00f5es_do_dia_24_06_2026_time_sync_h\u00edbrido_rollover_e_tarifas_aneel",
@@ -48071,7 +48137,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "DIARIO_ALTERACOES.md",
-      "source_location": "L177",
+      "source_location": "L189",
       "weight": 1.0,
       "_origin": "ast",
       "source": "diario_alteracoes_5_implementa\u00e7\u00f5es_do_dia_24_06_2026_time_sync_h\u00edbrido_rollover_e_tarifas_aneel",
@@ -48082,7 +48148,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "DIARIO_ALTERACOES.md",
-      "source_location": "L164",
+      "source_location": "L176",
       "weight": 1.0,
       "_origin": "ast",
       "source": "diario_alteracoes_5_implementa\u00e7\u00f5es_do_dia_24_06_2026_time_sync_h\u00edbrido_rollover_e_tarifas_aneel",
@@ -48093,7 +48159,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "DIARIO_ALTERACOES.md",
-      "source_location": "L194",
+      "source_location": "L206",
       "weight": 1.0,
       "_origin": "ast",
       "source": "diario_alteracoes_6_implementa\u00e7\u00f5es_do_dia_25_06_2026_persist\u00eancia_de_override_manual_e_corre\u00e7\u00e3o_de_oscila\u00e7\u00e3o_de_fallback",
@@ -48104,7 +48170,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "DIARIO_ALTERACOES.md",
-      "source_location": "L201",
+      "source_location": "L213",
       "weight": 1.0,
       "_origin": "ast",
       "source": "diario_alteracoes_6_implementa\u00e7\u00f5es_do_dia_25_06_2026_persist\u00eancia_de_override_manual_e_corre\u00e7\u00e3o_de_oscila\u00e7\u00e3o_de_fallback",
@@ -48115,7 +48181,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "DIARIO_ALTERACOES.md",
-      "source_location": "L214",
+      "source_location": "L226",
       "weight": 1.0,
       "_origin": "ast",
       "source": "diario_alteracoes_7_implementa\u00e7\u00f5es_do_dia_11_07_2026_comandos_de_voz_via_gemini_api_e_reorganiza\u00e7\u00e3o_de_documentos",
@@ -48126,7 +48192,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "DIARIO_ALTERACOES.md",
-      "source_location": "L222",
+      "source_location": "L234",
       "weight": 1.0,
       "_origin": "ast",
       "source": "diario_alteracoes_7_implementa\u00e7\u00f5es_do_dia_11_07_2026_comandos_de_voz_via_gemini_api_e_reorganiza\u00e7\u00e3o_de_documentos",
@@ -48137,7 +48203,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "DIARIO_ALTERACOES.md",
-      "source_location": "L243",
+      "source_location": "L255",
       "weight": 1.0,
       "_origin": "ast",
       "source": "diario_alteracoes_8_implementa\u00e7\u00f5es_do_dia_12_07_2026_housekeeping_resili\u00eancia_de_dns_unbound_e_rate_limiting_no_telegram",
@@ -48148,7 +48214,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "DIARIO_ALTERACOES.md",
-      "source_location": "L260",
+      "source_location": "L272",
       "weight": 1.0,
       "_origin": "ast",
       "source": "diario_alteracoes_8_implementa\u00e7\u00f5es_do_dia_12_07_2026_housekeeping_resili\u00eancia_de_dns_unbound_e_rate_limiting_no_telegram",
@@ -48159,7 +48225,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "DIARIO_ALTERACOES.md",
-      "source_location": "L235",
+      "source_location": "L247",
       "weight": 1.0,
       "_origin": "ast",
       "source": "diario_alteracoes_8_implementa\u00e7\u00f5es_do_dia_12_07_2026_housekeeping_resili\u00eancia_de_dns_unbound_e_rate_limiting_no_telegram",
@@ -48170,7 +48236,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "DIARIO_ALTERACOES.md",
-      "source_location": "L252",
+      "source_location": "L264",
       "weight": 1.0,
       "_origin": "ast",
       "source": "diario_alteracoes_8_implementa\u00e7\u00f5es_do_dia_12_07_2026_housekeeping_resili\u00eancia_de_dns_unbound_e_rate_limiting_no_telegram",
@@ -48531,5 +48597,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "bb7027e3a5ab9f98fc1b77def0aa79d3cf527e6c"
+  "built_at_commit": "64161bf0fc51ba8ed7fc879aad36249ce7503d94"
 }
