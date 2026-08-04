@@ -186,6 +186,45 @@ async def cmd_solar(message: types.Message):
         if conn:
             release_db_conn(conn)
 
+def get_solar_status_summary():
+    conn = None
+    try:
+        conn = get_db_conn()
+        cur = conn.cursor()
+        cur.execute("""
+            SELECT timestamp, power_w, today_kwh, total_kwh, temperature, status
+            FROM solar_generation
+            ORDER BY timestamp DESC LIMIT 1;
+        """)
+        row = cur.fetchone()
+        cur.close()
+        
+        if not row:
+            return "Status: 🌙 `Offline` (Sem registros)"
+            
+        ts, power, today_kwh, total_kwh, temp, status = row
+        time_diff = (datetime.now(timezone.utc) - ts).total_seconds() if ts else 9999
+        
+        if time_diff > 300 or status == "Offline":
+            return (
+                f"Status: 🌙 `Offline` (Sem Sol)\n"
+                f"• Geração Hoje: `{today_kwh or 0:.2f} kWh` | Total: `{total_kwh or 0:.2f} kWh`"
+            )
+        else:
+            status_icon = "🟢" if status in ["Normal", "Online", "OK"] else "⚠️"
+            temp_str = f" | Temp: `{temp or 0:.1f}°C`" if temp is not None else ""
+            return (
+                f"Status: {status_icon} `{status}`{temp_str}\n"
+                f"• Potência Atual: `⚡ {power or 0:.0f} W`\n"
+                f"• Geração Hoje: `📊 {today_kwh or 0:.2f} kWh` | Total: `{total_kwh or 0:.2f} kWh`"
+            )
+    except Exception as e:
+        logging.error(f"Erro ao consultar status solar no DB: {e}")
+        return "⚠️ Indisponível (Erro ao consultar banco)"
+    finally:
+        if conn:
+            release_db_conn(conn)
+
 @dp.message(Command("status"))
 async def cmd_status(message: types.Message):
     if not check_auth(message.from_user.id): return
@@ -205,11 +244,16 @@ async def cmd_status(message: types.Message):
         icon = "💡 ON" if raw_state == "ON" else "🌑 OFF"
         light_status += f"• {pt[1]}: {icon} [{mode}]\n"
 
+    # Inversor Solar
+    solar_summary = get_solar_status_summary()
+
     status_msg = (
         f"🖥 *Status do Raspberry Pi*\n"
         f"CPU: {cpu}%\n"
         f"RAM: {ram}%\n"
         f"Uptime: {str(uptime).split('.')[0]}\n\n"
+        f"☀️ *Inversor Solar*\n"
+        f"{solar_summary}\n\n"
         f"💡 *Pontos de Luz*\n"
         f"{light_status if light_status else 'Nenhum cadastrado.'}"
     )
