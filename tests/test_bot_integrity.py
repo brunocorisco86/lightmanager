@@ -32,3 +32,14 @@ def test_bot_syntax():
         error_str = str(e)
         if "syntax" in error_str.lower() or "module not found" in error_str.lower():
             pytest.fail(f"Erro de carregamento no bot.py: {e}")
+
+def test_get_solar_status_summary():
+    """Valida a execução sem exceções de NameError/TypeError da função get_solar_status_summary."""
+    try:
+        import bot.bot as bot_module
+        result = bot_module.get_solar_status_summary()
+        assert isinstance(result, str)
+    except Exception as e:
+        error_str = str(e).lower()
+        if "nameerror" in error_str or "typeerror" in error_str or "syntaxerror" in error_str:
+            pytest.fail(f"Erro na função get_solar_status_summary: {e}")

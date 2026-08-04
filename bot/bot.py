@@ -7,7 +7,7 @@ import tempfile
 import psycopg2
 import psutil
 import httpx
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from aiogram import Bot, Dispatcher, types, F
 from aiogram.filters import Command
 from aiogram.utils.keyboard import InlineKeyboardBuilder
