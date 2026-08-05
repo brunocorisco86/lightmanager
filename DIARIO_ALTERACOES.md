@@ -279,3 +279,16 @@ Este documento registra as falhas diagnosticadas no ambiente de produção do **
   - Adicionamos endpoints na Web API (`GET /api/solar/generation/latest` e `GET /api/solar/generation/history`) em [web_api/main.py](file:///home/bruno/Documentos/4_HOMELAB/9_LIGHT_MANAGER/web_api/main.py).
   - Adicionamos o comando `/solar` (ou `/geracao`) no Bot do Telegram em [bot/bot.py](file:///home/bruno/Documentos/4_HOMELAB/9_LIGHT_MANAGER/bot/bot.py) para visualização rápida das métricas fotovoltaicas.
   - Incluímos retenção de 7 dias para registros solares no [scripts/housekeeping.py](file:///home/bruno/Documentos/4_HOMELAB/9_LIGHT_MANAGER/scripts/housekeeping.py) e suite completa de testes em [tests/test_solar_scraper.py](file:///home/bruno/Documentos/4_HOMELAB/9_LIGHT_MANAGER/tests/test_solar_scraper.py).
+
+---
+
+## ☀️ 9. Implementações do Dia 04/08/2026 (Exibição de Geração e Saúde Solar no Comando `/status` do Bot Telegram)
+
+### 📊 Integração do Status Solar ao Comando `/status`
+* **Demanda:** Exibir o resumo da geração de energia solar e da saúde/temperatura do inversor solar diretamente ao digitar o comando `/status` no Telegram, sem depender de comandos separados.
+* **Solução:**
+  - Desenvolvemos a função utilitária `get_solar_status_summary()` em [bot/bot.py](file:///media/brunoconter/DOCUMENTOS3/10_LIGHT_MANAGER/lightmanager/bot/bot.py), que faz a consulta resiliente ao último registro da tabela `solar_generation` no PostgreSQL.
+  - Formatamos a exibição das informações com potência atual (`⚡ W`), geração do dia (`📊 kWh`), total acumulado (`🔋 kWh`), temperatura (`°C`) e saúde/status (`🟢 Normal`, `⚠️ Alerta` ou `🌙 Offline (Sem Sol)`).
+  - Incluímos quebra de linha dedicada na exibição do Total Acumulado para otimizar a visualização nos aplicativos móveis do Telegram.
+  - Adicionamos o import de `timezone` em [bot/bot.py](file:///media/brunoconter/DOCUMENTOS3/10_LIGHT_MANAGER/lightmanager/bot/bot.py) para tratamento correto do fuso horário UTC/BRT na checagem do tempo decorrido desde a última leitura solar.
+  - Atualizamos a suíte de testes unitários em [tests/test_bot_integrity.py](file:///media/brunoconter/DOCUMENTOS3/10_LIGHT_MANAGER/lightmanager/tests/test_bot_integrity.py) para validar a saúde da chamada sem regressões.

@@ -41,7 +41,7 @@ O Light Manager é composto pelos seguintes subcomponentes e fluxos de execuçã
 
 3. **Telegram Bot (`bot/bot.py`):**
    - Baseado na biblioteca **Aiogram 3**.
-   - Opera via **Long Polling** recebendo e enviando comandos de controle: `/status`, `/liga`, `/desliga`.
+   - Opera via **Long Polling** recebendo e enviando comandos de controle: `/status` (saúde do sistema, pontos de iluminação e resumo do inversor solar), `/liga`, `/desliga`, `/solar` / `/geracao`.
 
 4. **Solar Worker (`scripts/solar_worker.py`):**
    - Calcula cicladamente o horário do nascer/pôr do sol baseado nas coordenadas geográficas e offsets.
