@@ -1392,8 +1392,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "scripts_solar_ai_expert",
-      "community": 98,
-      "community_name": "analyze_solar_anomaly_with_ai",
+      "community": 67,
+      "community_name": "test_solar_scraper.py",
       "norm_label": "solar_ai_expert.py"
     },
     {
@@ -1403,8 +1403,8 @@
       "source_location": "L31",
       "_origin": "ast",
       "id": "scripts_solar_ai_expert_analyze_solar_anomaly_with_ai",
-      "community": 98,
-      "community_name": "analyze_solar_anomaly_with_ai",
+      "community": 67,
+      "community_name": "test_solar_scraper.py",
       "norm_label": "analyze_solar_anomaly_with_ai()"
     },
     {
@@ -1414,8 +1414,8 @@
       "source_location": "L32",
       "_origin": "ast",
       "id": "scripts_solar_ai_expert_rationale_32",
-      "community": 98,
-      "community_name": "analyze_solar_anomaly_with_ai",
+      "community": 67,
+      "community_name": "test_solar_scraper.py",
       "norm_label": "invoca o agente especialista fotovoltaico (gemini ai) para analisar a anomalia s"
     },
     {
@@ -1425,8 +1425,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "scripts_solar_forecast",
-      "community": 69,
-      "community_name": "fetch_solar_forecast",
+      "community": 67,
+      "community_name": "test_solar_scraper.py",
       "norm_label": "solar_forecast.py"
     },
     {
@@ -1436,8 +1436,8 @@
       "source_location": "L42",
       "_origin": "ast",
       "id": "scripts_solar_forecast_get_db_conn",
-      "community": 69,
-      "community_name": "fetch_solar_forecast",
+      "community": 67,
+      "community_name": "test_solar_scraper.py",
       "norm_label": "get_db_conn()"
     },
     {
@@ -1447,8 +1447,8 @@
       "source_location": "L62",
       "_origin": "ast",
       "id": "scripts_solar_forecast_calculate_system_efficiency_factor",
-      "community": 69,
-      "community_name": "fetch_solar_forecast",
+      "community": 67,
+      "community_name": "test_solar_scraper.py",
       "norm_label": "calculate_system_efficiency_factor()"
     },
     {
@@ -1458,8 +1458,8 @@
       "source_location": "L104",
       "_origin": "ast",
       "id": "scripts_solar_forecast_fetch_solar_forecast",
-      "community": 69,
-      "community_name": "fetch_solar_forecast",
+      "community": 67,
+      "community_name": "test_solar_scraper.py",
       "norm_label": "fetch_solar_forecast()"
     },
     {
@@ -1469,8 +1469,8 @@
       "source_location": "L63",
       "_origin": "ast",
       "id": "scripts_solar_forecast_rationale_63",
-      "community": 69,
-      "community_name": "fetch_solar_forecast",
+      "community": 67,
+      "community_name": "test_solar_scraper.py",
       "norm_label": "calcula o fator dinamico de conversao (kwh por mj/m2) baseado no historico recen"
     },
     {
@@ -1480,8 +1480,8 @@
       "source_location": "L105",
       "_origin": "ast",
       "id": "scripts_solar_forecast_rationale_105",
-      "community": 69,
-      "community_name": "fetch_solar_forecast",
+      "community": 67,
+      "community_name": "test_solar_scraper.py",
       "norm_label": "consulta a api open-meteo solar forecast e retorna a previsao estimada de geraca"
     },
     {
@@ -1667,8 +1667,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "scripts_solar_rain_alert",
-      "community": 69,
-      "community_name": "fetch_solar_forecast",
+      "community": 67,
+      "community_name": "test_solar_scraper.py",
       "norm_label": "solar_rain_alert.py"
     },
     {
@@ -1678,8 +1678,8 @@
       "source_location": "L19",
       "_origin": "ast",
       "id": "scripts_solar_rain_alert_check_abrupt_power_drop_and_rain",
-      "community": 69,
-      "community_name": "fetch_solar_forecast",
+      "community": 67,
+      "community_name": "test_solar_scraper.py",
       "norm_label": "check_abrupt_power_drop_and_rain()"
     },
     {
@@ -1689,8 +1689,8 @@
       "source_location": "L20",
       "_origin": "ast",
       "id": "scripts_solar_rain_alert_rationale_20",
-      "community": 69,
-      "community_name": "fetch_solar_forecast",
+      "community": 67,
+      "community_name": "test_solar_scraper.py",
       "norm_label": "detecta queda abrupta de geracao solar no horario de pico e cruza com a probabil"
     },
     {
@@ -1700,8 +1700,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "scripts_solar_report",
-      "community": 59,
-      "community_name": "graphify reference: extra exports and benchmark",
+      "community": 2,
+      "community_name": "solar_worker.py",
       "norm_label": "solar_report.py"
     },
     {
@@ -1711,8 +1711,8 @@
       "source_location": "L27",
       "_origin": "ast",
       "id": "scripts_solar_report_get_db_conn",
-      "community": 59,
-      "community_name": "graphify reference: extra exports and benchmark",
+      "community": 2,
+      "community_name": "solar_worker.py",
       "norm_label": "get_db_conn()"
     },
     {
@@ -1722,8 +1722,8 @@
       "source_location": "L47",
       "_origin": "ast",
       "id": "scripts_solar_report_fetch_daily_solar_data",
-      "community": 59,
-      "community_name": "graphify reference: extra exports and benchmark",
+      "community": 2,
+      "community_name": "solar_worker.py",
       "norm_label": "fetch_daily_solar_data()"
     },
     {
@@ -1733,8 +1733,8 @@
       "source_location": "L97",
       "_origin": "ast",
       "id": "scripts_solar_report_calculate_daily_summary",
-      "community": 59,
-      "community_name": "graphify reference: extra exports and benchmark",
+      "community": 2,
+      "community_name": "solar_worker.py",
       "norm_label": "calculate_daily_summary()"
     },
     {
@@ -1744,8 +1744,8 @@
       "source_location": "L136",
       "_origin": "ast",
       "id": "scripts_solar_report_generate_solar_chart_png",
-      "community": 59,
-      "community_name": "graphify reference: extra exports and benchmark",
+      "community": 2,
+      "community_name": "solar_worker.py",
       "norm_label": "generate_solar_chart_png()"
     },
     {
@@ -1755,8 +1755,8 @@
       "source_location": "L210",
       "_origin": "ast",
       "id": "scripts_solar_report_send_daily_solar_telegram_report",
-      "community": 59,
-      "community_name": "graphify reference: extra exports and benchmark",
+      "community": 2,
+      "community_name": "solar_worker.py",
       "norm_label": "send_daily_solar_telegram_report()"
     },
     {
@@ -1766,8 +1766,8 @@
       "source_location": "L48",
       "_origin": "ast",
       "id": "scripts_solar_report_rationale_48",
-      "community": 59,
-      "community_name": "graphify reference: extra exports and benchmark",
+      "community": 2,
+      "community_name": "solar_worker.py",
       "norm_label": "busca todas as entradas de telemetria solar registradas no banco para o dia espe"
     },
     {
@@ -1777,8 +1777,8 @@
       "source_location": "L98",
       "_origin": "ast",
       "id": "scripts_solar_report_rationale_98",
-      "community": 59,
-      "community_name": "graphify reference: extra exports and benchmark",
+      "community": 2,
+      "community_name": "solar_worker.py",
       "norm_label": "calcula os indicadores resumidos (kpis) da geracao do dia."
     },
     {
@@ -1788,8 +1788,8 @@
       "source_location": "L137",
       "_origin": "ast",
       "id": "scripts_solar_report_rationale_137",
-      "community": 59,
-      "community_name": "graphify reference: extra exports and benchmark",
+      "community": 2,
+      "community_name": "solar_worker.py",
       "norm_label": "gera o grafico da curva sino de potencia solar fotovoltaica usando matplotlib he"
     },
     {
@@ -1799,8 +1799,8 @@
       "source_location": "L211",
       "_origin": "ast",
       "id": "scripts_solar_report_rationale_211",
-      "community": 59,
-      "community_name": "graphify reference: extra exports and benchmark",
+      "community": 2,
+      "community_name": "solar_worker.py",
       "norm_label": "gera e envia o relatorio diario de producao solar fotovoltaica para o telegram."
     },
     {
@@ -1953,8 +1953,8 @@
       "source_location": "L320",
       "_origin": "ast",
       "id": "scripts_solar_scraper_check_solar_anomalies",
-      "community": 72,
-      "community_name": "analyze_solar_anomaly_with_ai",
+      "community": 67,
+      "community_name": "test_solar_scraper.py",
       "norm_label": "check_solar_anomalies()"
     },
     {
@@ -2074,8 +2074,8 @@
       "source_location": "L321",
       "_origin": "ast",
       "id": "scripts_solar_scraper_rationale_321",
-      "community": 72,
-      "community_name": "analyze_solar_anomaly_with_ai",
+      "community": 67,
+      "community_name": "test_solar_scraper.py",
       "norm_label": "verifica a ocorrencia de anomalias no inversor solar e envia alertas no telegram"
     },
     {
@@ -2423,8 +2423,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_benchmark_solar_worker",
-      "community": 8,
-      "community_name": "TestSolarWorkerPerformance",
+      "community": 2,
+      "community_name": "solar_worker.py",
       "norm_label": "benchmark_solar_worker.py"
     },
     {
@@ -2434,8 +2434,8 @@
       "source_location": "L19",
       "_origin": "ast",
       "id": "tests_benchmark_solar_worker_testsolarworkerperformance",
-      "community": 8,
-      "community_name": "TestSolarWorkerPerformance",
+      "community": 2,
+      "community_name": "solar_worker.py",
       "norm_label": "testsolarworkerperformance"
     },
     {
@@ -2445,8 +2445,8 @@
       "source_location": "L20",
       "_origin": "ast",
       "id": "tests_benchmark_solar_worker_testsolarworkerperformance_setup",
-      "community": 8,
-      "community_name": "TestSolarWorkerPerformance",
+      "community": 2,
+      "community_name": "solar_worker.py",
       "norm_label": ".setup()"
     },
     {
@@ -2456,8 +2456,8 @@
       "source_location": "L25",
       "_origin": "ast",
       "id": "tests_benchmark_solar_worker_testsolarworkerperformance_setup_mocks",
-      "community": 8,
-      "community_name": "TestSolarWorkerPerformance",
+      "community": 2,
+      "community_name": "solar_worker.py",
       "norm_label": ".setup_mocks()"
     },
     {
@@ -2467,8 +2467,8 @@
       "source_location": "L39",
       "_origin": "ast",
       "id": "tests_benchmark_solar_worker_testsolarworkerperformance_test_connection_and_cursor_management",
-      "community": 8,
-      "community_name": "TestSolarWorkerPerformance",
+      "community": 2,
+      "community_name": "solar_worker.py",
       "norm_label": ".test_connection_and_cursor_management()"
     },
     {
@@ -2478,8 +2478,8 @@
       "source_location": "L73",
       "_origin": "ast",
       "id": "tests_benchmark_solar_worker_testsolarworkerperformance_test_on_message_cursor_management",
-      "community": 8,
-      "community_name": "TestSolarWorkerPerformance",
+      "community": 2,
+      "community_name": "solar_worker.py",
       "norm_label": ".test_on_message_cursor_management()"
     },
     {
@@ -2489,8 +2489,8 @@
       "source_location": "L91",
       "_origin": "ast",
       "id": "tests_benchmark_solar_worker_testsolarworkerperformance_test_on_message_consumption_calculation",
-      "community": 8,
-      "community_name": "TestSolarWorkerPerformance",
+      "community": 2,
+      "community_name": "solar_worker.py",
       "norm_label": ".test_on_message_consumption_calculation()"
     },
     {
@@ -2500,8 +2500,8 @@
       "source_location": "L141",
       "_origin": "ast",
       "id": "tests_benchmark_solar_worker_testsolarworkerperformance_test_error_handling_rollback",
-      "community": 8,
-      "community_name": "TestSolarWorkerPerformance",
+      "community": 2,
+      "community_name": "solar_worker.py",
       "norm_label": ".test_error_handling_rollback()"
     },
     {
@@ -2511,8 +2511,8 @@
       "source_location": "L165",
       "_origin": "ast",
       "id": "tests_benchmark_solar_worker_testsolarworkerperformance_test_on_message_heartbeat_sync",
-      "community": 8,
-      "community_name": "TestSolarWorkerPerformance",
+      "community": 2,
+      "community_name": "solar_worker.py",
       "norm_label": ".test_on_message_heartbeat_sync()"
     },
     {
@@ -2522,8 +2522,8 @@
       "source_location": "L200",
       "_origin": "ast",
       "id": "tests_benchmark_solar_worker_testsolarworkerperformance_test_run_automation_cycle_time_publication",
-      "community": 8,
-      "community_name": "TestSolarWorkerPerformance",
+      "community": 2,
+      "community_name": "solar_worker.py",
       "norm_label": ".test_run_automation_cycle_time_publication()"
     },
     {
@@ -2533,8 +2533,8 @@
       "source_location": "L218",
       "_origin": "ast",
       "id": "tests_benchmark_solar_worker_testsolarworkerperformance_test_run_day_rollover",
-      "community": 8,
-      "community_name": "TestSolarWorkerPerformance",
+      "community": 2,
+      "community_name": "solar_worker.py",
       "norm_label": ".test_run_day_rollover()"
     },
     {
@@ -2599,8 +2599,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_test_auth",
-      "community": 60,
-      "community_name": "graphify reference: query, path, explain",
+      "community": 1,
+      "community_name": "main.py",
       "norm_label": "test_auth.py"
     },
     {
@@ -2610,8 +2610,8 @@
       "source_location": "L11",
       "_origin": "ast",
       "id": "tests_test_auth_get_db_connection",
-      "community": 60,
-      "community_name": "graphify reference: query, path, explain",
+      "community": 1,
+      "community_name": "main.py",
       "norm_label": "get_db_connection()"
     },
     {
@@ -2621,8 +2621,8 @@
       "source_location": "L21",
       "_origin": "ast",
       "id": "tests_test_auth_setup_test_user",
-      "community": 60,
-      "community_name": "graphify reference: query, path, explain",
+      "community": 1,
+      "community_name": "main.py",
       "norm_label": "setup_test_user()"
     },
     {
@@ -2632,8 +2632,8 @@
       "source_location": "L52",
       "_origin": "ast",
       "id": "tests_test_auth_test_login_success",
-      "community": 60,
-      "community_name": "graphify reference: query, path, explain",
+      "community": 1,
+      "community_name": "main.py",
       "norm_label": "test_login_success()"
     },
     {
@@ -2643,8 +2643,8 @@
       "source_location": "L64",
       "_origin": "ast",
       "id": "tests_test_auth_test_login_wrong_password",
-      "community": 60,
-      "community_name": "graphify reference: query, path, explain",
+      "community": 1,
+      "community_name": "main.py",
       "norm_label": "test_login_wrong_password()"
     },
     {
@@ -2654,8 +2654,8 @@
       "source_location": "L74",
       "_origin": "ast",
       "id": "tests_test_auth_test_login_user_not_found",
-      "community": 60,
-      "community_name": "graphify reference: query, path, explain",
+      "community": 1,
+      "community_name": "main.py",
       "norm_label": "test_login_user_not_found()"
     },
     {
@@ -2665,8 +2665,8 @@
       "source_location": "L53",
       "_origin": "ast",
       "id": "tests_test_auth_rationale_53",
-      "community": 60,
-      "community_name": "graphify reference: query, path, explain",
+      "community": 1,
+      "community_name": "main.py",
       "norm_label": "valida login com credenciais corretas"
     },
     {
@@ -2676,8 +2676,8 @@
       "source_location": "L65",
       "_origin": "ast",
       "id": "tests_test_auth_rationale_65",
-      "community": 60,
-      "community_name": "graphify reference: query, path, explain",
+      "community": 1,
+      "community_name": "main.py",
       "norm_label": "valida falha com senha incorreta"
     },
     {
@@ -2687,8 +2687,8 @@
       "source_location": "L75",
       "_origin": "ast",
       "id": "tests_test_auth_rationale_75",
-      "community": 60,
-      "community_name": "graphify reference: query, path, explain",
+      "community": 1,
+      "community_name": "main.py",
       "norm_label": "valida falha com usuario inexistente"
     },
     {
@@ -2698,8 +2698,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_test_automation_improvements",
-      "community": 10,
-      "community_name": "TestAutomationImprovements",
+      "community": 2,
+      "community_name": "solar_worker.py",
       "norm_label": "test_automation_improvements.py"
     },
     {
@@ -2709,8 +2709,8 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "tests_test_automation_improvements_testautomationimprovements",
-      "community": 10,
-      "community_name": "TestAutomationImprovements",
+      "community": 2,
+      "community_name": "solar_worker.py",
       "norm_label": "testautomationimprovements"
     },
     {
@@ -2720,8 +2720,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "tests_test_automation_improvements_testautomationimprovements_setup",
-      "community": 10,
-      "community_name": "TestAutomationImprovements",
+      "community": 2,
+      "community_name": "solar_worker.py",
       "norm_label": ".setup()"
     },
     {
@@ -2731,8 +2731,8 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "tests_test_automation_improvements_testautomationimprovements_setup_mocks",
-      "community": 10,
-      "community_name": "TestAutomationImprovements",
+      "community": 2,
+      "community_name": "solar_worker.py",
       "norm_label": ".setup_mocks()"
     },
     {
@@ -2742,8 +2742,8 @@
       "source_location": "L31",
       "_origin": "ast",
       "id": "tests_test_automation_improvements_testautomationimprovements_test_dynamic_fallback_calculation",
-      "community": 10,
-      "community_name": "TestAutomationImprovements",
+      "community": 2,
+      "community_name": "solar_worker.py",
       "norm_label": ".test_dynamic_fallback_calculation()"
     },
     {
@@ -2753,8 +2753,8 @@
       "source_location": "L69",
       "_origin": "ast",
       "id": "tests_test_automation_improvements_testautomationimprovements_test_manual_override_respected",
-      "community": 10,
-      "community_name": "TestAutomationImprovements",
+      "community": 2,
+      "community_name": "solar_worker.py",
       "norm_label": ".test_manual_override_respected()"
     },
     {
@@ -2764,8 +2764,8 @@
       "source_location": "L114",
       "_origin": "ast",
       "id": "tests_test_automation_improvements_testautomationimprovements_test_manual_override_cleared_on_trigger",
-      "community": 10,
-      "community_name": "TestAutomationImprovements",
+      "community": 2,
+      "community_name": "solar_worker.py",
       "norm_label": ".test_manual_override_cleared_on_trigger()"
     },
     {
@@ -2775,8 +2775,8 @@
       "source_location": "L32",
       "_origin": "ast",
       "id": "tests_test_automation_improvements_rationale_32",
-      "community": 10,
-      "community_name": "TestAutomationImprovements",
+      "community": 2,
+      "community_name": "solar_worker.py",
       "norm_label": "valida se os horarios de fallback enviados ao wemos se ajustam aos offsets corre"
     },
     {
@@ -2786,8 +2786,8 @@
       "source_location": "L70",
       "_origin": "ast",
       "id": "tests_test_automation_improvements_rationale_70",
-      "community": 10,
-      "community_name": "TestAutomationImprovements",
+      "community": 2,
+      "community_name": "solar_worker.py",
       "norm_label": "verifica se o manual_override ativa o estado desejado forcado independentemente"
     },
     {
@@ -2797,8 +2797,8 @@
       "source_location": "L115",
       "_origin": "ast",
       "id": "tests_test_automation_improvements_rationale_115",
-      "community": 10,
-      "community_name": "TestAutomationImprovements",
+      "community": 2,
+      "community_name": "solar_worker.py",
       "norm_label": "valida se o manual_override e limpo no banco ao bater o minuto do gatilho solar."
     },
     {
@@ -2901,6 +2901,17 @@
       "norm_label": "test_bot_syntax()"
     },
     {
+      "label": "test_get_solar_status_summary()",
+      "file_type": "code",
+      "source_file": "tests/test_bot_integrity.py",
+      "source_location": "L36",
+      "_origin": "ast",
+      "id": "tests_test_bot_integrity_test_get_solar_status_summary",
+      "community": 19,
+      "community_name": "test_bot_integrity.py",
+      "norm_label": "test_get_solar_status_summary()"
+    },
+    {
       "label": "Valida se as bibliotecas cr\u00edticas do bot est\u00e3o instaladas.",
       "file_type": "rationale",
       "source_file": "tests/test_bot_integrity.py",
@@ -2934,14 +2945,25 @@
       "norm_label": "verifica se o arquivo bot.py nao tem erros de sintaxe e pode ser carregado."
     },
     {
+      "label": "Valida a execu\u00e7\u00e3o sem exce\u00e7\u00f5es de NameError/TypeError da fun\u00e7\u00e3o get_solar_status",
+      "file_type": "rationale",
+      "source_file": "tests/test_bot_integrity.py",
+      "source_location": "L37",
+      "_origin": "ast",
+      "id": "tests_test_bot_integrity_rationale_37",
+      "community": 19,
+      "community_name": "test_bot_integrity.py",
+      "norm_label": "valida a execucao sem excecoes de nameerror/typeerror da funcao get_solar_status"
+    },
+    {
       "label": "test_command_reliability.py",
       "file_type": "code",
       "source_file": "tests/test_command_reliability.py",
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_test_command_reliability",
-      "community": 62,
-      "community_name": "graphify reference: commit hook and native CLAUDE.md integration",
+      "community": 1,
+      "community_name": "main.py",
       "norm_label": "test_command_reliability.py"
     },
     {
@@ -2951,8 +2973,8 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "tests_test_command_reliability_test_command_mqtt_qos_delivery",
-      "community": 62,
-      "community_name": "graphify reference: commit hook and native CLAUDE.md integration",
+      "community": 1,
+      "community_name": "main.py",
       "norm_label": "test_command_mqtt_qos_delivery()"
     },
     {
@@ -2962,8 +2984,8 @@
       "source_location": "L38",
       "_origin": "ast",
       "id": "tests_test_command_reliability_test_command_invalid_payload",
-      "community": 62,
-      "community_name": "graphify reference: commit hook and native CLAUDE.md integration",
+      "community": 1,
+      "community_name": "main.py",
       "norm_label": "test_command_invalid_payload()"
     },
     {
@@ -2973,8 +2995,8 @@
       "source_location": "L43",
       "_origin": "ast",
       "id": "tests_test_command_reliability_test_rapid_commands",
-      "community": 62,
-      "community_name": "graphify reference: commit hook and native CLAUDE.md integration",
+      "community": 1,
+      "community_name": "main.py",
       "norm_label": "test_rapid_commands()"
     },
     {
@@ -2984,8 +3006,8 @@
       "source_location": "L10",
       "_origin": "ast",
       "id": "tests_test_command_reliability_rationale_10",
-      "community": 62,
-      "community_name": "graphify reference: commit hook and native CLAUDE.md integration",
+      "community": 1,
+      "community_name": "main.py",
       "norm_label": "valida se o comando e enviado com sucesso via api e se o mqtt esta conectado."
     },
     {
@@ -2995,8 +3017,8 @@
       "source_location": "L39",
       "_origin": "ast",
       "id": "tests_test_command_reliability_rationale_39",
-      "community": 62,
-      "community_name": "graphify reference: commit hook and native CLAUDE.md integration",
+      "community": 1,
+      "community_name": "main.py",
       "norm_label": "valida rejeicao de payloads malformados"
     },
     {
@@ -3006,8 +3028,8 @@
       "source_location": "L44",
       "_origin": "ast",
       "id": "tests_test_command_reliability_rationale_44",
-      "community": 62,
-      "community_name": "graphify reference: commit hook and native CLAUDE.md integration",
+      "community": 1,
+      "community_name": "main.py",
       "norm_label": "valida se a api aguenta multiplos comandos rapidos sem travar o loop mqtt"
     },
     {
@@ -3061,8 +3083,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_test_solar_ai_expert",
-      "community": 98,
-      "community_name": "analyze_solar_anomaly_with_ai",
+      "community": 67,
+      "community_name": "test_solar_scraper.py",
       "norm_label": "test_solar_ai_expert.py"
     },
     {
@@ -3072,8 +3094,8 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "tests_test_solar_ai_expert_test_solar_ai_expert_no_key",
-      "community": 98,
-      "community_name": "analyze_solar_anomaly_with_ai",
+      "community": 67,
+      "community_name": "test_solar_scraper.py",
       "norm_label": "test_solar_ai_expert_no_key()"
     },
     {
@@ -3083,8 +3105,8 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "tests_test_solar_ai_expert_test_solar_ai_expert_with_gemini_key",
-      "community": 98,
-      "community_name": "analyze_solar_anomaly_with_ai",
+      "community": 67,
+      "community_name": "test_solar_scraper.py",
       "norm_label": "test_solar_ai_expert_with_gemini_key()"
     },
     {
@@ -3094,8 +3116,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_test_solar_anomalies",
-      "community": 72,
-      "community_name": "analyze_solar_anomaly_with_ai",
+      "community": 67,
+      "community_name": "test_solar_scraper.py",
       "norm_label": "test_solar_anomalies.py"
     },
     {
@@ -3105,8 +3127,8 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "tests_test_solar_anomalies_test_check_solar_anomalies_normal",
-      "community": 72,
-      "community_name": "analyze_solar_anomaly_with_ai",
+      "community": 67,
+      "community_name": "test_solar_scraper.py",
       "norm_label": "test_check_solar_anomalies_normal()"
     },
     {
@@ -3116,8 +3138,8 @@
       "source_location": "L20",
       "_origin": "ast",
       "id": "tests_test_solar_anomalies_test_check_solar_anomalies_high_temperature",
-      "community": 72,
-      "community_name": "analyze_solar_anomaly_with_ai",
+      "community": 67,
+      "community_name": "test_solar_scraper.py",
       "norm_label": "test_check_solar_anomalies_high_temperature()"
     },
     {
@@ -3127,8 +3149,8 @@
       "source_location": "L32",
       "_origin": "ast",
       "id": "tests_test_solar_anomalies_test_check_solar_anomalies_pv_asymmetry",
-      "community": 72,
-      "community_name": "analyze_solar_anomaly_with_ai",
+      "community": 67,
+      "community_name": "test_solar_scraper.py",
       "norm_label": "test_check_solar_anomalies_pv_asymmetry()"
     },
     {
@@ -3138,8 +3160,8 @@
       "source_location": "L45",
       "_origin": "ast",
       "id": "tests_test_solar_anomalies_test_check_solar_anomalies_inverter_fault",
-      "community": 72,
-      "community_name": "analyze_solar_anomaly_with_ai",
+      "community": 67,
+      "community_name": "test_solar_scraper.py",
       "norm_label": "test_check_solar_anomalies_inverter_fault()"
     },
     {
@@ -3149,8 +3171,8 @@
       "source_location": "L57",
       "_origin": "ast",
       "id": "tests_test_solar_anomalies_test_check_solar_anomalies_waiting_status_ignored",
-      "community": 72,
-      "community_name": "analyze_solar_anomaly_with_ai",
+      "community": 67,
+      "community_name": "test_solar_scraper.py",
       "norm_label": "test_check_solar_anomalies_waiting_status_ignored()"
     },
     {
@@ -3160,8 +3182,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_test_solar_forecast",
-      "community": 69,
-      "community_name": "fetch_solar_forecast",
+      "community": 67,
+      "community_name": "test_solar_scraper.py",
       "norm_label": "test_solar_forecast.py"
     },
     {
@@ -3171,8 +3193,8 @@
       "source_location": "L10",
       "_origin": "ast",
       "id": "tests_test_solar_forecast_test_wmo_weather_codes",
-      "community": 69,
-      "community_name": "fetch_solar_forecast",
+      "community": 67,
+      "community_name": "test_solar_scraper.py",
       "norm_label": "test_wmo_weather_codes()"
     },
     {
@@ -3182,8 +3204,8 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "tests_test_solar_forecast_test_calculate_system_efficiency_factor_default",
-      "community": 69,
-      "community_name": "fetch_solar_forecast",
+      "community": 67,
+      "community_name": "test_solar_scraper.py",
       "norm_label": "test_calculate_system_efficiency_factor_default()"
     },
     {
@@ -3193,8 +3215,8 @@
       "source_location": "L20",
       "_origin": "ast",
       "id": "tests_test_solar_forecast_test_fetch_solar_forecast_success",
-      "community": 69,
-      "community_name": "fetch_solar_forecast",
+      "community": 67,
+      "community_name": "test_solar_scraper.py",
       "norm_label": "test_fetch_solar_forecast_success()"
     },
     {
@@ -3270,8 +3292,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_test_solar_rain_alert",
-      "community": 69,
-      "community_name": "fetch_solar_forecast",
+      "community": 67,
+      "community_name": "test_solar_scraper.py",
       "norm_label": "test_solar_rain_alert.py"
     },
     {
@@ -3281,8 +3303,8 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "tests_test_solar_rain_alert_test_rain_alert_partial_drop_above_100w",
-      "community": 69,
-      "community_name": "fetch_solar_forecast",
+      "community": 67,
+      "community_name": "test_solar_scraper.py",
       "norm_label": "test_rain_alert_partial_drop_above_100w()"
     },
     {
@@ -3292,8 +3314,8 @@
       "source_location": "L16",
       "_origin": "ast",
       "id": "tests_test_solar_rain_alert_test_rain_alert_drop_below_100w",
-      "community": 69,
-      "community_name": "fetch_solar_forecast",
+      "community": 67,
+      "community_name": "test_solar_scraper.py",
       "norm_label": "test_rain_alert_drop_below_100w()"
     },
     {
@@ -3303,8 +3325,8 @@
       "source_location": "L23",
       "_origin": "ast",
       "id": "tests_test_solar_rain_alert_test_rain_alert_waiting_status_during_daytime",
-      "community": 69,
-      "community_name": "fetch_solar_forecast",
+      "community": 67,
+      "community_name": "test_solar_scraper.py",
       "norm_label": "test_rain_alert_waiting_status_during_daytime()"
     },
     {
@@ -3314,8 +3336,8 @@
       "source_location": "L30",
       "_origin": "ast",
       "id": "tests_test_solar_rain_alert_test_rain_alert_outside_peak_hours",
-      "community": 69,
-      "community_name": "fetch_solar_forecast",
+      "community": 67,
+      "community_name": "test_solar_scraper.py",
       "norm_label": "test_rain_alert_outside_peak_hours()"
     },
     {
@@ -3325,8 +3347,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_test_solar_report",
-      "community": 59,
-      "community_name": "graphify reference: extra exports and benchmark",
+      "community": 2,
+      "community_name": "solar_worker.py",
       "norm_label": "test_solar_report.py"
     },
     {
@@ -3336,8 +3358,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "tests_test_solar_report_test_calculate_daily_summary",
-      "community": 59,
-      "community_name": "graphify reference: extra exports and benchmark",
+      "community": 2,
+      "community_name": "solar_worker.py",
       "norm_label": "test_calculate_daily_summary()"
     },
     {
@@ -3347,8 +3369,8 @@
       "source_location": "L42",
       "_origin": "ast",
       "id": "tests_test_solar_report_test_generate_solar_chart_png",
-      "community": 59,
-      "community_name": "graphify reference: extra exports and benchmark",
+      "community": 2,
+      "community_name": "solar_worker.py",
       "norm_label": "test_generate_solar_chart_png()"
     },
     {
@@ -3358,8 +3380,8 @@
       "source_location": "L73",
       "_origin": "ast",
       "id": "tests_test_solar_report_test_send_daily_solar_telegram_report_dry_run",
-      "community": 59,
-      "community_name": "graphify reference: extra exports and benchmark",
+      "community": 2,
+      "community_name": "solar_worker.py",
       "norm_label": "test_send_daily_solar_telegram_report_dry_run()"
     },
     {
@@ -3633,8 +3655,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_test_web_api",
-      "community": 11,
-      "community_name": "test_web_api.py",
+      "community": 1,
+      "community_name": "main.py",
       "norm_label": "test_web_api.py"
     },
     {
@@ -3644,8 +3666,8 @@
       "source_location": "L23",
       "_origin": "ast",
       "id": "tests_test_web_api_test_get_sun_times_success",
-      "community": 11,
-      "community_name": "test_web_api.py",
+      "community": 1,
+      "community_name": "main.py",
       "norm_label": "test_get_sun_times_success()"
     },
     {
@@ -3655,8 +3677,8 @@
       "source_location": "L45",
       "_origin": "ast",
       "id": "tests_test_web_api_test_get_sun_times_cached",
-      "community": 11,
-      "community_name": "test_web_api.py",
+      "community": 1,
+      "community_name": "main.py",
       "norm_label": "test_get_sun_times_cached()"
     },
     {
@@ -3666,8 +3688,8 @@
       "source_location": "L57",
       "_origin": "ast",
       "id": "tests_test_web_api_test_get_sun_times_failure",
-      "community": 11,
-      "community_name": "test_web_api.py",
+      "community": 1,
+      "community_name": "main.py",
       "norm_label": "test_get_sun_times_failure()"
     },
     {
@@ -3677,8 +3699,8 @@
       "source_location": "L68",
       "_origin": "ast",
       "id": "tests_test_web_api_test_get_status_success",
-      "community": 11,
-      "community_name": "test_web_api.py",
+      "community": 1,
+      "community_name": "main.py",
       "norm_label": "test_get_status_success()"
     },
     {
@@ -3688,8 +3710,8 @@
       "source_location": "L94",
       "_origin": "ast",
       "id": "tests_test_web_api_test_get_status_db_error",
-      "community": 11,
-      "community_name": "test_web_api.py",
+      "community": 1,
+      "community_name": "main.py",
       "norm_label": "test_get_status_db_error()"
     },
     {
@@ -3699,8 +3721,8 @@
       "source_location": "L103",
       "_origin": "ast",
       "id": "tests_test_web_api_test_get_history_success",
-      "community": 11,
-      "community_name": "test_web_api.py",
+      "community": 1,
+      "community_name": "main.py",
       "norm_label": "test_get_history_success()"
     },
     {
@@ -3710,8 +3732,8 @@
       "source_location": "L125",
       "_origin": "ast",
       "id": "tests_test_web_api_test_get_consumption_history_success",
-      "community": 11,
-      "community_name": "test_web_api.py",
+      "community": 1,
+      "community_name": "main.py",
       "norm_label": "test_get_consumption_history_success()"
     },
     {
@@ -3721,8 +3743,8 @@
       "source_location": "L165",
       "_origin": "ast",
       "id": "tests_test_web_api_test_send_command_success",
-      "community": 11,
-      "community_name": "test_web_api.py",
+      "community": 1,
+      "community_name": "main.py",
       "norm_label": "test_send_command_success()"
     },
     {
@@ -3732,8 +3754,8 @@
       "source_location": "L185",
       "_origin": "ast",
       "id": "tests_test_web_api_test_get_solar_generation_curve_success",
-      "community": 11,
-      "community_name": "test_web_api.py",
+      "community": 1,
+      "community_name": "main.py",
       "norm_label": "test_get_solar_generation_curve_success()"
     },
     {
@@ -3743,8 +3765,8 @@
       "source_location": "L207",
       "_origin": "ast",
       "id": "tests_test_web_api_test_send_command_mqtt_offline",
-      "community": 11,
-      "community_name": "test_web_api.py",
+      "community": 1,
+      "community_name": "main.py",
       "norm_label": "test_send_command_mqtt_offline()"
     },
     {
@@ -3754,8 +3776,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_test_web_config",
-      "community": 64,
-      "community_name": "graphify reference: GitHub clone and cross-repo merge",
+      "community": 1,
+      "community_name": "main.py",
       "norm_label": "test_web_config.py"
     },
     {
@@ -3765,8 +3787,8 @@
       "source_location": "L10",
       "_origin": "ast",
       "id": "tests_test_web_config_get_db_connection",
-      "community": 64,
-      "community_name": "graphify reference: GitHub clone and cross-repo merge",
+      "community": 1,
+      "community_name": "main.py",
       "norm_label": "get_db_connection()"
     },
     {
@@ -3776,8 +3798,8 @@
       "source_location": "L20",
       "_origin": "ast",
       "id": "tests_test_web_config_setup_db",
-      "community": 64,
-      "community_name": "graphify reference: GitHub clone and cross-repo merge",
+      "community": 1,
+      "community_name": "main.py",
       "norm_label": "setup_db()"
     },
     {
@@ -3787,8 +3809,8 @@
       "source_location": "L30",
       "_origin": "ast",
       "id": "tests_test_web_config_test_config_points_crud",
-      "community": 64,
-      "community_name": "graphify reference: GitHub clone and cross-repo merge",
+      "community": 1,
+      "community_name": "main.py",
       "norm_label": "test_config_points_crud()"
     },
     {
@@ -3798,8 +3820,8 @@
       "source_location": "L63",
       "_origin": "ast",
       "id": "tests_test_web_config_test_solar_history_endpoint",
-      "community": 64,
-      "community_name": "graphify reference: GitHub clone and cross-repo merge",
+      "community": 1,
+      "community_name": "main.py",
       "norm_label": "test_solar_history_endpoint()"
     },
     {
@@ -3908,8 +3930,8 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "web_chart_min_s",
-      "community": 70,
-      "community_name": "\u2600\ufe0f 1. Resumo das Etapas Implementadas (Roadmap Solar)",
+      "community": 105,
+      "community_name": "Si",
       "norm_label": "s()"
     },
     {
@@ -3919,8 +3941,8 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "web_chart_min_n",
-      "community": 104,
-      "community_name": "n",
+      "community": 80,
+      "community_name": "eo",
       "norm_label": "n()"
     },
     {
@@ -3985,8 +4007,8 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "web_chart_min_u",
-      "community": 74,
-      "community_name": "s",
+      "community": 14,
+      "community_name": "test_auth.py",
       "norm_label": "u()"
     },
     {
@@ -3996,8 +4018,8 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "web_chart_min_f",
-      "community": 105,
-      "community_name": "Si",
+      "community": 76,
+      "community_name": "va",
       "norm_label": "f()"
     },
     {
@@ -4040,8 +4062,8 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "web_chart_min_b",
-      "community": 27,
-      "community_name": "test_web_config.py",
+      "community": 105,
+      "community_name": "Si",
       "norm_label": "b()"
     },
     {
@@ -4062,8 +4084,8 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "web_chart_min_v",
-      "community": 83,
-      "community_name": "da",
+      "community": 105,
+      "community_name": "Si",
       "norm_label": "v()"
     },
     {
@@ -4073,8 +4095,8 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "web_chart_min_w",
-      "community": 58,
-      "community_name": "What You Must Do When Invoked",
+      "community": 105,
+      "community_name": "Si",
       "norm_label": "w()"
     },
     {
@@ -4084,8 +4106,8 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "web_chart_min_h",
-      "community": 105,
-      "community_name": "Si",
+      "community": 20,
+      "community_name": "chart.min.js",
       "norm_label": "h()"
     },
     {
@@ -4095,8 +4117,8 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "web_chart_min_j",
-      "community": 105,
-      "community_name": "Si",
+      "community": 27,
+      "community_name": "test_web_config.py",
       "norm_label": "j()"
     },
     {
@@ -4106,8 +4128,8 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "web_chart_min_y",
-      "community": 20,
-      "community_name": "chart.min.js",
+      "community": 95,
+      "community_name": ".isHorizontal",
       "norm_label": "y()"
     },
     {
@@ -4117,8 +4139,8 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "web_chart_min_q",
-      "community": 83,
-      "community_name": "da",
+      "community": 75,
+      "community_name": "inRange",
       "norm_label": "q()"
     },
     {
@@ -4128,8 +4150,8 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "web_chart_min_k",
-      "community": 75,
-      "community_name": "inRange",
+      "community": 20,
+      "community_name": "chart.min.js",
       "norm_label": "k()"
     },
     {
@@ -4161,8 +4183,8 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "web_chart_min_et",
-      "community": 70,
-      "community_name": "\u2600\ufe0f 1. Resumo das Etapas Implementadas (Roadmap Solar)",
+      "community": 27,
+      "community_name": "test_web_config.py",
       "norm_label": "et()"
     },
     {
@@ -4183,8 +4205,8 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "web_chart_min_at",
-      "community": 58,
-      "community_name": "What You Must Do When Invoked",
+      "community": 3,
+      "community_name": "script.js",
       "norm_label": "at()"
     },
     {
@@ -4194,8 +4216,8 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "web_chart_min_rt",
-      "community": 61,
-      "community_name": "graphify reference: add a URL and watch a folder",
+      "community": 78,
+      "community_name": "ns",
       "norm_label": "rt()"
     },
     {
@@ -4205,8 +4227,8 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "web_chart_min_lt",
-      "community": 82,
-      "community_name": "no",
+      "community": 102,
+      "community_name": "ca",
       "norm_label": "lt()"
     },
     {
@@ -4216,8 +4238,8 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "web_chart_min_ct",
-      "community": 84,
-      "community_name": ".bindResponsiveEvents",
+      "community": 8,
+      "community_name": "TestSolarWorkerPerformance",
       "norm_label": "ct()"
     },
     {
@@ -4238,8 +4260,8 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "web_chart_min_pt",
-      "community": 27,
-      "community_name": "test_web_config.py",
+      "community": 102,
+      "community_name": "ca",
       "norm_label": "pt()"
     },
     {
@@ -4260,8 +4282,8 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "web_chart_min_bt",
-      "community": 70,
-      "community_name": "\u2600\ufe0f 1. Resumo das Etapas Implementadas (Roadmap Solar)",
+      "community": 73,
+      "community_name": "zt",
       "norm_label": "bt"
     },
     {
@@ -4271,8 +4293,8 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "web_chart_min_bt_constructor",
-      "community": 70,
-      "community_name": "\u2600\ufe0f 1. Resumo das Etapas Implementadas (Roadmap Solar)",
+      "community": 73,
+      "community_name": "zt",
       "norm_label": ".constructor()"
     },
     {
@@ -4282,8 +4304,8 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "web_chart_min_bt_notify",
-      "community": 70,
-      "community_name": "\u2600\ufe0f 1. Resumo das Etapas Implementadas (Roadmap Solar)",
+      "community": 73,
+      "community_name": "zt",
       "norm_label": "._notify()"
     },
     {
@@ -4293,8 +4315,8 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "web_chart_min_bt_refresh",
-      "community": 70,
-      "community_name": "\u2600\ufe0f 1. Resumo das Etapas Implementadas (Roadmap Solar)",
+      "community": 73,
+      "community_name": "zt",
       "norm_label": "._refresh()"
     },
     {
@@ -4315,8 +4337,8 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "web_chart_min_bt_getanims",
-      "community": 70,
-      "community_name": "\u2600\ufe0f 1. Resumo das Etapas Implementadas (Roadmap Solar)",
+      "community": 73,
+      "community_name": "zt",
       "norm_label": "._getanims()"
     },
     {
@@ -4326,8 +4348,8 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "web_chart_min_bt_listen",
-      "community": 70,
-      "community_name": "\u2600\ufe0f 1. Resumo das Etapas Implementadas (Roadmap Solar)",
+      "community": 73,
+      "community_name": "zt",
       "norm_label": ".listen()"
     },
     {
@@ -4337,8 +4359,8 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "web_chart_min_bt_add",
-      "community": 70,
-      "community_name": "\u2600\ufe0f 1. Resumo das Etapas Implementadas (Roadmap Solar)",
+      "community": 73,
+      "community_name": "zt",
       "norm_label": ".add()"
     },
     {
@@ -4348,8 +4370,8 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "web_chart_min_bt_has",
-      "community": 70,
-      "community_name": "\u2600\ufe0f 1. Resumo das Etapas Implementadas (Roadmap Solar)",
+      "community": 73,
+      "community_name": "zt",
       "norm_label": ".has()"
     },
     {
@@ -4359,8 +4381,8 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "web_chart_min_bt_start",
-      "community": 70,
-      "community_name": "\u2600\ufe0f 1. Resumo das Etapas Implementadas (Roadmap Solar)",
+      "community": 73,
+      "community_name": "zt",
       "norm_label": ".start()"
     },
     {
@@ -4370,8 +4392,8 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "web_chart_min_bt_running",
-      "community": 97,
-      "community_name": ".getDataset",
+      "community": 14,
+      "community_name": "test_auth.py",
       "norm_label": ".running()"
     },
     {
@@ -4392,8 +4414,8 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "web_chart_min_bt_remove",
-      "community": 70,
-      "community_name": "\u2600\ufe0f 1. Resumo das Etapas Implementadas (Roadmap Solar)",
+      "community": 73,
+      "community_name": "zt",
       "norm_label": ".remove()"
     },
     {
@@ -4414,8 +4436,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_vt",
-      "community": 66,
-      "community_name": "extraction-spec.md",
+      "community": 73,
+      "community_name": "zt",
       "norm_label": "vt()"
     },
     {
@@ -4480,8 +4502,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_jt",
-      "community": 66,
-      "community_name": "extraction-spec.md",
+      "community": 105,
+      "community_name": "Si",
       "norm_label": "jt()"
     },
     {
@@ -4513,8 +4535,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_gt",
-      "community": 66,
-      "community_name": "extraction-spec.md",
+      "community": 105,
+      "community_name": "Si",
       "norm_label": "gt()"
     },
     {
@@ -4524,8 +4546,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_zt_constructor",
-      "community": 66,
-      "community_name": "extraction-spec.md",
+      "community": 105,
+      "community_name": "Si",
       "norm_label": ".constructor()"
     },
     {
@@ -4744,8 +4766,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_ne",
-      "community": 104,
-      "community_name": "n",
+      "community": 80,
+      "community_name": "eo",
       "norm_label": "ne()"
     },
     {
@@ -4755,8 +4777,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_numeric",
-      "community": 104,
-      "community_name": "n",
+      "community": 80,
+      "community_name": "eo",
       "norm_label": "numeric()"
     },
     {
@@ -4887,8 +4909,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_fe",
-      "community": 70,
-      "community_name": "\u2600\ufe0f 1. Resumo das Etapas Implementadas (Roadmap Solar)",
+      "community": 20,
+      "community_name": "chart.min.js",
       "norm_label": "fe()"
     },
     {
@@ -4898,8 +4920,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_ge",
-      "community": 84,
-      "community_name": ".bindResponsiveEvents",
+      "community": 8,
+      "community_name": "TestSolarWorkerPerformance",
       "norm_label": "ge()"
     },
     {
@@ -4909,8 +4931,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_pe",
-      "community": 84,
-      "community_name": ".bindResponsiveEvents",
+      "community": 20,
+      "community_name": "chart.min.js",
       "norm_label": "pe()"
     },
     {
@@ -4920,8 +4942,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_be",
-      "community": 84,
-      "community_name": ".bindResponsiveEvents",
+      "community": 20,
+      "community_name": "chart.min.js",
       "norm_label": "be()"
     },
     {
@@ -4942,8 +4964,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_we",
-      "community": 84,
-      "community_name": ".bindResponsiveEvents",
+      "community": 27,
+      "community_name": "test_web_config.py",
       "norm_label": "we()"
     },
     {
@@ -4953,8 +4975,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_ke",
-      "community": 97,
-      "community_name": ".getDataset",
+      "community": 14,
+      "community_name": "test_auth.py",
       "norm_label": "ke()"
     },
     {
@@ -4975,8 +4997,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_oe",
-      "community": 104,
-      "community_name": "n",
+      "community": 80,
+      "community_name": "eo",
       "norm_label": "oe()"
     },
     {
@@ -4986,8 +5008,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_ae",
-      "community": 100,
-      "community_name": "._resolveElementOptions",
+      "community": 76,
+      "community_name": "va",
       "norm_label": "ae()"
     },
     {
@@ -5041,8 +5063,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_ze",
-      "community": 91,
-      "community_name": "fa",
+      "community": 20,
+      "community_name": "chart.min.js",
       "norm_label": "ze()"
     },
     {
@@ -5063,8 +5085,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_ye",
-      "community": 77,
-      "community_name": "bn",
+      "community": 78,
+      "community_name": "ns",
       "norm_label": "ye()"
     },
     {
@@ -5118,8 +5140,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_ai",
-      "community": 83,
-      "community_name": "da",
+      "community": 75,
+      "community_name": "inRange",
       "norm_label": "ai()"
     },
     {
@@ -5129,8 +5151,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_ri",
-      "community": 83,
-      "community_name": "da",
+      "community": 75,
+      "community_name": "inRange",
       "norm_label": "ri()"
     },
     {
@@ -5151,8 +5173,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_hi",
-      "community": 83,
-      "community_name": "da",
+      "community": 75,
+      "community_name": "inRange",
       "norm_label": "hi()"
     },
     {
@@ -5217,8 +5239,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_gi",
-      "community": 27,
-      "community_name": "test_web_config.py",
+      "community": 20,
+      "community_name": "chart.min.js",
       "norm_label": "gi()"
     },
     {
@@ -5228,8 +5250,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_pi",
-      "community": 104,
-      "community_name": "n",
+      "community": 80,
+      "community_name": "eo",
       "norm_label": "pi()"
     },
     {
@@ -5272,8 +5294,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_wi",
-      "community": 99,
-      "community_name": "._layers",
+      "community": 81,
+      "community_name": "Si",
       "norm_label": "wi()"
     },
     {
@@ -5283,7 +5305,7 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_ki",
-      "community": 105,
+      "community": 81,
       "community_name": "Si",
       "norm_label": "ki()"
     },
@@ -5316,8 +5338,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_ci",
-      "community": 90,
-      "community_name": ".getContext",
+      "community": 76,
+      "community_name": "va",
       "norm_label": "ci()"
     },
     {
@@ -5349,8 +5371,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_fi",
-      "community": 90,
-      "community_name": ".getContext",
+      "community": 76,
+      "community_name": "va",
       "norm_label": "fi()"
     },
     {
@@ -5360,8 +5382,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_bi",
-      "community": 90,
-      "community_name": ".getContext",
+      "community": 76,
+      "community_name": "va",
       "norm_label": "bi()"
     },
     {
@@ -5371,8 +5393,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_ni",
-      "community": 83,
-      "community_name": "da",
+      "community": 20,
+      "community_name": "chart.min.js",
       "norm_label": "ni()"
     },
     {
@@ -5459,8 +5481,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_ts",
-      "community": 20,
-      "community_name": "chart.min.js",
+      "community": 76,
+      "community_name": "va",
       "norm_label": "ts()"
     },
     {
@@ -5481,8 +5503,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_is",
-      "community": 105,
-      "community_name": "Si",
+      "community": 102,
+      "community_name": "ca",
       "norm_label": "is()"
     },
     {
@@ -5492,8 +5514,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_ss",
-      "community": 105,
-      "community_name": "Si",
+      "community": 76,
+      "community_name": "va",
       "norm_label": "ss()"
     },
     {
@@ -5525,8 +5547,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_addbox",
-      "community": 74,
-      "community_name": "s",
+      "community": 14,
+      "community_name": "test_auth.py",
       "norm_label": "addbox()"
     },
     {
@@ -5536,8 +5558,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_removebox",
-      "community": 106,
-      "community_name": ".buildOrUpdateControllers",
+      "community": 14,
+      "community_name": "test_auth.py",
       "norm_label": "removebox()"
     },
     {
@@ -5547,8 +5569,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_configure",
-      "community": 74,
-      "community_name": "s",
+      "community": 95,
+      "community_name": ".isHorizontal",
       "norm_label": "configure()"
     },
     {
@@ -5558,8 +5580,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_update",
-      "community": 105,
-      "community_name": "Si",
+      "community": 76,
+      "community_name": "va",
       "norm_label": "update()"
     },
     {
@@ -5668,8 +5690,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_ls",
-      "community": 85,
-      "community_name": "solar_scraper.py",
+      "community": 76,
+      "community_name": "va",
       "norm_label": "ls"
     },
     {
@@ -5679,8 +5701,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_ls_acquirecontext",
-      "community": 85,
-      "community_name": "solar_scraper.py",
+      "community": 76,
+      "community_name": "va",
       "norm_label": ".acquirecontext()"
     },
     {
@@ -5690,8 +5712,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_ls_updateconfig",
-      "community": 85,
-      "community_name": "solar_scraper.py",
+      "community": 76,
+      "community_name": "va",
       "norm_label": ".updateconfig()"
     },
     {
@@ -5701,8 +5723,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_fs",
-      "community": 84,
-      "community_name": ".bindResponsiveEvents",
+      "community": 14,
+      "community_name": "test_auth.py",
       "norm_label": "fs()"
     },
     {
@@ -5712,7 +5734,7 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_gs",
-      "community": 105,
+      "community": 81,
       "community_name": "Si",
       "norm_label": "gs()"
     },
@@ -5723,8 +5745,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_ps",
-      "community": 84,
-      "community_name": ".bindResponsiveEvents",
+      "community": 20,
+      "community_name": "chart.min.js",
       "norm_label": "ps()"
     },
     {
@@ -5734,8 +5756,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_ms",
-      "community": 84,
-      "community_name": ".bindResponsiveEvents",
+      "community": 81,
+      "community_name": "Si",
       "norm_label": "ms()"
     },
     {
@@ -5745,8 +5767,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_ys",
-      "community": 84,
-      "community_name": ".bindResponsiveEvents",
+      "community": 8,
+      "community_name": "TestSolarWorkerPerformance",
       "norm_label": "ys()"
     },
     {
@@ -5756,8 +5778,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_vs",
-      "community": 84,
-      "community_name": ".bindResponsiveEvents",
+      "community": 14,
+      "community_name": "test_auth.py",
       "norm_label": "vs()"
     },
     {
@@ -5800,8 +5822,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_ws_addeventlistener",
-      "community": 84,
-      "community_name": ".bindResponsiveEvents",
+      "community": 14,
+      "community_name": "test_auth.py",
       "norm_label": ".addeventlistener()"
     },
     {
@@ -5811,8 +5833,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_ws_removeeventlistener",
-      "community": 84,
-      "community_name": ".bindResponsiveEvents",
+      "community": 14,
+      "community_name": "test_auth.py",
       "norm_label": ".removeeventlistener()"
     },
     {
@@ -5844,8 +5866,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_ws_isattached",
-      "community": 84,
-      "community_name": ".bindResponsiveEvents",
+      "community": 8,
+      "community_name": "TestSolarWorkerPerformance",
       "norm_label": ".isattached()"
     },
     {
@@ -5855,8 +5877,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_ks",
-      "community": 70,
-      "community_name": "\u2600\ufe0f 1. Resumo das Etapas Implementadas (Roadmap Solar)",
+      "community": 20,
+      "community_name": "chart.min.js",
       "norm_label": "ks()"
     },
     {
@@ -5965,8 +5987,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_os_constructor",
-      "community": 74,
-      "community_name": "s",
+      "community": 70,
+      "community_name": "\u2600\ufe0f 1. Resumo das Etapas Implementadas (Roadmap Solar)",
       "norm_label": ".constructor()"
     },
     {
@@ -5976,8 +5998,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_os_configure",
-      "community": 70,
-      "community_name": "\u2600\ufe0f 1. Resumo das Etapas Implementadas (Roadmap Solar)",
+      "community": 27,
+      "community_name": "test_web_config.py",
       "norm_label": ".configure()"
     },
     {
@@ -6042,8 +6064,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_ns_constructor",
-      "community": 65,
-      "community_name": "graphify reference: transcribe video and audio",
+      "community": 78,
+      "community_name": "ns",
       "norm_label": ".constructor()"
     },
     {
@@ -6053,8 +6075,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_ns_initialize",
-      "community": 106,
-      "community_name": ".buildOrUpdateControllers",
+      "community": 58,
+      "community_name": "What You Must Do When Invoked",
       "norm_label": ".initialize()"
     },
     {
@@ -6064,8 +6086,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_ns_updateindex",
-      "community": 106,
-      "community_name": ".buildOrUpdateControllers",
+      "community": 14,
+      "community_name": "test_auth.py",
       "norm_label": ".updateindex()"
     },
     {
@@ -6075,8 +6097,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_ns_linkscales",
-      "community": 61,
-      "community_name": "graphify reference: add a URL and watch a folder",
+      "community": 78,
+      "community_name": "ns",
       "norm_label": ".linkscales()"
     },
     {
@@ -6086,8 +6108,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_ns_getdataset",
-      "community": 61,
-      "community_name": "graphify reference: add a URL and watch a folder",
+      "community": 78,
+      "community_name": "ns",
       "norm_label": ".getdataset()"
     },
     {
@@ -6097,8 +6119,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_ns_getmeta",
-      "community": 65,
-      "community_name": "graphify reference: transcribe video and audio",
+      "community": 78,
+      "community_name": "ns",
       "norm_label": ".getmeta()"
     },
     {
@@ -6108,8 +6130,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_ns_getscaleforid",
-      "community": 61,
-      "community_name": "graphify reference: add a URL and watch a folder",
+      "community": 78,
+      "community_name": "ns",
       "norm_label": ".getscaleforid()"
     },
     {
@@ -6141,8 +6163,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_ns_destroy",
-      "community": 61,
-      "community_name": "graphify reference: add a URL and watch a folder",
+      "community": 78,
+      "community_name": "ns",
       "norm_label": "._destroy()"
     },
     {
@@ -6152,8 +6174,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_ns_datacheck",
-      "community": 61,
-      "community_name": "graphify reference: add a URL and watch a folder",
+      "community": 78,
+      "community_name": "ns",
       "norm_label": "._datacheck()"
     },
     {
@@ -6163,8 +6185,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_ns_addelements",
-      "community": 61,
-      "community_name": "graphify reference: add a URL and watch a folder",
+      "community": 78,
+      "community_name": "ns",
       "norm_label": ".addelements()"
     },
     {
@@ -6174,8 +6196,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_ns_buildorupdateelements",
-      "community": 61,
-      "community_name": "graphify reference: add a URL and watch a folder",
+      "community": 78,
+      "community_name": "ns",
       "norm_label": ".buildorupdateelements()"
     },
     {
@@ -6185,8 +6207,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_ns_configure",
-      "community": 77,
-      "community_name": "bn",
+      "community": 78,
+      "community_name": "ns",
       "norm_label": ".configure()"
     },
     {
@@ -6207,8 +6229,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_ns_parseprimitivedata",
-      "community": 79,
-      "community_name": "d",
+      "community": 93,
+      "community_name": "parse",
       "norm_label": ".parseprimitivedata()"
     },
     {
@@ -6295,8 +6317,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_ns_getallparsedvalues",
-      "community": 82,
-      "community_name": "no",
+      "community": 102,
+      "community_name": "ca",
       "norm_label": ".getallparsedvalues()"
     },
     {
@@ -6350,8 +6372,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_ns_getstyle",
-      "community": 63,
-      "community_name": "graphify reference: incremental update and cluster-only",
+      "community": 78,
+      "community_name": "ns",
       "norm_label": ".getstyle()"
     },
     {
@@ -6361,8 +6383,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_ns_getcontext",
-      "community": 90,
-      "community_name": ".getContext",
+      "community": 76,
+      "community_name": "va",
       "norm_label": ".getcontext()"
     },
     {
@@ -6372,8 +6394,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_ns_resolvedatasetelementoptions",
-      "community": 63,
-      "community_name": "graphify reference: incremental update and cluster-only",
+      "community": 78,
+      "community_name": "ns",
       "norm_label": ".resolvedatasetelementoptions()"
     },
     {
@@ -6383,8 +6405,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_ns_resolvedataelementoptions",
-      "community": 63,
-      "community_name": "graphify reference: incremental update and cluster-only",
+      "community": 78,
+      "community_name": "ns",
       "norm_label": ".resolvedataelementoptions()"
     },
     {
@@ -6394,8 +6416,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_ns_resolveelementoptions",
-      "community": 63,
-      "community_name": "graphify reference: incremental update and cluster-only",
+      "community": 78,
+      "community_name": "ns",
       "norm_label": "._resolveelementoptions()"
     },
     {
@@ -6405,8 +6427,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_ns_resolveanimations",
-      "community": 77,
-      "community_name": "bn",
+      "community": 78,
+      "community_name": "ns",
       "norm_label": "._resolveanimations()"
     },
     {
@@ -6416,8 +6438,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_ns_getsharedoptions",
-      "community": 101,
-      "community_name": "beforeUpdate",
+      "community": 100,
+      "community_name": "._resolveElementOptions",
       "norm_label": ".getsharedoptions()"
     },
     {
@@ -6427,8 +6449,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_ns_includeoptions",
-      "community": 101,
-      "community_name": "beforeUpdate",
+      "community": 100,
+      "community_name": "._resolveElementOptions",
       "norm_label": ".includeoptions()"
     },
     {
@@ -6438,8 +6460,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_ns_updateelement",
-      "community": 101,
-      "community_name": "beforeUpdate",
+      "community": 76,
+      "community_name": "va",
       "norm_label": ".updateelement()"
     },
     {
@@ -6449,8 +6471,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_ns_updatesharedoptions",
-      "community": 101,
-      "community_name": "beforeUpdate",
+      "community": 100,
+      "community_name": "._resolveElementOptions",
       "norm_label": ".updatesharedoptions()"
     },
     {
@@ -6515,8 +6537,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_ns_resyncelements",
-      "community": 93,
-      "community_name": "parse",
+      "community": 78,
+      "community_name": "ns",
       "norm_label": "._resyncelements()"
     },
     {
@@ -6526,8 +6548,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_ns_insertelements",
-      "community": 93,
-      "community_name": "parse",
+      "community": 78,
+      "community_name": "ns",
       "norm_label": "._insertelements()"
     },
     {
@@ -6548,8 +6570,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_ns_removeelements",
-      "community": 93,
-      "community_name": "parse",
+      "community": 78,
+      "community_name": "ns",
       "norm_label": "._removeelements()"
     },
     {
@@ -6669,8 +6691,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_xs",
-      "community": 20,
-      "community_name": "chart.min.js",
+      "community": 95,
+      "community_name": ".isHorizontal",
       "norm_label": "xs()"
     },
     {
@@ -6680,8 +6702,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_qs",
-      "community": 84,
-      "community_name": ".bindResponsiveEvents",
+      "community": 58,
+      "community_name": "What You Must Do When Invoked",
       "norm_label": "qs()"
     },
     {
@@ -6768,8 +6790,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_js_getlabels",
-      "community": 79,
-      "community_name": "d",
+      "community": 93,
+      "community_name": "parse",
       "norm_label": ".getlabels()"
     },
     {
@@ -6999,8 +7021,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_js_calculatelabelrotation",
-      "community": 20,
-      "community_name": "chart.min.js",
+      "community": 95,
+      "community_name": ".isHorizontal",
       "norm_label": ".calculatelabelrotation()"
     },
     {
@@ -7043,8 +7065,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_js_fit",
-      "community": 20,
-      "community_name": "chart.min.js",
+      "community": 95,
+      "community_name": ".isHorizontal",
       "norm_label": ".fit()"
     },
     {
@@ -7054,8 +7076,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_js_calculatepadding",
-      "community": 20,
-      "community_name": "chart.min.js",
+      "community": 95,
+      "community_name": ".isHorizontal",
       "norm_label": "._calculatepadding()"
     },
     {
@@ -7065,8 +7087,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_js_handlemargins",
-      "community": 20,
-      "community_name": "chart.min.js",
+      "community": 95,
+      "community_name": ".isHorizontal",
       "norm_label": "._handlemargins()"
     },
     {
@@ -7120,8 +7142,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_js_getlabelsizes",
-      "community": 20,
-      "community_name": "chart.min.js",
+      "community": 95,
+      "community_name": ".isHorizontal",
       "norm_label": "._getlabelsizes()"
     },
     {
@@ -7197,8 +7219,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_js_getdecimalforpixel",
-      "community": 100,
-      "community_name": "._resolveElementOptions",
+      "community": 80,
+      "community_name": "eo",
       "norm_label": ".getdecimalforpixel()"
     },
     {
@@ -7219,8 +7241,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_js_getbasevalue",
-      "community": 80,
-      "community_name": "eo",
+      "community": 102,
+      "community_name": "ca",
       "norm_label": ".getbasevalue()"
     },
     {
@@ -7230,8 +7252,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_js_getcontext",
-      "community": 90,
-      "community_name": ".getContext",
+      "community": 76,
+      "community_name": "va",
       "norm_label": ".getcontext()"
     },
     {
@@ -7241,8 +7263,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_js_ticksize",
-      "community": 20,
-      "community_name": "chart.min.js",
+      "community": 95,
+      "community_name": ".isHorizontal",
       "norm_label": "._ticksize()"
     },
     {
@@ -7252,8 +7274,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_js_isvisible",
-      "community": 80,
-      "community_name": "eo",
+      "community": 95,
+      "community_name": ".isHorizontal",
       "norm_label": "._isvisible()"
     },
     {
@@ -7263,8 +7285,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_js_computegridlineitems",
-      "community": 27,
-      "community_name": "test_web_config.py",
+      "community": 76,
+      "community_name": "va",
       "norm_label": "._computegridlineitems()"
     },
     {
@@ -7274,8 +7296,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_js_computelabelitems",
-      "community": 20,
-      "community_name": "chart.min.js",
+      "community": 95,
+      "community_name": ".isHorizontal",
       "norm_label": "._computelabelitems()"
     },
     {
@@ -7285,8 +7307,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_js_getxaxislabelalignment",
-      "community": 20,
-      "community_name": "chart.min.js",
+      "community": 95,
+      "community_name": ".isHorizontal",
       "norm_label": "._getxaxislabelalignment()"
     },
     {
@@ -7296,8 +7318,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_js_getyaxislabelalignment",
-      "community": 20,
-      "community_name": "chart.min.js",
+      "community": 95,
+      "community_name": ".isHorizontal",
       "norm_label": "._getyaxislabelalignment()"
     },
     {
@@ -7307,8 +7329,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_js_computelabelarea",
-      "community": 91,
-      "community_name": "fa",
+      "community": 20,
+      "community_name": "chart.min.js",
       "norm_label": "._computelabelarea()"
     },
     {
@@ -7329,8 +7351,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_js_getlinewidthforvalue",
-      "community": 100,
-      "community_name": "._resolveElementOptions",
+      "community": 95,
+      "community_name": ".isHorizontal",
       "norm_label": ".getlinewidthforvalue()"
     },
     {
@@ -7340,8 +7362,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_js_drawgrid",
-      "community": 27,
-      "community_name": "test_web_config.py",
+      "community": 76,
+      "community_name": "va",
       "norm_label": ".drawgrid()"
     },
     {
@@ -7351,8 +7373,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_js_drawborder",
-      "community": 95,
-      "community_name": ".isHorizontal",
+      "community": 76,
+      "community_name": "va",
       "norm_label": ".drawborder()"
     },
     {
@@ -7362,8 +7384,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_js_drawlabels",
-      "community": 91,
-      "community_name": "fa",
+      "community": 20,
+      "community_name": "chart.min.js",
       "norm_label": ".drawlabels()"
     },
     {
@@ -7384,8 +7406,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_js_draw",
-      "community": 80,
-      "community_name": "eo",
+      "community": 81,
+      "community_name": "Si",
       "norm_label": ".draw()"
     },
     {
@@ -7395,8 +7417,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_js_layers",
-      "community": 80,
-      "community_name": "eo",
+      "community": 81,
+      "community_name": "Si",
       "norm_label": "._layers()"
     },
     {
@@ -7406,8 +7428,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_js_getmatchingvisiblemetas",
-      "community": 80,
-      "community_name": "eo",
+      "community": 102,
+      "community_name": "ca",
       "norm_label": ".getmatchingvisiblemetas()"
     },
     {
@@ -7439,8 +7461,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_qs_constructor",
-      "community": 84,
-      "community_name": ".bindResponsiveEvents",
+      "community": 58,
+      "community_name": "What You Must Do When Invoked",
       "norm_label": ".constructor()"
     },
     {
@@ -7461,8 +7483,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_qs_register",
-      "community": 84,
-      "community_name": ".bindResponsiveEvents",
+      "community": 105,
+      "community_name": "Si",
       "norm_label": ".register()"
     },
     {
@@ -7472,8 +7494,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_qs_get",
-      "community": 77,
-      "community_name": "bn",
+      "community": 78,
+      "community_name": "ns",
       "norm_label": ".get()"
     },
     {
@@ -7483,8 +7505,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_qs_unregister",
-      "community": 84,
-      "community_name": ".bindResponsiveEvents",
+      "community": 58,
+      "community_name": "What You Must Do When Invoked",
       "norm_label": ".unregister()"
     },
     {
@@ -7527,8 +7549,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_tn_remove",
-      "community": 58,
-      "community_name": "What You Must Do When Invoked",
+      "community": 14,
+      "community_name": "test_auth.py",
       "norm_label": ".remove()"
     },
     {
@@ -7593,8 +7615,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_tn_getelement",
-      "community": 106,
-      "community_name": ".buildOrUpdateControllers",
+      "community": 58,
+      "community_name": "What You Must Do When Invoked",
       "norm_label": ".getelement()"
     },
     {
@@ -7802,8 +7824,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_on",
-      "community": 77,
-      "community_name": "bn",
+      "community": 27,
+      "community_name": "test_web_config.py",
       "norm_label": "on()"
     },
     {
@@ -7824,8 +7846,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_rn",
-      "community": 27,
-      "community_name": "test_web_config.py",
+      "community": 20,
+      "community_name": "chart.min.js",
       "norm_label": "rn()"
     },
     {
@@ -7835,8 +7857,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_ln",
-      "community": 27,
-      "community_name": "test_web_config.py",
+      "community": 20,
+      "community_name": "chart.min.js",
       "norm_label": "ln()"
     },
     {
@@ -7846,8 +7868,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_hn",
-      "community": 27,
-      "community_name": "test_web_config.py",
+      "community": 20,
+      "community_name": "chart.min.js",
       "norm_label": "hn()"
     },
     {
@@ -7890,8 +7912,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_pn",
-      "community": 77,
-      "community_name": "bn",
+      "community": 78,
+      "community_name": "ns",
       "norm_label": "pn()"
     },
     {
@@ -7901,8 +7923,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_bn",
-      "community": 77,
-      "community_name": "bn",
+      "community": 78,
+      "community_name": "ns",
       "norm_label": "bn"
     },
     {
@@ -7923,8 +7945,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_bn_platform",
-      "community": 77,
-      "community_name": "bn",
+      "community": 78,
+      "community_name": "ns",
       "norm_label": ".platform()"
     },
     {
@@ -7934,8 +7956,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_bn_type",
-      "community": 77,
-      "community_name": "bn",
+      "community": 78,
+      "community_name": "ns",
       "norm_label": ".type()"
     },
     {
@@ -7945,8 +7967,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_bn_data",
-      "community": 27,
-      "community_name": "test_web_config.py",
+      "community": 78,
+      "community_name": "ns",
       "norm_label": ".data()"
     },
     {
@@ -7956,8 +7978,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_bn_options",
-      "community": 77,
-      "community_name": "bn",
+      "community": 78,
+      "community_name": "ns",
       "norm_label": ".options()"
     },
     {
@@ -7967,8 +7989,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_bn_plugins",
-      "community": 77,
-      "community_name": "bn",
+      "community": 78,
+      "community_name": "ns",
       "norm_label": ".plugins()"
     },
     {
@@ -7978,8 +8000,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_bn_update",
-      "community": 77,
-      "community_name": "bn",
+      "community": 78,
+      "community_name": "ns",
       "norm_label": ".update()"
     },
     {
@@ -7989,8 +8011,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_bn_clearcache",
-      "community": 77,
-      "community_name": "bn",
+      "community": 78,
+      "community_name": "ns",
       "norm_label": ".clearcache()"
     },
     {
@@ -8000,8 +8022,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_bn_datasetscopekeys",
-      "community": 77,
-      "community_name": "bn",
+      "community": 78,
+      "community_name": "ns",
       "norm_label": ".datasetscopekeys()"
     },
     {
@@ -8011,8 +8033,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_bn_datasetanimationscopekeys",
-      "community": 77,
-      "community_name": "bn",
+      "community": 78,
+      "community_name": "ns",
       "norm_label": ".datasetanimationscopekeys()"
     },
     {
@@ -8022,8 +8044,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_bn_datasetelementscopekeys",
-      "community": 77,
-      "community_name": "bn",
+      "community": 78,
+      "community_name": "ns",
       "norm_label": ".datasetelementscopekeys()"
     },
     {
@@ -8033,8 +8055,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_bn_pluginscopekeys",
-      "community": 77,
-      "community_name": "bn",
+      "community": 78,
+      "community_name": "ns",
       "norm_label": ".pluginscopekeys()"
     },
     {
@@ -8044,8 +8066,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_bn_cachedscopes",
-      "community": 77,
-      "community_name": "bn",
+      "community": 78,
+      "community_name": "ns",
       "norm_label": "._cachedscopes()"
     },
     {
@@ -8055,8 +8077,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_bn_getoptionscopes",
-      "community": 77,
-      "community_name": "bn",
+      "community": 78,
+      "community_name": "ns",
       "norm_label": ".getoptionscopes()"
     },
     {
@@ -8066,8 +8088,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_bn_chartoptionscopes",
-      "community": 97,
-      "community_name": ".getDataset",
+      "community": 14,
+      "community_name": "test_auth.py",
       "norm_label": ".chartoptionscopes()"
     },
     {
@@ -8077,8 +8099,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_bn_resolvenamedoptions",
-      "community": 77,
-      "community_name": "bn",
+      "community": 78,
+      "community_name": "ns",
       "norm_label": ".resolvenamedoptions()"
     },
     {
@@ -8088,8 +8110,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_bn_createresolver",
-      "community": 77,
-      "community_name": "bn",
+      "community": 78,
+      "community_name": "ns",
       "norm_label": ".createresolver()"
     },
     {
@@ -8099,8 +8121,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_xn",
-      "community": 77,
-      "community_name": "bn",
+      "community": 78,
+      "community_name": "ns",
       "norm_label": "xn()"
     },
     {
@@ -8121,8 +8143,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_mn",
-      "community": 106,
-      "community_name": ".buildOrUpdateControllers",
+      "community": 14,
+      "community_name": "test_auth.py",
       "norm_label": "mn()"
     },
     {
@@ -8132,8 +8154,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_wn",
-      "community": 97,
-      "community_name": ".getDataset",
+      "community": 14,
+      "community_name": "test_auth.py",
       "norm_label": "wn()"
     },
     {
@@ -8143,8 +8165,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_kn",
-      "community": 83,
-      "community_name": "da",
+      "community": 79,
+      "community_name": "d",
       "norm_label": "kn()"
     },
     {
@@ -8154,8 +8176,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_an_register",
-      "community": 84,
-      "community_name": ".bindResponsiveEvents",
+      "community": 3,
+      "community_name": "script.js",
       "norm_label": ".register()"
     },
     {
@@ -8176,8 +8198,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_an_constructor",
-      "community": 97,
-      "community_name": ".getDataset",
+      "community": 14,
+      "community_name": "test_auth.py",
       "norm_label": ".constructor()"
     },
     {
@@ -8187,8 +8209,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_an_aspectratio",
-      "community": 70,
-      "community_name": "\u2600\ufe0f 1. Resumo das Etapas Implementadas (Roadmap Solar)",
+      "community": 14,
+      "community_name": "test_auth.py",
       "norm_label": ".aspectratio()"
     },
     {
@@ -8231,8 +8253,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_an_initialize",
-      "community": 97,
-      "community_name": ".getDataset",
+      "community": 14,
+      "community_name": "test_auth.py",
       "norm_label": "._initialize()"
     },
     {
@@ -8242,8 +8264,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_an_clear",
-      "community": 97,
-      "community_name": ".getDataset",
+      "community": 14,
+      "community_name": "test_auth.py",
       "norm_label": ".clear()"
     },
     {
@@ -8253,8 +8275,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_an_stop",
-      "community": 106,
-      "community_name": ".buildOrUpdateControllers",
+      "community": 14,
+      "community_name": "test_auth.py",
       "norm_label": ".stop()"
     },
     {
@@ -8264,8 +8286,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_an_resize",
-      "community": 97,
-      "community_name": ".getDataset",
+      "community": 14,
+      "community_name": "test_auth.py",
       "norm_label": ".resize()"
     },
     {
@@ -8275,8 +8297,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_an_ensurescaleshaveids",
-      "community": 74,
-      "community_name": "s",
+      "community": 14,
+      "community_name": "test_auth.py",
       "norm_label": ".ensurescaleshaveids()"
     },
     {
@@ -8286,8 +8308,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_an_buildorupdatescales",
-      "community": 74,
-      "community_name": "s",
+      "community": 14,
+      "community_name": "test_auth.py",
       "norm_label": ".buildorupdatescales()"
     },
     {
@@ -8297,8 +8319,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_an_updatemetasets",
-      "community": 106,
-      "community_name": ".buildOrUpdateControllers",
+      "community": 14,
+      "community_name": "test_auth.py",
       "norm_label": "._updatemetasets()"
     },
     {
@@ -8308,8 +8330,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_an_removeunreferencedmetasets",
-      "community": 106,
-      "community_name": ".buildOrUpdateControllers",
+      "community": 14,
+      "community_name": "test_auth.py",
       "norm_label": "._removeunreferencedmetasets()"
     },
     {
@@ -8319,8 +8341,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_an_buildorupdatecontrollers",
-      "community": 106,
-      "community_name": ".buildOrUpdateControllers",
+      "community": 14,
+      "community_name": "test_auth.py",
       "norm_label": ".buildorupdatecontrollers()"
     },
     {
@@ -8330,8 +8352,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_an_resetelements",
-      "community": 74,
-      "community_name": "s",
+      "community": 14,
+      "community_name": "test_auth.py",
       "norm_label": "._resetelements()"
     },
     {
@@ -8341,8 +8363,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_an_reset",
-      "community": 74,
-      "community_name": "s",
+      "community": 14,
+      "community_name": "test_auth.py",
       "norm_label": ".reset()"
     },
     {
@@ -8352,8 +8374,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_an_update",
-      "community": 74,
-      "community_name": "s",
+      "community": 14,
+      "community_name": "test_auth.py",
       "norm_label": ".update()"
     },
     {
@@ -8363,8 +8385,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_an_updatescales",
-      "community": 74,
-      "community_name": "s",
+      "community": 14,
+      "community_name": "test_auth.py",
       "norm_label": "._updatescales()"
     },
     {
@@ -8407,8 +8429,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_an_updatelayout",
-      "community": 74,
-      "community_name": "s",
+      "community": 14,
+      "community_name": "test_auth.py",
       "norm_label": "._updatelayout()"
     },
     {
@@ -8418,8 +8440,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_an_updatedatasets",
-      "community": 103,
-      "community_name": ".getDatasetMeta",
+      "community": 14,
+      "community_name": "test_auth.py",
       "norm_label": "._updatedatasets()"
     },
     {
@@ -8429,8 +8451,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_an_updatedataset",
-      "community": 103,
-      "community_name": ".getDatasetMeta",
+      "community": 14,
+      "community_name": "test_auth.py",
       "norm_label": "._updatedataset()"
     },
     {
@@ -8440,8 +8462,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_an_render",
-      "community": 97,
-      "community_name": ".getDataset",
+      "community": 14,
+      "community_name": "test_auth.py",
       "norm_label": ".render()"
     },
     {
@@ -8451,8 +8473,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_an_draw",
-      "community": 97,
-      "community_name": ".getDataset",
+      "community": 14,
+      "community_name": "test_auth.py",
       "norm_label": ".draw()"
     },
     {
@@ -8462,8 +8484,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_an_getsorteddatasetmetas",
-      "community": 14,
-      "community_name": "test_auth.py",
+      "community": 76,
+      "community_name": "va",
       "norm_label": "._getsorteddatasetmetas()"
     },
     {
@@ -8484,8 +8506,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_an_drawdatasets",
-      "community": 97,
-      "community_name": ".getDataset",
+      "community": 14,
+      "community_name": "test_auth.py",
       "norm_label": "._drawdatasets()"
     },
     {
@@ -8495,8 +8517,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_an_drawdataset",
-      "community": 97,
-      "community_name": ".getDataset",
+      "community": 14,
+      "community_name": "test_auth.py",
       "norm_label": "._drawdataset()"
     },
     {
@@ -8528,8 +8550,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_an_getdatasetmeta",
-      "community": 103,
-      "community_name": ".getDatasetMeta",
+      "community": 14,
+      "community_name": "test_auth.py",
       "norm_label": ".getdatasetmeta()"
     },
     {
@@ -8539,8 +8561,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_an_getcontext",
-      "community": 90,
-      "community_name": ".getContext",
+      "community": 76,
+      "community_name": "va",
       "norm_label": ".getcontext()"
     },
     {
@@ -8561,8 +8583,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_an_isdatasetvisible",
-      "community": 103,
-      "community_name": ".getDatasetMeta",
+      "community": 14,
+      "community_name": "test_auth.py",
       "norm_label": ".isdatasetvisible()"
     },
     {
@@ -8572,8 +8594,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_an_setdatasetvisibility",
-      "community": 103,
-      "community_name": ".getDatasetMeta",
+      "community": 14,
+      "community_name": "test_auth.py",
       "norm_label": ".setdatasetvisibility()"
     },
     {
@@ -8583,8 +8605,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_an_toggledatavisibility",
-      "community": 103,
-      "community_name": ".getDatasetMeta",
+      "community": 14,
+      "community_name": "test_auth.py",
       "norm_label": ".toggledatavisibility()"
     },
     {
@@ -8605,8 +8627,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_an_updatevisibility",
-      "community": 103,
-      "community_name": ".getDatasetMeta",
+      "community": 14,
+      "community_name": "test_auth.py",
       "norm_label": "._updatevisibility()"
     },
     {
@@ -8616,8 +8638,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_an_hide",
-      "community": 103,
-      "community_name": ".getDatasetMeta",
+      "community": 14,
+      "community_name": "test_auth.py",
       "norm_label": ".hide()"
     },
     {
@@ -8627,8 +8649,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_an_show",
-      "community": 103,
-      "community_name": ".getDatasetMeta",
+      "community": 14,
+      "community_name": "test_auth.py",
       "norm_label": ".show()"
     },
     {
@@ -8638,8 +8660,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_an_destroydatasetmeta",
-      "community": 106,
-      "community_name": ".buildOrUpdateControllers",
+      "community": 14,
+      "community_name": "test_auth.py",
       "norm_label": "._destroydatasetmeta()"
     },
     {
@@ -8748,8 +8770,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_an_notifyplugins",
-      "community": 97,
-      "community_name": ".getDataset",
+      "community": 14,
+      "community_name": "test_auth.py",
       "norm_label": ".notifyplugins()"
     },
     {
@@ -8814,8 +8836,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_en_override",
-      "community": 84,
-      "community_name": ".bindResponsiveEvents",
+      "community": 105,
+      "community_name": "Si",
       "norm_label": ".override()"
     },
     {
@@ -8946,8 +8968,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_fn",
-      "community": 27,
-      "community_name": "test_web_config.py",
+      "community": 100,
+      "community_name": "._resolveElementOptions",
       "norm_label": "fn()"
     },
     {
@@ -8979,8 +9001,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_onclick",
-      "community": 103,
-      "community_name": ".getDatasetMeta",
+      "community": 14,
+      "community_name": "test_auth.py",
       "norm_label": "onclick()"
     },
     {
@@ -9001,8 +9023,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_jn_linkscales",
-      "community": 106,
-      "community_name": ".buildOrUpdateControllers",
+      "community": 58,
+      "community_name": "What You Must Do When Invoked",
       "norm_label": ".linkscales()"
     },
     {
@@ -9111,8 +9133,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_jn_getlabelandvalue",
-      "community": 104,
-      "community_name": "n",
+      "community": 80,
+      "community_name": "eo",
       "norm_label": ".getlabelandvalue()"
     },
     {
@@ -9122,8 +9144,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_jn_getmaxborderwidth",
-      "community": 71,
-      "community_name": "send_daily_solar_telegram_report",
+      "community": 14,
+      "community_name": "test_auth.py",
       "norm_label": ".getmaxborderwidth()"
     },
     {
@@ -9177,8 +9199,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_n_constructor",
-      "community": 104,
-      "community_name": "n",
+      "community": 80,
+      "community_name": "eo",
       "norm_label": ".constructor()"
     },
     {
@@ -9188,8 +9210,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_n_getlabelandvalue",
-      "community": 104,
-      "community_name": "n",
+      "community": 80,
+      "community_name": "eo",
       "norm_label": ".getlabelandvalue()"
     },
     {
@@ -9199,8 +9221,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_n_parseobjectdata",
-      "community": 104,
-      "community_name": "n",
+      "community": 80,
+      "community_name": "eo",
       "norm_label": ".parseobjectdata()"
     },
     {
@@ -9210,8 +9232,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_n_update",
-      "community": 104,
-      "community_name": "n",
+      "community": 80,
+      "community_name": "eo",
       "norm_label": ".update()"
     },
     {
@@ -9221,8 +9243,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_n_getminmax",
-      "community": 27,
-      "community_name": "test_web_config.py",
+      "community": 80,
+      "community_name": "eo",
       "norm_label": ".getminmax()"
     },
     {
@@ -9232,8 +9254,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_n_updateradius",
-      "community": 104,
-      "community_name": "n",
+      "community": 80,
+      "community_name": "eo",
       "norm_label": "._updateradius()"
     },
     {
@@ -9243,8 +9265,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_n_updateelements",
-      "community": 101,
-      "community_name": "beforeUpdate",
+      "community": 80,
+      "community_name": "eo",
       "norm_label": ".updateelements()"
     },
     {
@@ -9254,8 +9276,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_n_countvisibleelements",
-      "community": 104,
-      "community_name": "n",
+      "community": 80,
+      "community_name": "eo",
       "norm_label": ".countvisibleelements()"
     },
     {
@@ -9265,8 +9287,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_n_computeangle",
-      "community": 101,
-      "community_name": "beforeUpdate",
+      "community": 80,
+      "community_name": "eo",
       "norm_label": "._computeangle()"
     },
     {
@@ -9276,8 +9298,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_parseprimitivedata",
-      "community": 27,
-      "community_name": "test_web_config.py",
+      "community": 100,
+      "community_name": "._resolveElementOptions",
       "norm_label": "parseprimitivedata()"
     },
     {
@@ -9287,8 +9309,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_parsearraydata",
-      "community": 27,
-      "community_name": "test_web_config.py",
+      "community": 100,
+      "community_name": "._resolveElementOptions",
       "norm_label": "parsearraydata()"
     },
     {
@@ -9320,8 +9342,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_getmaxoverflow",
-      "community": 83,
-      "community_name": "da",
+      "community": 100,
+      "community_name": "._resolveElementOptions",
       "norm_label": "getmaxoverflow()"
     },
     {
@@ -9342,8 +9364,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_initialize",
-      "community": 65,
-      "community_name": "graphify reference: transcribe video and audio",
+      "community": 78,
+      "community_name": "ns",
       "norm_label": "initialize()"
     },
     {
@@ -9353,8 +9375,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_updateelements",
-      "community": 101,
-      "community_name": "beforeUpdate",
+      "community": 100,
+      "community_name": "._resolveElementOptions",
       "norm_label": "updateelements()"
     },
     {
@@ -9441,8 +9463,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_resolvedataelementoptions",
-      "community": 101,
-      "community_name": "beforeUpdate",
+      "community": 100,
+      "community_name": "._resolveElementOptions",
       "norm_label": "resolvedataelementoptions()"
     },
     {
@@ -9452,8 +9474,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_addelements",
-      "community": 106,
-      "community_name": ".buildOrUpdateControllers",
+      "community": 58,
+      "community_name": "What You Must Do When Invoked",
       "norm_label": "addelements()"
     },
     {
@@ -9463,8 +9485,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_qn",
-      "community": 83,
-      "community_name": "da",
+      "community": 105,
+      "community_name": "Si",
       "norm_label": "qn()"
     },
     {
@@ -9562,8 +9584,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_no_segments",
-      "community": 27,
-      "community_name": "test_web_config.py",
+      "community": 82,
+      "community_name": "no",
       "norm_label": ".segments()"
     },
     {
@@ -9573,8 +9595,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_no_first",
-      "community": 91,
-      "community_name": "fa",
+      "community": 82,
+      "community_name": "no",
       "norm_label": ".first()"
     },
     {
@@ -9606,8 +9628,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_no_pathsegment",
-      "community": 82,
-      "community_name": "no",
+      "community": 80,
+      "community_name": "eo",
       "norm_label": ".pathsegment()"
     },
     {
@@ -9628,8 +9650,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_no_draw",
-      "community": 27,
-      "community_name": "test_web_config.py",
+      "community": 82,
+      "community_name": "no",
       "norm_label": ".draw()"
     },
     {
@@ -9639,8 +9661,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_oo",
-      "community": 75,
-      "community_name": "inRange",
+      "community": 20,
+      "community_name": "chart.min.js",
       "norm_label": "oo()"
     },
     {
@@ -9661,8 +9683,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_ro",
-      "community": 75,
-      "community_name": "inRange",
+      "community": 20,
+      "community_name": "chart.min.js",
       "norm_label": "ro()"
     },
     {
@@ -9705,8 +9727,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_uo",
-      "community": 83,
-      "community_name": "da",
+      "community": 20,
+      "community_name": "chart.min.js",
       "norm_label": "uo()"
     },
     {
@@ -9760,8 +9782,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_inxrange",
-      "community": 75,
-      "community_name": "inRange",
+      "community": 20,
+      "community_name": "chart.min.js",
       "norm_label": "inxrange()"
     },
     {
@@ -9771,8 +9793,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_inyrange",
-      "community": 75,
-      "community_name": "inRange",
+      "community": 20,
+      "community_name": "chart.min.js",
       "norm_label": "inyrange()"
     },
     {
@@ -9782,8 +9804,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_getrange",
-      "community": 83,
-      "community_name": "da",
+      "community": 20,
+      "community_name": "chart.min.js",
       "norm_label": "getrange()"
     },
     {
@@ -9793,8 +9815,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_size",
-      "community": 83,
-      "community_name": "da",
+      "community": 100,
+      "community_name": "._resolveElementOptions",
       "norm_label": "size()"
     },
     {
@@ -9815,8 +9837,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_po",
-      "community": 79,
-      "community_name": "d",
+      "community": 93,
+      "community_name": "parse",
       "norm_label": "po()"
     },
     {
@@ -9826,8 +9848,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_mo",
-      "community": 105,
-      "community_name": "Si",
+      "community": 27,
+      "community_name": "test_web_config.py",
       "norm_label": "mo()"
     },
     {
@@ -9837,8 +9859,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_bo",
-      "community": 70,
-      "community_name": "\u2600\ufe0f 1. Resumo das Etapas Implementadas (Roadmap Solar)",
+      "community": 80,
+      "community_name": "eo",
       "norm_label": "bo"
     },
     {
@@ -9848,8 +9870,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_bo_constructor",
-      "community": 70,
-      "community_name": "\u2600\ufe0f 1. Resumo das Etapas Implementadas (Roadmap Solar)",
+      "community": 80,
+      "community_name": "eo",
       "norm_label": ".constructor()"
     },
     {
@@ -9859,8 +9881,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_bo_parse",
-      "community": 70,
-      "community_name": "\u2600\ufe0f 1. Resumo das Etapas Implementadas (Roadmap Solar)",
+      "community": 80,
+      "community_name": "eo",
       "norm_label": ".parse()"
     },
     {
@@ -9870,8 +9892,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_bo_handletickrangeoptions",
-      "community": 70,
-      "community_name": "\u2600\ufe0f 1. Resumo das Etapas Implementadas (Roadmap Solar)",
+      "community": 27,
+      "community_name": "test_web_config.py",
       "norm_label": ".handletickrangeoptions()"
     },
     {
@@ -9881,8 +9903,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_bo_getticklimit",
-      "community": 105,
-      "community_name": "Si",
+      "community": 80,
+      "community_name": "eo",
       "norm_label": ".getticklimit()"
     },
     {
@@ -9892,8 +9914,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_bo_computeticklimit",
-      "community": 70,
-      "community_name": "\u2600\ufe0f 1. Resumo das Etapas Implementadas (Roadmap Solar)",
+      "community": 80,
+      "community_name": "eo",
       "norm_label": ".computeticklimit()"
     },
     {
@@ -9914,8 +9936,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_bo_configure",
-      "community": 74,
-      "community_name": "s",
+      "community": 80,
+      "community_name": "eo",
       "norm_label": ".configure()"
     },
     {
@@ -9925,8 +9947,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_bo_getlabelforvalue",
-      "community": 104,
-      "community_name": "n",
+      "community": 80,
+      "community_name": "eo",
       "norm_label": ".getlabelforvalue()"
     },
     {
@@ -9936,8 +9958,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_xo",
-      "community": 100,
-      "community_name": "._resolveElementOptions",
+      "community": 80,
+      "community_name": "eo",
       "norm_label": "xo"
     },
     {
@@ -9947,8 +9969,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_xo_determinedatalimits",
-      "community": 27,
-      "community_name": "test_web_config.py",
+      "community": 80,
+      "community_name": "eo",
       "norm_label": ".determinedatalimits()"
     },
     {
@@ -9958,8 +9980,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_xo_computeticklimit",
-      "community": 100,
-      "community_name": "._resolveElementOptions",
+      "community": 80,
+      "community_name": "eo",
       "norm_label": ".computeticklimit()"
     },
     {
@@ -9980,8 +10002,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_xo_getvalueforpixel",
-      "community": 100,
-      "community_name": "._resolveElementOptions",
+      "community": 80,
+      "community_name": "eo",
       "norm_label": ".getvalueforpixel()"
     },
     {
@@ -9991,8 +10013,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_vo",
-      "community": 105,
-      "community_name": "Si",
+      "community": 76,
+      "community_name": "va",
       "norm_label": "vo()"
     },
     {
@@ -10002,8 +10024,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_wo",
-      "community": 105,
-      "community_name": "Si",
+      "community": 76,
+      "community_name": "va",
       "norm_label": "wo()"
     },
     {
@@ -10013,8 +10035,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_ko",
-      "community": 100,
-      "community_name": "._resolveElementOptions",
+      "community": 80,
+      "community_name": "eo",
       "norm_label": "ko"
     },
     {
@@ -10024,8 +10046,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_ko_constructor",
-      "community": 100,
-      "community_name": "._resolveElementOptions",
+      "community": 80,
+      "community_name": "eo",
       "norm_label": ".constructor()"
     },
     {
@@ -10035,8 +10057,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_ko_parse",
-      "community": 100,
-      "community_name": "._resolveElementOptions",
+      "community": 84,
+      "community_name": ".bindResponsiveEvents",
       "norm_label": ".parse()"
     },
     {
@@ -10046,8 +10068,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_ko_determinedatalimits",
-      "community": 27,
-      "community_name": "test_web_config.py",
+      "community": 80,
+      "community_name": "eo",
       "norm_label": ".determinedatalimits()"
     },
     {
@@ -10057,8 +10079,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_ko_handletickrangeoptions",
-      "community": 27,
-      "community_name": "test_web_config.py",
+      "community": 80,
+      "community_name": "eo",
       "norm_label": ".handletickrangeoptions()"
     },
     {
@@ -10068,8 +10090,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_ko_buildticks",
-      "community": 105,
-      "community_name": "Si",
+      "community": 76,
+      "community_name": "va",
       "norm_label": ".buildticks()"
     },
     {
@@ -10079,8 +10101,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_ko_getlabelforvalue",
-      "community": 100,
-      "community_name": "._resolveElementOptions",
+      "community": 80,
+      "community_name": "eo",
       "norm_label": ".getlabelforvalue()"
     },
     {
@@ -10090,8 +10112,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_ko_configure",
-      "community": 74,
-      "community_name": "s",
+      "community": 14,
+      "community_name": "test_auth.py",
       "norm_label": ".configure()"
     },
     {
@@ -10112,8 +10134,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_ko_getvalueforpixel",
-      "community": 100,
-      "community_name": "._resolveElementOptions",
+      "community": 80,
+      "community_name": "eo",
       "norm_label": ".getvalueforpixel()"
     },
     {
@@ -10145,8 +10167,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_eo_setdimensions",
-      "community": 105,
-      "community_name": "Si",
+      "community": 80,
+      "community_name": "eo",
       "norm_label": ".setdimensions()"
     },
     {
@@ -10156,8 +10178,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_eo_determinedatalimits",
-      "community": 27,
-      "community_name": "test_web_config.py",
+      "community": 80,
+      "community_name": "eo",
       "norm_label": ".determinedatalimits()"
     },
     {
@@ -10167,8 +10189,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_eo_computeticklimit",
-      "community": 105,
-      "community_name": "Si",
+      "community": 80,
+      "community_name": "eo",
       "norm_label": ".computeticklimit()"
     },
     {
@@ -10178,8 +10200,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_eo_generateticklabels",
-      "community": 79,
-      "community_name": "d",
+      "community": 93,
+      "community_name": "parse",
       "norm_label": ".generateticklabels()"
     },
     {
@@ -10233,8 +10255,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_eo_getvaluefordistancefromcenter",
-      "community": 70,
-      "community_name": "\u2600\ufe0f 1. Resumo das Etapas Implementadas (Roadmap Solar)",
+      "community": 80,
+      "community_name": "eo",
       "norm_label": ".getvaluefordistancefromcenter()"
     },
     {
@@ -10244,8 +10266,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_eo_getpointlabelcontext",
-      "community": 90,
-      "community_name": ".getContext",
+      "community": 76,
+      "community_name": "va",
       "norm_label": ".getpointlabelcontext()"
     },
     {
@@ -10321,8 +10343,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_eo_drawborder",
-      "community": 80,
-      "community_name": "eo",
+      "community": 81,
+      "community_name": "Si",
       "norm_label": ".drawborder()"
     },
     {
@@ -10332,8 +10354,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_eo_drawlabels",
-      "community": 80,
-      "community_name": "eo",
+      "community": 81,
+      "community_name": "Si",
       "norm_label": ".drawlabels()"
     },
     {
@@ -10398,8 +10420,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_no_beforelayout",
-      "community": 70,
-      "community_name": "\u2600\ufe0f 1. Resumo das Etapas Implementadas (Roadmap Solar)",
+      "community": 76,
+      "community_name": "va",
       "norm_label": ".beforelayout()"
     },
     {
@@ -10541,8 +10563,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_no_getvalueforpixel",
-      "community": 100,
-      "community_name": "._resolveElementOptions",
+      "community": 80,
+      "community_name": "eo",
       "norm_label": ".getvalueforpixel()"
     },
     {
@@ -10629,8 +10651,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_determinedatalimits",
-      "community": 27,
-      "community_name": "test_web_config.py",
+      "community": 93,
+      "community_name": "parse",
       "norm_label": "determinedatalimits()"
     },
     {
@@ -10640,8 +10662,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_buildticks",
-      "community": 79,
-      "community_name": "d",
+      "community": 93,
+      "community_name": "parse",
       "norm_label": "buildticks()"
     },
     {
@@ -10673,8 +10695,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_getpixelfortick",
-      "community": 102,
-      "community_name": "ca",
+      "community": 95,
+      "community_name": ".isHorizontal",
       "norm_label": "getpixelfortick()"
     },
     {
@@ -10684,8 +10706,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_getvalueforpixel",
-      "community": 100,
-      "community_name": "._resolveElementOptions",
+      "community": 80,
+      "community_name": "eo",
       "norm_label": "getvalueforpixel()"
     },
     {
@@ -10695,8 +10717,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_getbasepixel",
-      "community": 101,
-      "community_name": "beforeUpdate",
+      "community": 102,
+      "community_name": "ca",
       "norm_label": "getbasepixel()"
     },
     {
@@ -10761,8 +10783,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_qo",
-      "community": 70,
-      "community_name": "\u2600\ufe0f 1. Resumo das Etapas Implementadas (Roadmap Solar)",
+      "community": 76,
+      "community_name": "va",
       "norm_label": "qo()"
     },
     {
@@ -10772,8 +10794,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_beforelayout",
-      "community": 70,
-      "community_name": "\u2600\ufe0f 1. Resumo das Etapas Implementadas (Roadmap Solar)",
+      "community": 76,
+      "community_name": "va",
       "norm_label": "beforelayout()"
     },
     {
@@ -10827,8 +10849,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_ia",
-      "community": 84,
-      "community_name": ".bindResponsiveEvents",
+      "community": 105,
+      "community_name": "Si",
       "norm_label": "ia()"
     },
     {
@@ -10838,8 +10860,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_sa",
-      "community": 91,
-      "community_name": "fa",
+      "community": 102,
+      "community_name": "ca",
       "norm_label": "sa()"
     },
     {
@@ -10849,8 +10871,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_na",
-      "community": 91,
-      "community_name": "fa",
+      "community": 20,
+      "community_name": "chart.min.js",
       "norm_label": "na()"
     },
     {
@@ -10860,7 +10882,7 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_oa",
-      "community": 105,
+      "community": 81,
       "community_name": "Si",
       "norm_label": "oa()"
     },
@@ -10948,8 +10970,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_ca",
-      "community": 80,
-      "community_name": "eo",
+      "community": 102,
+      "community_name": "ca",
       "norm_label": "ca()"
     },
     {
@@ -10992,8 +11014,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_ga",
-      "community": 91,
-      "community_name": "fa",
+      "community": 20,
+      "community_name": "chart.min.js",
       "norm_label": "ga()"
     },
     {
@@ -11003,8 +11025,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_pa",
-      "community": 84,
-      "community_name": ".bindResponsiveEvents",
+      "community": 91,
+      "community_name": "fa",
       "norm_label": "pa()"
     },
     {
@@ -11014,8 +11036,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_afterdatasetsupdate",
-      "community": 103,
-      "community_name": ".getDatasetMeta",
+      "community": 14,
+      "community_name": "test_auth.py",
       "norm_label": "afterdatasetsupdate()"
     },
     {
@@ -11036,8 +11058,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_beforedatasetsdraw",
-      "community": 91,
-      "community_name": "fa",
+      "community": 20,
+      "community_name": "chart.min.js",
       "norm_label": "beforedatasetsdraw()"
     },
     {
@@ -11047,8 +11069,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_beforedatasetdraw",
-      "community": 91,
-      "community_name": "fa",
+      "community": 20,
+      "community_name": "chart.min.js",
       "norm_label": "beforedatasetdraw()"
     },
     {
@@ -11058,8 +11080,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_xa",
-      "community": 86,
-      "community_name": "xa",
+      "community": 81,
+      "community_name": "Si",
       "norm_label": "xa"
     },
     {
@@ -11069,8 +11091,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_xa_constructor",
-      "community": 86,
-      "community_name": "xa",
+      "community": 81,
+      "community_name": "Si",
       "norm_label": ".constructor()"
     },
     {
@@ -11080,8 +11102,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_xa_update",
-      "community": 86,
-      "community_name": "xa",
+      "community": 81,
+      "community_name": "Si",
       "norm_label": ".update()"
     },
     {
@@ -11091,8 +11113,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_xa_setdimensions",
-      "community": 86,
-      "community_name": "xa",
+      "community": 81,
+      "community_name": "Si",
       "norm_label": ".setdimensions()"
     },
     {
@@ -11102,8 +11124,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_xa_buildlabels",
-      "community": 86,
-      "community_name": "xa",
+      "community": 81,
+      "community_name": "Si",
       "norm_label": ".buildlabels()"
     },
     {
@@ -11113,8 +11135,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_xa_fit",
-      "community": 86,
-      "community_name": "xa",
+      "community": 81,
+      "community_name": "Si",
       "norm_label": ".fit()"
     },
     {
@@ -11124,8 +11146,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_xa_fitrows",
-      "community": 86,
-      "community_name": "xa",
+      "community": 105,
+      "community_name": "Si",
       "norm_label": "._fitrows()"
     },
     {
@@ -11135,8 +11157,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_xa_fitcols",
-      "community": 86,
-      "community_name": "xa",
+      "community": 105,
+      "community_name": "Si",
       "norm_label": "._fitcols()"
     },
     {
@@ -11157,8 +11179,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_xa_ishorizontal",
-      "community": 86,
-      "community_name": "xa",
+      "community": 81,
+      "community_name": "Si",
       "norm_label": ".ishorizontal()"
     },
     {
@@ -11201,8 +11223,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_xa_getlegenditemat",
-      "community": 86,
-      "community_name": "xa",
+      "community": 81,
+      "community_name": "Si",
       "norm_label": "._getlegenditemat()"
     },
     {
@@ -11212,8 +11234,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_xa_handleevent",
-      "community": 86,
-      "community_name": "xa",
+      "community": 81,
+      "community_name": "Si",
       "norm_label": ".handleevent()"
     },
     {
@@ -11223,8 +11245,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_start",
-      "community": 74,
-      "community_name": "s",
+      "community": 14,
+      "community_name": "test_auth.py",
       "norm_label": "start()"
     },
     {
@@ -11234,8 +11256,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_stop",
-      "community": 106,
-      "community_name": ".buildOrUpdateControllers",
+      "community": 14,
+      "community_name": "test_auth.py",
       "norm_label": "stop()"
     },
     {
@@ -11245,8 +11267,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_beforeupdate",
-      "community": 65,
-      "community_name": "graphify reference: transcribe video and audio",
+      "community": 78,
+      "community_name": "ns",
       "norm_label": "beforeupdate()"
     },
     {
@@ -11256,8 +11278,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_afterupdate",
-      "community": 86,
-      "community_name": "xa",
+      "community": 81,
+      "community_name": "Si",
       "norm_label": "afterupdate()"
     },
     {
@@ -11355,8 +11377,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_label",
-      "community": 70,
-      "community_name": "\u2600\ufe0f 1. Resumo das Etapas Implementadas (Roadmap Solar)",
+      "community": 20,
+      "community_name": "chart.min.js",
       "norm_label": "label()"
     },
     {
@@ -11366,8 +11388,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_labelcolor",
-      "community": 63,
-      "community_name": "graphify reference: incremental update and cluster-only",
+      "community": 78,
+      "community_name": "ns",
       "norm_label": "labelcolor()"
     },
     {
@@ -11388,8 +11410,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_labelpointstyle",
-      "community": 63,
-      "community_name": "graphify reference: incremental update and cluster-only",
+      "community": 78,
+      "community_name": "ns",
       "norm_label": "labelpointstyle()"
     },
     {
@@ -11399,8 +11421,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_va_initialize",
-      "community": 65,
-      "community_name": "graphify reference: transcribe video and audio",
+      "community": 78,
+      "community_name": "ns",
       "norm_label": ".initialize()"
     },
     {
@@ -11421,8 +11443,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_va_getcontext",
-      "community": 90,
-      "community_name": ".getContext",
+      "community": 76,
+      "community_name": "va",
       "norm_label": ".getcontext()"
     },
     {
@@ -11498,8 +11520,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_va_drawcaret",
-      "community": 99,
-      "community_name": "._layers",
+      "community": 76,
+      "community_name": "va",
       "norm_label": ".drawcaret()"
     },
     {
@@ -11509,8 +11531,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_va_getcaretposition",
-      "community": 99,
-      "community_name": "._layers",
+      "community": 76,
+      "community_name": "va",
       "norm_label": ".getcaretposition()"
     },
     {
@@ -11564,8 +11586,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_va_drawbackground",
-      "community": 99,
-      "community_name": "._layers",
+      "community": 81,
+      "community_name": "Si",
       "norm_label": ".drawbackground()"
     },
     {
@@ -11652,8 +11674,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "web_chart_min_reset",
-      "community": 74,
-      "community_name": "s",
+      "community": 14,
+      "community_name": "test_auth.py",
       "norm_label": "reset()"
     },
     {
@@ -12202,8 +12224,8 @@
       "source_location": "L452",
       "_origin": "ast",
       "id": "web_api_main_get_solar_forecast_endpoint",
-      "community": 69,
-      "community_name": "fetch_solar_forecast",
+      "community": 1,
+      "community_name": "main.py",
       "norm_label": "get_solar_forecast_endpoint()"
     },
     {
@@ -18230,6 +18252,17 @@
       "confidence_score": 1.0
     },
     {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_bot_integrity.py",
+      "source_location": "L36",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "tests_test_bot_integrity",
+      "target": "tests_test_bot_integrity_test_get_solar_status_summary",
+      "confidence_score": 1.0
+    },
+    {
       "relation": "rationale_for",
       "confidence": "EXTRACTED",
       "source_file": "tests/test_bot_integrity.py",
@@ -18260,6 +18293,17 @@
       "_origin": "ast",
       "source": "tests_test_bot_integrity_rationale_26",
       "target": "tests_test_bot_integrity_test_bot_syntax",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_bot_integrity.py",
+      "source_location": "L37",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "tests_test_bot_integrity_rationale_37",
+      "target": "tests_test_bot_integrity_test_get_solar_status_summary",
       "confidence_score": 1.0
     },
     {
@@ -46576,5 +46620,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "20a425743db57ae1a366962fc3294ffbdd0ca79f"
+  "built_at_commit": "5ce1436e925b288179a1201858adeccab8a69cf3"
 }

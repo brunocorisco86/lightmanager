@@ -208,7 +208,8 @@ def get_solar_status_summary():
         if time_diff > 300 or status == "Offline":
             return (
                 f"Status: 🌙 `Offline` (Sem Sol)\n"
-                f"• Geração Hoje: `{today_kwh or 0:.2f} kWh` | Total: `{total_kwh or 0:.2f} kWh`"
+                f"• Geração Hoje: `📊 {today_kwh or 0:.2f} kWh`\n"
+                f"• Total Acumulado: `🔋 {total_kwh or 0:.2f} kWh`"
             )
         else:
             status_icon = "🟢" if status in ["Normal", "Online", "OK"] else "⚠️"
@@ -216,7 +217,8 @@ def get_solar_status_summary():
             return (
                 f"Status: {status_icon} `{status}`{temp_str}\n"
                 f"• Potência Atual: `⚡ {power or 0:.0f} W`\n"
-                f"• Geração Hoje: `📊 {today_kwh or 0:.2f} kWh` | Total: `{total_kwh or 0:.2f} kWh`"
+                f"• Geração Hoje: `📊 {today_kwh or 0:.2f} kWh`\n"
+                f"• Total Acumulado: `🔋 {total_kwh or 0:.2f} kWh`"
             )
     except Exception as e:
         logging.error(f"Erro ao consultar status solar no DB: {e}")

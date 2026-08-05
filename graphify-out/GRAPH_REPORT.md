@@ -1,16 +1,16 @@
 # Graph Report - lightmanager  (2026-08-04)
 
 ## Corpus Check
-- 78 files · ~44,488 words
+- 78 files · ~44,493 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 1227 nodes · 2836 edges · 86 communities (59 shown, 27 thin omitted)
+- 1227 nodes · 2836 edges · 85 communities (58 shown, 27 thin omitted)
 - Extraction: 93% EXTRACTED · 7% INFERRED · 0% AMBIGUOUS · INFERRED: 188 edges (avg confidence: 0.51)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `5ce1436e`
+- Built from commit: `d1bbf255`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -86,7 +86,6 @@
 - parse
 - rs
 - .isHorizontal
-- ._resolveElementOptions
 - ca
 - Si
 - ☀️ 1. Resumo das Etapas Implementadas (Roadmap Solar)
@@ -125,7 +124,7 @@
 ## Import Cycles
 - None detected.
 
-## Communities (86 total, 27 thin omitted)
+## Communities (85 total, 27 thin omitted)
 
 ### Community 0 - "Diário de Alterações (Changelog) - 21/06/2026"
 Cohesion: 0.22
@@ -296,20 +295,16 @@ Cohesion: 0.24
 Nodes (8): da(), ea(), fa(), ha, Ie(), pa(), ta(), ua()
 
 ### Community 93 - "parse"
-Cohesion: 0.18
-Nodes (6): buildTicks(), determineDataLimits(), go(), ii(), parse(), po()
+Cohesion: 0.13
+Nodes (12): buildTicks(), determineDataLimits(), Fn(), getMaxOverflow(), go(), ii(), parse(), parseArrayData() (+4 more)
 
 ### Community 95 - ".isHorizontal"
 Cohesion: 0.13
 Nodes (4): configure(), getPixelForTick(), Xs(), Y()
 
-### Community 100 - "._resolveElementOptions"
-Cohesion: 0.19
-Nodes (8): _calculateBarValuePixels(), Fn(), getMaxOverflow(), parseArrayData(), parsePrimitiveData(), resolveDataElementOptions(), size(), updateElements()
-
 ### Community 102 - "ca"
-Cohesion: 0.13
-Nodes (15): ca(), _calculateBarIndexPixels(), getBasePixel(), getLabelAndValue(), getLabelForValue(), getPixelForValue(), _getRuler(), _getStackCount() (+7 more)
+Cohesion: 0.11
+Nodes (17): ca(), _calculateBarIndexPixels(), _calculateBarValuePixels(), getBasePixel(), getLabelAndValue(), getLabelForValue(), getPixelForValue(), _getRuler() (+9 more)
 
 ### Community 105 - "Si"
 Cohesion: 0.18
@@ -357,7 +352,7 @@ _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `an()` connect `test_auth.py` to `script.js`, `inRange`, `va`, `chart.min.js`, `test_web_config.py`?**
   _High betweenness centrality (0.045) - this node is a cross-community bridge._
-- **Why does `ns()` connect `ns` to `._resolveElementOptions`, `ca`, `☀️ 1. Resumo das Etapas Implementadas (Roadmap Solar)`, `va`, `test_auth.py`, `chart.min.js`, `What You Must Do When Invoked`, `test_web_config.py`, `parse`?**
+- **Why does `ns()` connect `ns` to `ca`, `☀️ 1. Resumo das Etapas Implementadas (Roadmap Solar)`, `va`, `test_auth.py`, `chart.min.js`, `What You Must Do When Invoked`, `test_web_config.py`, `parse`?**
   _High betweenness centrality (0.041) - this node is a cross-community bridge._
 - **Why does `va` connect `va` to `ca`, `☀️ 1. Resumo das Etapas Implementadas (Roadmap Solar)`, `Si`, `inRange`, `test_auth.py`, `ns`, `eo`, `Si`, `no`, `chart.min.js`, `.bindResponsiveEvents`, `parse`, `.isHorizontal`?**
   _High betweenness centrality (0.020) - this node is a cross-community bridge._
