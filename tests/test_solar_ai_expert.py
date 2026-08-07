@@ -14,8 +14,9 @@ def test_solar_ai_expert_no_key():
         assert "GEMINI_API_KEY" in res
         assert "não está configurada" in res
 
+@patch("scripts.solar_forecast.fetch_solar_forecast", return_value={"today": {"condition_full": "Nublado ☁️"}})
 @patch("requests.post")
-def test_solar_ai_expert_with_gemini_key(mock_post):
+def test_solar_ai_expert_with_gemini_key_and_weather_correlation(mock_post, mock_forecast):
     mock_resp = MagicMock()
     mock_resp.status_code = 200
     mock_resp.json.return_value = {
@@ -34,3 +35,14 @@ def test_solar_ai_expert_with_gemini_key(mock_post):
         telemetry = {"power_w": 2000, "temperature": 63.5, "status": "Normal"}
         res = analyze_solar_anomaly_with_ai(anomaly, telemetry, dry_run=True)
         assert "Superaquecimento do inversor" in res
+
+        # Verifica se o payload enviado ao Gemini inclui o contexto climático
+        called_json = mock_post.call_args[1]["json"]
+        prompt_parts = called_json["contents"][0]["parts"]
+        system_prompt = prompt_parts[0]["text"]
+        user_prompt = prompt_parts[1]["text"]
+
+        assert "GUARDRAILS CLIMÁTICOS E OPERACIONAIS OBRIGATÓRIOS" in system_prompt
+        assert "NUNCA oriente a chamar suporte técnico" in system_prompt
+        assert "CONDIÇÃO CLIMÁTICA ATUAL NO LOCAL" in user_prompt
+        assert "Nublado ☁️" in user_prompt

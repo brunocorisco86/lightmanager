@@ -19,11 +19,18 @@ SOLAR_EXPERT_SYSTEM_PROMPT = (
     "Arranjos de Placas Solares (PV) e Inversores de String. "
     "Sua função é analisar alertas de anomalias operacionais reportadas na LAN e fornecer um "
     "diagnóstico técnico rápido, prático e fundamentado para o proprietário do sistema.\n\n"
+    "GUARDRAILS CLIMÁTICOS E OPERACIONAIS OBRIGATÓRIOS:\n"
+    "1. CORRELAÇÃO METEOROLÓGICA: Sempre analise a 'CONDIÇÃO CLIMÁTICA ATUAL NO LOCAL' e a 'Potência Gerada Atual' antes de indicar causas ou ações.\n"
+    "2. CÉU ENCOBERTO / CHUVA / BAIXA IRRADIAÇÃO (< 200W): Se a potência gerada estiver baixa (< 200W) ou houver chuva, nebulosidade alta ou céu encoberto, "
+    "informe com clareza que a queda de corrente/tensão em uma das strings (MPPT) é um comportamento NORMAL de ajuste dinâmico do inversor sob pouca luz. "
+    "NUNCA oriente a chamar suporte técnico, instalador ou manutenção presencial caso a causa seja apenas chuva, nuvens ou céu encoberto!\n"
+    "3. SUPORTE TÉCNICO E MANUTENÇÃO: Somente sugira acionar suporte técnico ou instalador se houver sol pleno com potência alta (>= 200W) e assimetria persistente em uma string, "
+    "sobretemperatura crítica (>= 60°C) ou código de erro interno irrecuperável no inversor.\n\n"
     "Diretrizes de resposta:\n"
     "1. Formate em Markdown amigável para o Telegram com bullet points e emojis.\n"
     "2. Estruture em 3 seções curtas:\n"
-    "   - 🧠 *Diagnóstico da Causa Raiz* (o que provavelmente causou este evento baseado na telemetria).\n"
-    "   - 🛠️ *Ações Recomendadas de Verificação* (priorize a segurança elétrica: seccionamento AC/DC antes de inspeção).\n"
+    "   - 🧠 *Diagnóstico da Causa Raiz* (correlacione a telemetria às condições climáticas locais atuais).\n"
+    "   - 🛠️ *Ações Recomendadas de Verificação* (se for chuva/céu encoberto, oriente apenas aguardar a abertura do sol; priorize segurança elétrica se houver inspeção necessária).\n"
     "   - ⚠️ *Nível de Risco Operacional* (BAIXO, MÉDIO ou CRÍTICO).\n"
     "3. Seja conciso (máximo 160 palavras). Não use saudações longas."
 )
@@ -31,7 +38,7 @@ SOLAR_EXPERT_SYSTEM_PROMPT = (
 def analyze_solar_anomaly_with_ai(anomaly_info, telemetry, dry_run=False):
     """
     Invoca o Agente Especialista Fotovoltaico (Gemini AI) para analisar a anomalia solar
-    e envia o diagnóstico técnico detalhado via Telegram.
+    correlacionando a telemetria aos dados climáticos atuais do local e envia o parecer no Telegram.
     """
     tg_token = os.getenv("TELEGRAM_BOT_TOKEN")
     tg_user_id = os.getenv("TELEGRAM_ALLOWED_USER_ID")
@@ -39,11 +46,31 @@ def analyze_solar_anomaly_with_ai(anomaly_info, telemetry, dry_run=False):
 
     now_str = datetime.now(BR_TZ).strftime("%d/%m/%Y %H:%M:%S")
 
+    # Busca previsão / condição meteorológica atual para correlação climática
+    weather_cond = "Não disponível"
+    try:
+        from scripts.solar_forecast import fetch_solar_forecast
+    except ImportError:
+        try:
+            from solar_forecast import fetch_solar_forecast
+        except ImportError:
+            fetch_solar_forecast = None
+
+    if fetch_solar_forecast:
+        try:
+            fc = fetch_solar_forecast()
+            if fc and "today" in fc:
+                weather_cond = fc["today"].get("condition_full", weather_cond)
+        except Exception as efc:
+            logging.warning(f"Não foi possível obter dados de tempo para o Agente IA: {efc}")
+
     prompt_context = (
         f"ANOMALIA DETECTADA NO INVERSOR SOLAR:\n"
         f"- Título do Alerta: {anomaly_info.get('title')}\n"
         f"- Detalhe: {anomaly_info.get('detail')}\n"
         f"- Horário da Ocorrência: {now_str}\n\n"
+        f"CONDIÇÃO CLIMÁTICA ATUAL NO LOCAL:\n"
+        f"- Tempo / Nebulosidade: {weather_cond}\n\n"
         f"TELEMETRIA COMPLETA DO INVERSOR:\n"
         f"- Potência Gerada Atual: {telemetry.get('power_w', 0)} W\n"
         f"- Energia Gerada Hoje: {telemetry.get('today_kwh', 0)} kWh\n"
@@ -93,8 +120,8 @@ def analyze_solar_anomaly_with_ai(anomaly_info, telemetry, dry_run=False):
     if not ai_diagnostic:
         ai_diagnostic = (
             f"👷‍♂️ *Diagnóstico do Especialista Solar*\n\n"
-            f"⚠️ Ocorreu uma oscilação na consulta à IA. Verifique as conexões físicas "
-            f"e meça a tensão nas entradas DC do inversor com um multímetro de segurança."
+            f"⚠️ Ocorreu uma oscilação na consulta à IA. Se a potência estiver baixa e houver nuvens ou chuva, "
+            f"aguarde a estabilização da irradiação solar antes de qualquer intervenção."
         )
 
     telegram_msg = (
