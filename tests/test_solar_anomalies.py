@@ -29,7 +29,7 @@ def test_check_solar_anomalies_high_temperature():
     assert len(anomalies) == 1
     assert anomalies[0]["key"] == "high_temperature"
 
-def test_check_solar_anomalies_pv_asymmetry():
+def test_check_solar_anomalies_pv_asymmetry_active_generation():
     now_noon = datetime.now(BR_TZ).replace(hour=12, minute=30)
     telemetry = {
         "status": "Normal",
@@ -41,6 +41,19 @@ def test_check_solar_anomalies_pv_asymmetry():
     anomalies = check_solar_anomalies(telemetry, now_obj=now_noon, dry_run=True)
     assert len(anomalies) == 1
     assert anomalies[0]["key"] == "pv_string_fault"
+
+def test_check_solar_anomalies_pv_asymmetry_overcast_ignored():
+    # Céu encoberto com potência baixa (<200W): a string zerada não deve gerar falso positivo de desconexão
+    now_noon = datetime.now(BR_TZ).replace(hour=15, minute=40)
+    telemetry = {
+        "status": "Normal",
+        "temperature": 29.3,
+        "pv1_voltage": 121.6,
+        "pv2_voltage": 0.0,
+        "power_w": 46.0
+    }
+    anomalies = check_solar_anomalies(telemetry, now_obj=now_noon, dry_run=True)
+    assert len(anomalies) == 0
 
 def test_check_solar_anomalies_inverter_fault():
     telemetry = {

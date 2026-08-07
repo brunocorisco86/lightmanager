@@ -12,39 +12,87 @@ load_dotenv(dotenv_path=os.path.join(PROJECT_ROOT, '.env'))
 
 BR_TZ = timezone(timedelta(hours=-3))
 RAIN_THROTTLE_FILE = "/tmp/rain_alert_throttle.json"
+POWER_HISTORY_FILE = "/tmp/solar_power_history.json"
 RAIN_THROTTLE_SECONDS = 3600  # Trava de 1 hora para evitar múltiplos alertas no mesmo temporal
+HISTORY_WINDOW_SECONDS = 1200  # 20 minutos de histórico deslizante
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - RAIN_ALERT - %(message)s')
 
-def check_abrupt_power_drop_and_rain(telemetry, previous_power_w, now_obj=None, dry_run=False):
+def update_and_get_power_history(current_power, now_ts):
     """
-    Detecta queda abrupta de geração solar no horário de pico e cruza com a probabilidade
-    de chuva da Open-Meteo para enviar um alerta preventivo no Telegram.
+    Mantém histórico de potência solar dos últimos 20 minutos em disco.
     """
-    if not telemetry or previous_power_w is None:
+    history = []
+    if os.path.exists(POWER_HISTORY_FILE):
+        try:
+            with open(POWER_HISTORY_FILE, "r") as f:
+                data = json.load(f)
+                if isinstance(data, list):
+                    history = [item for item in data if isinstance(item, dict) and (now_ts - float(item.get("ts", 0)) <= HISTORY_WINDOW_SECONDS)]
+        except Exception:
+            history = []
+
+    history.append({"ts": now_ts, "power_w": float(current_power)})
+    try:
+        with open(POWER_HISTORY_FILE, "w") as f:
+            json.dump(history, f)
+    except Exception as e:
+        logging.warning(f"Erro ao salvar histórico de potência: {e}")
+    return history
+
+def check_abrupt_power_drop_and_rain(telemetry, previous_power_w=None, now_obj=None, dry_run=False):
+    """
+    Detecta queda abrupta ou progressiva de geração solar no horário diurno (janela de 20 min)
+    e cruza com a previsão meteorológica da Open-Meteo para enviar um alerta preventivo no Telegram.
+    """
+    if not telemetry:
         return False
 
     now = now_obj or datetime.now(BR_TZ)
+    now_ts = now.timestamp()
     current_hour = now.hour
     current_minute = now.minute
     time_float = current_hour + current_minute / 60.0
     current_power = float(telemetry.get("power_w") or 0.0)
-    prev_power = float(previous_power_w)
+    prev_power = float(previous_power_w) if previous_power_w is not None else current_power
     status = (telemetry.get("status") or "Normal").strip().lower()
 
-    # 1. Valida se está no horário diurno de geração solar (10:00 às 16:30)
-    if not (10.0 <= time_float <= 16.5):
+    # 1. Valida se está no horário diurno de geração solar (08:00 às 17:15)
+    if not (8.0 <= time_float <= 17.25):
         return False
+
+    # Carrega/Atualiza janela deslizante de 20 minutos
+    if not dry_run:
+        history = update_and_get_power_history(current_power, now_ts)
+        recent_powers = [float(entry["power_w"]) for entry in history]
+    else:
+        recent_powers = [current_power]
+
+    if previous_power_w is not None:
+        recent_powers.append(prev_power)
+
+    peak_power_20min = max(recent_powers)
 
     # 2. Requisitos do Guardrail:
-    # A queda de geração deve ser com potência de até 100W (current_power <= 100W) com drop significativo,
-    # OU quando o sistema entra em status 'Waiting' durante o dia.
-    power_drop = prev_power - current_power
-    is_power_drop_to_low = (prev_power >= 300.0 and power_drop >= 200.0 and current_power <= 100.0)
-    is_waiting_during_day = (status == "waiting" and prev_power >= 200.0)
+    # A) Queda abrupta de 1 minuto: prev_power >= 300W e drop_1min >= 200W e current_power <= 120W
+    power_drop_1min = prev_power - current_power
+    is_abrupt_1min_drop = (prev_power >= 300.0 and power_drop_1min >= 200.0 and current_power <= 120.0)
 
-    if not (is_power_drop_to_low or is_waiting_during_day):
+    # B) Queda progressiva/acentuada na janela de 20 minutos (ex: 610W -> 90W em 15 min):
+    # Pico recente de pelo menos 300W, queda total >= 200W, potência atual <= 120W e queda >= 50%
+    power_drop_window = peak_power_20min - current_power
+    drop_pct = ((peak_power_20min - current_power) / peak_power_20min * 100.0) if peak_power_20min > 0 else 0
+    is_window_drop = (peak_power_20min >= 300.0 and power_drop_window >= 200.0 and current_power <= 120.0 and drop_pct >= 50.0)
+
+    # C) Sistema entrando em status 'Waiting' durante o dia após ter gerado >= 200W recentemente
+    is_waiting_during_day = (status == "waiting" and peak_power_20min >= 200.0)
+
+    if not (is_abrupt_1min_drop or is_window_drop or is_waiting_during_day):
         return False
+
+    display_peak = peak_power_20min if is_window_drop else (prev_power if is_abrupt_1min_drop else peak_power_20min)
+    display_drop = display_peak - current_power
+    display_drop_pct = ((display_peak - current_power) / display_peak * 100.0) if display_peak > 0 else 0.0
 
     # 3. Consulta dados de previsão do tempo (Open-Meteo) para confirmar probabilidade de chuva
     try:
@@ -56,7 +104,7 @@ def check_abrupt_power_drop_and_rain(telemetry, previous_power_w, now_obj=None, 
             fetch_solar_forecast = None
 
     rain_probable = True  # Fallback preventivo caso a API esteja indisponível
-    weather_cond = "Nebulosidade com chance de chuva"
+    weather_cond = "Céu encoberto com alta probabilidade de chuva"
 
     if fetch_solar_forecast:
         try:
@@ -65,8 +113,12 @@ def check_abrupt_power_drop_and_rain(telemetry, previous_power_w, now_obj=None, 
                 today_fc = fc["today"]
                 w_code = today_fc.get("weather_code", 0)
                 weather_cond = today_fc.get("condition_full", weather_cond)
-                # Códigos WMO de chuva/pancadas/chuvisco/tempestade
-                if w_code in [51, 53, 55, 61, 63, 65, 80, 81, 82, 95, 96, 99, 3, 45, 48]:
+                # Códigos WMO de nuvens/chuva/pancadas/chuvisco/tempestade
+                if w_code in [2, 3, 45, 48, 51, 53, 55, 61, 63, 65, 80, 81, 82, 95, 96, 99]:
+                    rain_probable = True
+                else:
+                    # Se o WMO diário for ensolarado, porém a queda real em solo foi >50% até <=120W,
+                    # mantemos o alerta preventivo ativado devido ao evento local em andamento.
                     rain_probable = True
         except Exception as efc:
             logging.warning(f"Não foi possível confirmar chuva no Open-Meteo: {efc}")
@@ -84,7 +136,6 @@ def check_abrupt_power_drop_and_rain(telemetry, previous_power_w, now_obj=None, 
         except Exception:
             throttle_time = 0
 
-    now_ts = time.time()
     if not dry_run and (now_ts - throttle_time < RAIN_THROTTLE_SECONDS):
         logging.info("⏳ Alerta de chuva suprimido pelo controle de rate-limiting (menos de 1 hora).")
         return False
@@ -94,14 +145,14 @@ def check_abrupt_power_drop_and_rain(telemetry, previous_power_w, now_obj=None, 
 
     alert_msg = (
         f"🌧️ *ALERTA PREVENTIVO DE CHUVA*\n\n"
-        f"⚡ *Queda Abrupta de Geração Solar:* `{int(prev_power)} W` ➡️ `{int(current_power)} W` (Drop de `{int(power_drop)} W`)\n"
+        f"⚡ *Queda de Geração Solar:* `{int(display_peak)} W` ➡️ `{int(current_power)} W` (Queda de `{int(display_drop)} W` / `{display_drop_pct:.0f}%`)\n"
         f"☁️ *Condição do Tempo:* {weather_cond}\n"
         f"📅 *Horário:* `{now.strftime('%H:%M')}`\n\n"
         f"💡 *Recomendação:* Alta probabilidade de chuva nas próximas horas! "
         f"Lembre-se de levar guarda-chuva se for sair para não se molhar no caminho dos seus compromissos! ☔"
     )
 
-    logging.warning(f"🌧️ Alerta preventivo de chuva disparado! Drop de {int(power_drop)} W")
+    logging.warning(f"🌧️ Alerta preventivo de chuva disparado! Queda de {int(display_drop)} W ({display_drop_pct:.0f}%)")
 
     if dry_run:
         print("=== [DRY-RUN] Alerta Preventivo de Chuva ===")
@@ -128,5 +179,5 @@ def check_abrupt_power_drop_and_rain(telemetry, previous_power_w, now_obj=None, 
     return True
 
 if __name__ == "__main__":
-    telemetry_sample = {"power_w": 350.0}
-    check_abrupt_power_drop_and_rain(telemetry_sample, previous_power_w=2200.0, dry_run=True)
+    telemetry_sample = {"power_w": 90.0, "status": "Normal"}
+    check_abrupt_power_drop_and_rain(telemetry_sample, previous_power_w=610.0, dry_run=True)

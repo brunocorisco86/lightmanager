@@ -356,20 +356,23 @@ def check_solar_anomalies(telemetry, now_obj=None, dry_run=False):
             "icon": "🔥"
         })
 
-    # 3. Desconexão / Assimetria de String PV (Horário de pico sol: 10h às 16h)
-    if 10 <= current_hour <= 16:
+    # 3. Desconexão / Assimetria de String PV (Horário diurno: 10h às 16h)
+    # IMPORTANTE: Somente gera alerta de desconexão de string se a potência gerada for ativa (power_w >= 200.0 W).
+    # Em dias de céu encoberto/chuva (power_w < 200W), o inversor reduz o MPPT de uma das strings zerando sua tensão/corrente,
+    # o que não caracteriza falha física de desconexão.
+    if 10 <= current_hour <= 16 and power_w >= 200.0:
         if pv1_v >= 80.0 and pv2_v < 15.0:
             anomalies_detected.append({
                 "key": "pv_string_fault",
                 "title": "Queda / Desconexão na String PV2",
-                "detail": f"Tensão PV1: `{pv1_v:.1f} V` | Tensão PV2: `{pv2_v:.1f} V` (Anormal em pico sol)",
+                "detail": f"Tensão PV1: `{pv1_v:.1f} V` | Tensão PV2: `{pv2_v:.1f} V` (Potência: `{power_w:.0f} W`)",
                 "icon": "⚡"
             })
         elif pv2_v >= 80.0 and pv1_v < 15.0:
             anomalies_detected.append({
                 "key": "pv_string_fault",
                 "title": "Queda / Desconexão na String PV1",
-                "detail": f"Tensão PV1: `{pv1_v:.1f} V` | Tensão PV2: `{pv2_v:.1f} V` (Anormal em pico sol)",
+                "detail": f"Tensão PV1: `{pv1_v:.1f} V` | Tensão PV2: `{pv2_v:.1f} V` (Potência: `{power_w:.0f} W`)",
                 "icon": "⚡"
             })
 
