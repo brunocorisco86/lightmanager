@@ -201,7 +201,7 @@ def fetch_solar_telemetry(ip=None, timeout=5):
         if response.status_code == 200:
             return parse_solar_csv(response.text)
         else:
-            logging.warning(f"Inversor solar ({ip}) retornou código HTTP {response.status_code}")
+            logging.info(f"Inversor solar ({ip}) em standby/offline (código HTTP {response.status_code})")
             return None
     except requests.exceptions.RequestException as e:
         # Quando não há sol, a interface web do inversor se desliga e não responde

@@ -82,7 +82,45 @@ def extract_errors():
             
     return consolidated_errors
 
-def get_ai_summary(errors):
+def get_weather_and_solar_context():
+    """Busca o contexto de meteorologia e geração solar diária para informar o agente IA."""
+    try:
+        from scripts.solar_forecast import fetch_solar_forecast
+    except ImportError:
+        try:
+            from solar_forecast import fetch_solar_forecast
+        except ImportError:
+            fetch_solar_forecast = None
+
+    context = {
+        "condition": "Desconhecido",
+        "estimated_kwh": 0.0,
+        "is_solar_window": False,
+        "detail": "Sem dados de previsão"
+    }
+
+    sp_tz = timezone(timedelta(hours=-3))
+    now = datetime.now(sp_tz)
+    hour = now.hour
+
+    # Janela solar diurna aproximada: entre 06:30 e 18:30 BRT
+    is_solar_window = 6 <= hour < 18 or (hour == 6 and now.minute >= 30) or (hour == 18 and now.minute <= 30)
+    context["is_solar_window"] = is_solar_window
+
+    if fetch_solar_forecast:
+        try:
+            forecast = fetch_solar_forecast()
+            if forecast and "today" in forecast:
+                today_info = forecast["today"]
+                context["condition"] = today_info.get("condition_full", today_info.get("condition", "N/A"))
+                context["estimated_kwh"] = today_info.get("estimated_kwh", 0.0)
+                context["detail"] = f"Clima Hoje: {context['condition']} | Geração Estimada: {context['estimated_kwh']} kWh"
+        except Exception as e:
+            print(f"Aviso: Erro ao buscar dados meteorológicos para log_analyzer: {e}")
+
+    return context
+
+def get_ai_summary(errors, weather_ctx=None):
     """Envia os erros para a API do Gemini e obtém o resumo."""
     if not GEMINI_API_KEY:
         print("Aviso: GEMINI_API_KEY não configurada. Usando fallback de resumo em texto.")
@@ -93,15 +131,29 @@ def get_ai_summary(errors):
     for (service, _), data in errors.items():
         error_list_text += f"- [{service.upper()}] (Ocorreu {data['count']} vez(es)): {data['original']}\n"
         
+    weather_text = ""
+    if weather_ctx:
+        weather_text = (
+            f"Contexto Operacional e Meteorológico Atual:\n"
+            f"- Janela Solar Diurna Ativa: {'SIM' if weather_ctx.get('is_solar_window') else 'NÃO (Horário Noturno / Pós-pôr do sol)'}\n"
+            f"- Clima Registrado Hoje: {weather_ctx.get('condition', 'N/A')}\n"
+            f"- Geração Solar Estimada: {weather_ctx.get('estimated_kwh', 0.0)} kWh\n"
+            f"- Nota Técnica Guardrail: Inversores solares LAN (192.168.1.13) são energizados pela tensão DC dos painéis. "
+            f"Em horários sem sol ou durante chuva densa, o inversor desliga seu servidor Web HTTP (retornando HTTP 404, 503, Timeout ou Conexão Recusada). "
+            f"ISSO É COMPORTAMENTO FÍSICO NORMAL DE STANDBY E NÃO DEVE SER CLASSIFICADO COMO ALERTA OU FALHA DE SISTEMA.\n\n"
+        )
+
     prompt = (
         "Você é um engenheiro SRE especialista em Linux e IoT (Raspberry Pi, MQTT, FastAPI). "
         "Analise a lista de erros abaixo vindos dos logs de um sistema doméstico inteligente de iluminação (Light Manager) "
         "e gere um relatório resumido e direto em português (pt-br).\n\n"
+        f"{weather_text}"
         "Regras:\n"
         "1. Seja extremamente conciso. Use bullet points.\n"
         "2. Identifique a provável causa raiz (ex: queda de rede, problema no banco postgres, erro no bot).\n"
         "3. Dê uma estimativa de impacto/urgência (Ex: CRÍTICO, ALERTA ou INFORMATIVO).\n"
-        "4. Não use jargões desnecessários nem introduções longas.\n\n"
+        "4. Não classifique desconexão/HTTP 404 do inversor solar fora do horário de sol ou durante chuva como erro/ALERTA SRE.\n"
+        "5. Não use jargões desnecessários nem introduções longas.\n\n"
         "Lista de Erros:\n"
         f"{error_list_text}"
     )
@@ -172,15 +224,32 @@ def main():
     print(f"[{now.strftime('%Y-%m-%d %H:%M:%S')}] Iniciando monitoramento de logs diários...")
     
     errors = extract_errors()
+    weather_ctx = get_weather_and_solar_context()
     
     # Define se os erros encontrados são críticos ou comprometem o funcionamento
     critical_errors = {}
     for key, data in errors.items():
         service, normalized = key
+        norm_lower = normalized.lower()
+
         # Ignora avisos leves, por exemplo, conexões do uvicorn normais que foram marcadas com erros secundários
         # ou problemas triviais de download de sol
-        if "sun data unavailable" in normalized.lower() or "ping statistics" in normalized.lower():
+        if "sun data unavailable" in norm_lower or "ping statistics" in norm_lower:
             continue
+
+        # GUARDRAIL SOLAR & METEOROLÓGICO:
+        # Se for log do componente solar indicando erro HTTP 404, file not found, standby ou desconexão:
+        is_solar_standby = any(pat in norm_lower for pat in [
+            "http 404", "404", "file not found", "connection refused", 
+            "timeout", "inacessível (sem sol)", "standby", "offline"
+        ])
+        if service == "solar" and is_solar_standby:
+            is_rainy = any(cond in weather_ctx.get("condition", "").lower() for cond in ["chuva", "chuvisco", "tempestade", "nublado"])
+            # Se estiver fora do horário de pico diurno, ou clima chuvoso/sem radiação, ignora falso alarme
+            if not weather_ctx.get("is_solar_window") or is_rainy or weather_ctx.get("estimated_kwh", 0) < 1.0:
+                print(f"Guardrail acionado: Ignorando log de standby/ausência de sol do inversor ({normalized[:80]}...)")
+                continue
+
         critical_errors[key] = data
 
     if not critical_errors:
@@ -192,7 +261,7 @@ def main():
     print(f"Detectados {len(critical_errors)} tipos de erros consolidados. Solicitando resumo à IA...")
     
     # Tenta obter o resumo da IA
-    ai_summary = get_ai_summary(critical_errors)
+    ai_summary = get_ai_summary(critical_errors, weather_ctx=weather_ctx)
     
     if ai_summary:
         message = (
