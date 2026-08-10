@@ -40,3 +40,15 @@ def test_solar_standby_guardrail_filters_404(tmp_path):
         mock_tg.assert_called_once()
         msg_text = mock_tg.call_args[0][0]
         assert "Tudo OK" in msg_text
+
+def test_extract_errors_ignores_self_logs(tmp_path):
+    cron_log = tmp_path / "cron.log"
+    cron_log.write_text(
+        "[2026-08-10 19:00:02] Iniciando monitoramento de logs diários...\n"
+        "Detectados 1 tipos de erros consolidados. Solicitando resumo à IA...\n"
+        "Enviando relatório via Telegram...\n"
+    )
+    with patch("scripts.log_analyzer.LOG_FILES", {"cron": str(cron_log)}):
+        errs = extract_errors()
+        assert len(errs) == 0
+

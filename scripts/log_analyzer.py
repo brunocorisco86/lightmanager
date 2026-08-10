@@ -61,7 +61,18 @@ def extract_errors():
                     lower_line = line.lower()
                     if any(kw in lower_line for kw in ERROR_KEYWORDS):
                         # Ignora logs de info que contêm a palavra erro mas não são erros
-                        if "status: ok" in lower_line or "0 error(s)" in lower_line or "erro no ciclo: db error" in lower_line and "tests" in file_path:
+                        if (
+                            "status: ok" in lower_line 
+                            or "0 error(s)" in lower_line 
+                            or "iniciando monitoramento de logs" in lower_line
+                            or "erros consolidados" in lower_line
+                            or "solicitando resumo à ia" in lower_line
+                            or "nenhum erro crítico" in lower_line
+                            or "enviando status ok" in lower_line
+                            or "enviando relatório via telegram" in lower_line
+                            or "guardrail acionado" in lower_line
+                            or ("erro no ciclo: db error" in lower_line and "tests" in file_path)
+                        ):
                             continue
                             
                         normalized = clean_timestamp(line)
