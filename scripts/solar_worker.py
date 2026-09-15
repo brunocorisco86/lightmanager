@@ -81,6 +81,20 @@ def send_telegram_message(text):
             logging.error(f"Falha na conexão com Telegram (tentativa {attempt + 1}/3): {e}")
             time.sleep(2)
 
+def send_ntfy_message(text, title="LightManager 💡", priority="3", tags="bulb"):
+    """Envia uma notificação complementar via ntfy (bruno-casa-dallas)."""
+    ntfy_topic = os.getenv("NTFY_TOPIC", "bruno-casa-dallas")
+    try:
+        clean_text = text.replace("*", "").replace("`", "")
+        requests.post(
+            f"https://ntfy.sh/{ntfy_topic}",
+            data=clean_text.encode("utf-8"),
+            headers={"Title": title, "Priority": str(priority), "Tags": tags},
+            timeout=2.5
+        )
+    except Exception as e:
+        logging.warning(f"ntfy aviso: {e}")
+
 def touch_last_seen():
     """Atualiza o timestamp local de última atividade do Wemos."""
     try:
@@ -487,6 +501,7 @@ def run_automation_cycle(client):
                 client.publish(f"{topic}/set", "ON", qos=1, retain=True)
                 log_event_to_db(topic, "ON", source="solar_trigger", cursor=cur)
                 send_telegram_message(f"🌑 *Gatilho Solar*\nLuz: `{topic}`\nAção: `LIGAR` 💡")
+                send_ntfy_message(f"Luz: {topic}\nAção: LIGAR 💡", title="Gatilho Solar 🌑", priority="3", tags="bulb,night")
             elif current_time_str == target_off_str:
                 logging.info(f"🌅 Gatilho Solar: DESLIGANDO {topic}")
                 # Limpa override manual ao disparar o gatilho automático
@@ -496,6 +511,7 @@ def run_automation_cycle(client):
                 client.publish(f"{topic}/set", "OFF", qos=1, retain=True)
                 log_event_to_db(topic, "OFF", source="solar_trigger", cursor=cur)
                 send_telegram_message(f"🌅 *Gatilho Solar*\nLuz: `{topic}`\nAção: `DESLIGAR` 🌑")
+                send_ntfy_message(f"Luz: {topic}\nAção: DESLIGAR 🌑", title="Gatilho Solar 🌅", priority="3", tags="bulb,sunrise")
             
             # Determina o estado desejado real (respeita override manual se ativo)
             if manual_override is not None:
@@ -543,6 +559,7 @@ def run_automation_cycle(client):
                     )
                     logging.error(f"❌ {alert_msg.replace('*', '')}")
                     send_telegram_message(alert_msg)
+                    send_ntfy_message(alert_msg, title="Alerta Preventivo 🚨", priority="4", tags="warning,satellite")
                 else:
                     logging.info(f"✅ Dispositivo saudável. Último sinal há {int(time_diff)}s.")
 
