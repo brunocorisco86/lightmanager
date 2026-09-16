@@ -115,7 +115,6 @@ def on_message(client, userdata, msg):
             os.makedirs(log_dir, exist_ok=True)
             log_file_path = os.path.join(log_dir, 'devices.log')
             
-            from datetime import datetime, timezone, timedelta
             sp_tz = timezone(timedelta(hours=-3))
             now_str = datetime.now(sp_tz).strftime("%Y-%m-%d %H:%M:%S")
             
