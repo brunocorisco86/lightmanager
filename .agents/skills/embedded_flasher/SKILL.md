@@ -28,12 +28,19 @@ Esta skill permite ao assistente gerenciar o processo de compilação, gravaçã
 * **Interface USB:** USB CDC Nativo JTAG/Serial (`/dev/ttyACM0` ou `/dev/ttyACM1`, ID `303a:1001`).
 * **Flags de Compilação Obrigatórias:**
   `build.extra_flags=-DARDUINO_USB_MODE=1 -DARDUINO_USB_CDC_ON_BOOT=1` (permite uso de `Serial.begin(115200)` via USB nativo).
-* **Pinagem com Sensor Radar LD2420:**
-  - VCC -> 3V3
-  - GND -> GND
-  - OUT -> GPIO 2 (`pinMode(2, INPUT_PULLDOWN)`)
-  - TX -> GPIO 20 (`Serial1` RX)
-  - RX -> GPIO 21 (`Serial1` TX)
+* **Pinagem com Sensor Radar LD2420 (Matriz de Firmwares):**
+  - **Caso 1 (Firmware ≤ v1.5.2 - Padrão Mais Comum):**
+    - VCC (Pino 1) -> 3V3
+    - GND (Pino 2) -> GND
+    - **OT1 (Pino 3) -> GPIO 2** (`pinMode(2, INPUT_PULLDOWN)` - Presença Digital)
+    - **RX (Pino 4)  -> GPIO 21** (`Serial1 TX`)
+    - **OT2 (Pino 5) -> GPIO 20** (`Serial1 RX` @ 256.000 bps)
+  - **Caso 2 (Firmware ≥ v1.5.3):**
+    - VCC (Pino 1) -> 3V3
+    - GND (Pino 2) -> GND
+    - **OT1 (Pino 3) -> GPIO 20** (`Serial1 RX` @ 115.200 bps)
+    - **RX (Pino 4)  -> GPIO 21** (`Serial1 TX`)
+    - **OT2 (Pino 5) -> GPIO 2** (`pinMode(2, INPUT_PULLDOWN)` - Presença Digital)
   - LED Onboard -> GPIO 8 (Active LOW)
 
 ### Roteiro de Gravação
@@ -51,9 +58,11 @@ Esta skill permite ao assistente gerenciar o processo de compilação, gravaçã
    - Solte o botão **BOOT**.
    - Reexecute o script de flash.
 
-### Monitoramento Serial ao Vivo
-Para observar os pulsos de detecção de pessoas em tempo real:
+### Monitoramento Serial ao Vivo e Calibração Anti-Ruído
+Para observar os pulsos de detecção de pessoas e descartes de glitches em tempo real:
 ```bash
-arduino-cli monitor -p /dev/ttyACM0 -c baudrate=115200
+./scripts/monitor_radar_serial.py
 ```
+*(ou `arduino-cli monitor -p /dev/ttyACM0 -c baudrate=115200`)*
+
 

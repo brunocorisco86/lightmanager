@@ -24,6 +24,7 @@ pip-delete-this-directory.txt
 
 # Project specific
 backups_tmp/
+sun_cache.json
 scripts/sun_cache.json
 reports/output/*.json
 reports/output/*.csv

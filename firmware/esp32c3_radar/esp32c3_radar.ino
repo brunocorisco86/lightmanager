@@ -2,11 +2,27 @@
 #include <PubSubClient.h>
 
 // ==========================================
+// Seleção da Versão do Firmware do LD2420
+// ==========================================
+// Caso 1 (Padrão/Mais Comum): FW <= 1.5.2 -> OT1 = Presença (GPIO 2), OT2 = TX UART (GPIO 20) @ 256.000 bps
+// Caso 2: FW >= 1.5.3                     -> OT2 = Presença (GPIO 2), OT1 = TX UART (GPIO 20) @ 115.200 bps
+#define LD2420_MODE_FW_LE_152
+//#define LD2420_MODE_FW_GE_153
+
+#ifdef LD2420_MODE_FW_LE_152
+  const unsigned long RADAR_BAUD_RATE = 256000;
+  const char* RADAR_FW_DESC = "Caso 1: FW <= 1.5.2 (OT1 = Presenca / OT2 = TX @ 256.000 bps)";
+#else
+  const unsigned long RADAR_BAUD_RATE = 115200;
+  const char* RADAR_FW_DESC = "Caso 2: FW >= 1.5.3 (OT2 = Presenca / OT1 = TX @ 115.200 bps)";
+#endif
+
+// ==========================================
 // Configurações de Hardware e Pinos
 // ==========================================
 // ESP32-C3 SuperMini + Radar LD2420
-const int PIN_RADAR_OUT = 2;   // Pino OUT do LD2420 (Digital HIGH = Presença)
-const int PIN_RADAR_RX  = 20;  // RX do ESP32-C3 conectado ao TX do LD2420
+const int PIN_RADAR_OUT = 2;   // Pino de Presença Digital do LD2420 (OT1 no Caso 1 / OT2 no Caso 2)
+const int PIN_RADAR_RX  = 20;  // RX do ESP32-C3 conectado ao TX do LD2420 (OT2 no Caso 1 / OT1 no Caso 2)
 const int PIN_RADAR_TX  = 21;  // TX do ESP32-C3 conectado ao RX do LD2420
 const int PIN_LED_BUILDIN = 8; // LED onboard do ESP32-C3 SuperMini (Active LOW)
 
@@ -28,11 +44,13 @@ const char* TOPIC_RADAR_STATUS   = "home/outdoor/radar/status";
 const char* TOPIC_RADAR_LOG      = "home/outdoor/radar/log";
 
 // ==========================================
-// Constantes de Temporização
+// Constantes de Filtro e Temporização
 // ==========================================
 // 2 minutos = 120.000 ms
 const unsigned long LIGHT_TIMEOUT_MS = 120000;
 const unsigned long STATUS_INTERVAL_MS = 30000; // Heartbeat a cada 30s
+const unsigned long CONFIRMATION_TIME_MS = 300; // Mínimo HIGH contínuo para confirmar presença
+const unsigned long RELEASE_TIME_MS = 3000;     // Mínimo LOW contínuo para encerrar presença
 
 // ==========================================
 // Objetos e Variáveis Globais
@@ -47,6 +65,14 @@ unsigned long lastPulseHighTime = 0;
 unsigned long lastStatusMsg = 0;
 unsigned long motionCounter = 0;
 unsigned long lastReconnectAttempt = 0;
+
+// Variáveis de Diagnóstico e Filtro
+int lastRawPinState = -1;
+unsigned long lastRawStateChangeTime = 0;
+unsigned long lastStatusPrint = 0;
+unsigned long highStartTime = 0;
+unsigned long lowStartTime = 0;
+const bool ENABLE_RELAY_TRIGGER = true; // Habilitado para acionar Muro e MQTT
 
 void setup_wifi() {
   if (WiFi.status() == WL_CONNECTED) return;
@@ -139,7 +165,7 @@ void setup() {
   delay(1500); // Aguarda estabilização do CDC
 
   Serial.println("\n==================================================");
-  Serial.println("🚀 ESP32-C3 SuperMini - PoC Radar LD2420 + Light");
+  Serial.println("🚀 ESP32-C3 SuperMini - Diagnostico Radar LD2420");
   Serial.println("==================================================");
 
   // Configuração dos Pinos
@@ -147,16 +173,16 @@ void setup() {
   pinMode(PIN_LED_BUILDIN, OUTPUT);
   digitalWrite(PIN_LED_BUILDIN, HIGH); // Apagado (active LOW)
 
-  // Inicializa UART1 com o radar LD2420 para telemetria opcional
-  Serial1.begin(115200, SERIAL_8N1, PIN_RADAR_RX, PIN_RADAR_TX);
-  Serial.println("📡 Serial1 do Radar LD2420 inicializada em 115200 baud.");
+  // Inicializa UART1 com o radar LD2420
+  Serial1.begin(RADAR_BAUD_RATE, SERIAL_8N1, PIN_RADAR_RX, PIN_RADAR_TX);
+  Serial.printf("📡 Serial1 do Radar LD2420 inicializada: %s\n", RADAR_FW_DESC);
 
   // Configuração de Rede
   setup_wifi();
   client.setServer(mqtt_server, mqtt_port);
   client.setCallback(mqtt_callback);
 
-  Serial.println("Pronto! Aguardando detecção de presença...\n");
+  Serial.println("🔍 Monitor de Diagnostico Iniciado! Aguardando leituras...\n");
 }
 
 void loop() {
@@ -178,55 +204,98 @@ void loop() {
     }
   }
 
-  // 2. Leitura do Sensor Radar LD2420 (Pino OUT)
+  // 2. Leitura e Diagnóstico Imediato do Pino OUT (GPIO 2)
   int radarReading = digitalRead(PIN_RADAR_OUT);
-  bool currentPresence = (radarReading == HIGH);
-
-  // 3. Processa dados da Serial1 do LD2420 se disponíveis (log/debug)
-  while (Serial1.available()) {
-    char c = (char)Serial1.read();
-    // Eco opcional de bytes ou pacotes do radar
+  
+  if (radarReading != lastRawPinState) {
+    unsigned long duration = (lastRawStateChangeTime > 0) ? (now - lastRawStateChangeTime) : 0;
+    if (radarReading == HIGH) {
+      highStartTime = now;
+      Serial.printf("[TRANSITION] GPIO 2: LOW -> HIGH (ficou LOW por %lu ms)\n", duration);
+    } else {
+      lowStartTime = now;
+      if (!presenceActive && (now - highStartTime < CONFIRMATION_TIME_MS)) {
+        Serial.printf("🛡️ [GLITCH IGNORADO] Pulso HIGH durou apenas %lu ms (< %lu ms de confirmacao)\n", 
+                      duration, CONFIRMATION_TIME_MS);
+      } else {
+        Serial.printf("[TRANSITION] GPIO 2: HIGH -> LOW (ficou HIGH por %lu ms)\n", duration);
+      }
+    }
+    lastRawPinState = radarReading;
+    lastRawStateChangeTime = now;
   }
 
-  // 4. Lógica de Detecção de Movimento e Acionamento da Luz do Muro
-  if (currentPresence) {
-    lastPulseHighTime = now;
-    lastMotionTime = now;               // Retrigger do temporizador de 2 minutos
-    digitalWrite(PIN_LED_BUILDIN, LOW); // Liga LED indicador onboard
+  // Relatório periódico a cada 500ms
+  if (now - lastStatusPrint >= 500) {
+    lastStatusPrint = now;
+    unsigned long stateDuration = now - lastRawStateChangeTime;
+    Serial.printf("[STATUS] GPIO 2 RAW: %d | PresencaConfirmada: %s | DuracaoEstado: %lu ms | Movimentos: %lu\n",
+                  radarReading,
+                  presenceActive ? "SIM (ON)" : "NAO (OFF)",
+                  stateDuration,
+                  motionCounter);
+  }
 
+  // 3. Processa dados da Serial1 do LD2420 se disponíveis
+  if (Serial1.available()) {
+    String hexBuf = "";
+    int count = 0;
+    while (Serial1.available() && count < 32) {
+      uint8_t b = Serial1.read();
+      if (b < 0x10) hexBuf += "0";
+      hexBuf += String(b, HEX);
+      hexBuf += " ";
+      count++;
+    }
+    hexBuf.toUpperCase();
+    Serial.printf("[UART_RADAR] %d bytes: %s\n", count, hexBuf.c_str());
+  }
+
+  // 4. Lógica de Filtro Sustentado (> 300ms contínuo) e Histerese (> 3000ms contínuo)
+  if (radarReading == HIGH) {
     if (!presenceActive) {
-      presenceActive = true;
-      motionCounter++;
-      Serial.printf("🏃 [PRESENÇA DETECTADA] Pulso HIGH no GPIO 2! (Contagem: %lu)\n", motionCounter);
+      // Verifica se permaneceu em HIGH por tempo suficiente
+      if (now - highStartTime >= CONFIRMATION_TIME_MS) {
+        presenceActive = true;
+        motionCounter++;
+        lastMotionTime = now;
+        lastPulseHighTime = now;
+        digitalWrite(PIN_LED_BUILDIN, LOW); // Liga LED indicador onboard
+        Serial.printf("🏃 [PRESENÇA CONFIRMADA] GPIO 2 HIGH continuo por %lu ms! (Contagem: %lu)\n", 
+                      (now - highStartTime), motionCounter);
 
-      if (client.connected()) {
-        client.publish(TOPIC_RADAR_PRESENCE, "ON", true);
-        
-        // Se a luz estiver apagada, envia comando para ligar
-        if (!lightIsOn) {
-          Serial.println("💡 Enviando comando MQTT: LIGAR Luz do Muro (home/outdoor/muro/set -> ON)");
-          client.publish(TOPIC_MURO_SET, "ON", false);
-          lightIsOn = true;
+        if (client.connected()) {
+          client.publish(TOPIC_RADAR_PRESENCE, "ON", true);
+          if (ENABLE_RELAY_TRIGGER && !lightIsOn) {
+            Serial.println("💡 Enviando comando MQTT: LIGAR Luz do Muro");
+            client.publish(TOPIC_MURO_SET, "ON", false);
+            lightIsOn = true;
+          }
+        }
+      }
+    } else {
+      lastMotionTime = now;
+      lastPulseHighTime = now;
+    }
+  } else {
+    // Está em LOW: só encerra após RELEASE_TIME_MS (3 segundos) contínuos em LOW
+    if (presenceActive) {
+      if (now - lowStartTime >= RELEASE_TIME_MS) {
+        presenceActive = false;
+        digitalWrite(PIN_LED_BUILDIN, HIGH); // Apaga LED indicador onboard
+        Serial.printf("🚶 [PRESENÇA CESSADA] GPIO 2 LOW continuo por %lu ms.\n", RELEASE_TIME_MS);
+        if (client.connected()) {
+          client.publish(TOPIC_RADAR_PRESENCE, "OFF", true);
         }
       }
     }
-  } else {
-    // Histerese de 2000ms: só desativa presença se ficar LOW continuamente por 2 segundos
-    if (presenceActive && (now - lastPulseHighTime >= 2000)) {
-      presenceActive = false;
-      digitalWrite(PIN_LED_BUILDIN, HIGH); // Apaga LED indicador onboard
-      Serial.println("🚶 [PRESENÇA CESSADA] Sem movimento por 2s. Temporizador de 2 min em contagem...");
-      if (client.connected()) {
-        client.publish(TOPIC_RADAR_PRESENCE, "OFF", true);
-      }
-    }
   }
 
-  // 5. Verificação do Temporizador de 2 minutos (120s)
+  // 5. Temporizador de 2 minutos (caso acionado)
   if (lightIsOn && lastMotionTime > 0) {
     if (now - lastMotionTime >= LIGHT_TIMEOUT_MS) {
-      Serial.println("⏱️ [TEMPORIZADOR EXPIRADO] 2 minutos sem presença. Desligando Luz do Muro...");
-      if (client.connected()) {
+      Serial.println("⏱️ [TEMPORIZADOR EXPIRADO] Desligando Luz do Muro...");
+      if (client.connected() && ENABLE_RELAY_TRIGGER) {
         client.publish(TOPIC_MURO_SET, "OFF", false);
       }
       lightIsOn = false;
@@ -234,7 +303,7 @@ void loop() {
     }
   }
 
-  // 6. Telemetria periódica
+  // 6. Telemetria periódica MQTT
   if (now - lastStatusMsg > STATUS_INTERVAL_MS) {
     lastStatusMsg = now;
     publish_telemetry();

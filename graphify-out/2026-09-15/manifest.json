@@ -1,8 +1,8 @@
 {
   "bot/bot.py": {
-    "mtime": 1785603022.5252564,
-    "seen": 1789524393.0950997,
-    "ast_hash": "0269215b36dd639cc219246b58a84247",
+    "mtime": 1789525312.5214272,
+    "seen": 1789525807.1244946,
+    "ast_hash": "7a50c7d7eddf93d92028a553bc3c43bc",
     "semantic_hash": ""
   },
   "reports/generate_daily.py": {
@@ -18,9 +18,9 @@
     "semantic_hash": ""
   },
   "run_tests.sh": {
-    "mtime": 1784505383.392235,
-    "seen": 1789524393.0951214,
-    "ast_hash": "d2a68e378a8c0aa9e1e53714f3bb2ac9",
+    "mtime": 1789525312.551428,
+    "seen": 1789525807.1245067,
+    "ast_hash": "057a5af3df54d39983d81ebb71de1b80",
     "semantic_hash": ""
   },
   "scripts/00_setup_python.sh": {
@@ -66,8 +66,8 @@
     "semantic_hash": ""
   },
   "scripts/07_test_mqtt_commands.sh": {
-    "mtime": 1789523998.2486248,
-    "seen": 1789524393.0951393,
+    "mtime": 1789525312.7624342,
+    "seen": 1789525807.1245189,
     "ast_hash": "8ae01d87d7e834dfe374b85a200cdafd",
     "semantic_hash": ""
   },
@@ -108,9 +108,9 @@
     "semantic_hash": ""
   },
   "scripts/log_analyzer.py": {
-    "mtime": 1784505017.6843467,
-    "seen": 1789524393.0951886,
-    "ast_hash": "155908d0b43ec4428b5dd24bfb10732b",
+    "mtime": 1789525312.551428,
+    "seen": 1789525807.1245308,
+    "ast_hash": "4ddf59d0cb05ef48b79bcc1bff510832",
     "semantic_hash": ""
   },
   "scripts/manage_users.py": {
@@ -174,9 +174,9 @@
     "semantic_hash": ""
   },
   "scripts/solar_worker.py": {
-    "mtime": 1789524021.2565458,
-    "seen": 1789524393.0952208,
-    "ast_hash": "395916d43728a3460a03a94db7421b05",
+    "mtime": 1789525312.7634342,
+    "seen": 1789525807.1245534,
+    "ast_hash": "d90a54231ca566bd99333e92bb1d4216",
     "semantic_hash": ""
   },
   "scripts/tariff_sync.py": {
@@ -246,9 +246,9 @@
     "semantic_hash": ""
   },
   "tests/test_bot_integrity.py": {
-    "mtime": 1779843269.5227568,
-    "seen": 1789524393.0952387,
-    "ast_hash": "55e1ba35e7ac0eb31caf7e1d3a5b8ec4",
+    "mtime": 1789525312.552428,
+    "seen": 1789525807.1245685,
+    "ast_hash": "90b1eb606d7ed4d96844e789b6eaf278",
     "semantic_hash": ""
   },
   "tests/test_command_reliability.py": {
@@ -282,9 +282,9 @@
     "semantic_hash": ""
   },
   "tests/test_web_api.py": {
-    "mtime": 1789524346.0594888,
-    "seen": 1789524393.0952523,
-    "ast_hash": "ea99fc7562de7f0c50717f29d61dffbb",
+    "mtime": 1789525312.7634342,
+    "seen": 1789525807.124585,
+    "ast_hash": "88a1ae335c95bc370d69bdc6f39033cb",
     "semantic_hash": ""
   },
   "tests/test_web_config.py": {
@@ -294,15 +294,15 @@
     "semantic_hash": ""
   },
   "web/script.js": {
-    "mtime": 1789524231.3801932,
-    "seen": 1789524393.0952556,
-    "ast_hash": "68d78c7ac5d36cc37475ce61c65b8026",
+    "mtime": 1789525312.7634342,
+    "seen": 1789525807.1245883,
+    "ast_hash": "9249889bba27682004466dd72ab91ee6",
     "semantic_hash": ""
   },
   "web_api/main.py": {
-    "mtime": 1789524070.9734957,
-    "seen": 1789524393.0952566,
-    "ast_hash": "98343c3cfce329745fe6e318d5f144fb",
+    "mtime": 1789525736.366328,
+    "seen": 1789525807.1245892,
+    "ast_hash": "4181e7f9a1fa730daa2ea3f23d7ab94a",
     "semantic_hash": ""
   },
   ".agents/AGENTS.md": {
@@ -318,8 +318,8 @@
     "semantic_hash": ""
   },
   ".agents/skills/embedded_flasher/SKILL.md": {
-    "mtime": 1789523756.1680553,
-    "seen": 1789524393.095262,
+    "mtime": 1789525312.7464337,
+    "seen": 1789525807.1245925,
     "ast_hash": "e3032b6e0fc0632db01eea9a2ade3ae4",
     "semantic_hash": ""
   },
@@ -330,9 +330,9 @@
     "semantic_hash": ""
   },
   ".agents/skills/lightmanager/SKILL.md": {
-    "mtime": 1785709372.5728295,
-    "seen": 1789524393.095285,
-    "ast_hash": "68cc636af8e4c0063f417ea0f339109c",
+    "mtime": 1789525312.5204272,
+    "seen": 1789525807.1246061,
+    "ast_hash": "4dee62172b8ae7c85a67d71da0d39fd9",
     "semantic_hash": ""
   },
   ".agents/workflows/graphify.md": {
@@ -378,9 +378,9 @@
     "semantic_hash": ""
   },
   "DIARIO_ALTERACOES.md": {
-    "mtime": 1785709378.0430052,
-    "seen": 1789524393.0952942,
-    "ast_hash": "38f4a275ab3fae7909f89784a3b73e7e",
+    "mtime": 1789525312.5214272,
+    "seen": 1789525807.1246164,
+    "ast_hash": "4101e09538224c740d33a20c3898c101",
     "semantic_hash": ""
   },
   "README.md": {
@@ -444,9 +444,9 @@
     "semantic_hash": ""
   },
   "web/index.html": {
-    "mtime": 1789524139.3970978,
-    "seen": 1789524393.0953248,
-    "ast_hash": "60c3c729273ea677e064f346f4db6c4d",
+    "mtime": 1789525312.7634342,
+    "seen": 1789525807.1246305,
+    "ast_hash": "ae6607b8fd9317e3b47d2fd73c14bccb",
     "semantic_hash": ""
   },
   "web/login.html": {
@@ -510,9 +510,9 @@
     "semantic_hash": ""
   },
   "scripts/solar_scraper.py": {
-    "mtime": 1785619840.5022333,
-    "seen": 1789524393.0952194,
-    "ast_hash": "f89f5a9adb5f8a81035054151b16e70a",
+    "mtime": 1789525312.551428,
+    "seen": 1789525807.1245525,
+    "ast_hash": "5208c97ee837494e1ab3228d513fcd42",
     "semantic_hash": ""
   },
   "tests/test_solar_scraper.py": {
@@ -522,9 +522,9 @@
     "semantic_hash": ""
   },
   "scripts/solar_ai_expert.py": {
-    "mtime": 1785606025.3498573,
-    "seen": 1789524393.0952115,
-    "ast_hash": "9cf824b237e899ee45772b1a2b532fcb",
+    "mtime": 1789525312.551428,
+    "seen": 1789525807.1245458,
+    "ast_hash": "3da9304c25fa3f602d44da4df067951a",
     "semantic_hash": ""
   },
   "scripts/solar_forecast.py": {
@@ -540,9 +540,9 @@
     "semantic_hash": ""
   },
   "scripts/solar_rain_alert.py": {
-    "mtime": 1785619838.279716,
-    "seen": 1789524393.0952163,
-    "ast_hash": "7b080f6bcadba1aafed15b1db0b94205",
+    "mtime": 1789525312.551428,
+    "seen": 1789525807.1245496,
+    "ast_hash": "f19830bf06d9500d02a3857fb66a3962",
     "semantic_hash": ""
   },
   "scripts/solar_report.py": {
@@ -552,15 +552,15 @@
     "semantic_hash": ""
   },
   "tests/test_solar_ai_expert.py": {
-    "mtime": 1785606034.3418887,
-    "seen": 1789524393.0952415,
-    "ast_hash": "e52a5a8978720241bd8ea0b96b710278",
+    "mtime": 1789525312.552428,
+    "seen": 1789525807.124574,
+    "ast_hash": "22be0fa4db073c717ffeefb5e0450dbf",
     "semantic_hash": ""
   },
   "tests/test_solar_anomalies.py": {
-    "mtime": 1785619849.595393,
-    "seen": 1789524393.0952432,
-    "ast_hash": "1f9733915c15a7a0fc5b6ca1f6600dd8",
+    "mtime": 1789525312.552428,
+    "seen": 1789525807.124575,
+    "ast_hash": "a8dd029b3af34d84794834eefec8235b",
     "semantic_hash": ""
   },
   "tests/test_solar_forecast.py": {
@@ -576,9 +576,9 @@
     "semantic_hash": ""
   },
   "tests/test_solar_rain_alert.py": {
-    "mtime": 1785619845.3082345,
-    "seen": 1789524393.095246,
-    "ast_hash": "75b48e1996519ec67ae7682fa6cd5c5f",
+    "mtime": 1789525312.552428,
+    "seen": 1789525807.124578,
+    "ast_hash": "207f1f7ccca97da9c4e9b1e2d557ad8c",
     "semantic_hash": ""
   },
   "tests/test_solar_report.py": {
@@ -600,14 +600,14 @@
     "semantic_hash": ""
   },
   "scripts/09_flash_esp32c3.sh": {
-    "mtime": 1789523724.835545,
-    "seen": 1789524393.0951428,
+    "mtime": 1789525312.7624342,
+    "seen": 1789525807.124522,
     "ast_hash": "4244293107b39d8ac4190b4741fbde6c",
     "semantic_hash": ""
   },
   "scripts/register_muro_point.py": {
-    "mtime": 1789524238.8837342,
-    "seen": 1789524393.0952017,
+    "mtime": 1789525312.7624342,
+    "seen": 1789525807.1245394,
     "ast_hash": "bfa308f8d071a8520990e6c2364181ed",
     "semantic_hash": ""
   },
@@ -615,6 +615,12 @@
     "mtime": 1789524357.48355,
     "seen": 1789524393.0952275,
     "ast_hash": "0866db44d0eba4a9089e22b9160d5ff6",
+    "semantic_hash": ""
+  },
+  "tests/test_log_analyzer.py": {
+    "mtime": 1789525312.552428,
+    "seen": 1789525807.1245725,
+    "ast_hash": "c087fc213b6ec320ec729fad26c4d124",
     "semantic_hash": ""
   }
 }
