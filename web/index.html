@@ -164,6 +164,74 @@
 
         <section class="controls">
             <h2>Controle em Tempo Real</h2>
+            <div class="radar-status-card">
+                <div class="radar-status-header">
+                    <div class="radar-sonar-icon-wrapper" id="radar-sonar-wrapper">
+                        <span class="radar-sonar-wave"></span>
+                        <span class="radar-sonar-wave delay-1"></span>
+                        <span class="radar-sonar-icon">📡</span>
+                    </div>
+                    <div class="radar-title-group">
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <h3>Sensor Radar LD2420 & Luz do Muro</h3>
+                            <span id="radar-ip-badge" class="radar-tag">192.168.1.12</span>
+                        </div>
+                        <span id="radar-presence-badge" class="badge-presence presence-idle">⚪ Livre</span>
+                    </div>
+                </div>
+
+                <!-- Barra de contagem regressiva em tempo real -->
+                <div class="radar-timer-box">
+                    <div class="radar-timer-label">
+                        <span>⏱️ Temporizador da Luz: <b id="muro-timer-status">Inativo (2 min)</b></span>
+                        <span id="muro-timer-sec">0s / 120s</span>
+                    </div>
+                    <div class="radar-progress-bar-bg">
+                        <div id="muro-progress-bar" class="radar-progress-bar" style="width: 0%;"></div>
+                    </div>
+                </div>
+
+                <div class="radar-status-body">
+                    <div class="radar-stat-item">
+                        <span class="radar-stat-label">Passagens na Noite</span>
+                        <div class="radar-stat-value"><span id="muro-night-count">0</span> <small>vezes</small></div>
+                    </div>
+                    <div class="radar-stat-item">
+                        <span class="radar-stat-label">Total Hoje (ESP32)</span>
+                        <div class="radar-stat-value accent"><span id="muro-today-count">0</span> <small>pulsos</small></div>
+                    </div>
+                    <div class="radar-stat-item">
+                        <span class="radar-stat-label">Último Acionamento</span>
+                        <span class="radar-stat-sub" id="muro-last-trigger">Aguardando...</span>
+                    </div>
+                    <div class="radar-stat-item">
+                        <span class="radar-stat-label">Sinal Wi-Fi</span>
+                        <span class="radar-stat-sub" id="radar-rssi">-- dBm</span>
+                    </div>
+                </div>
+
+                <!-- Gráfico Noturno por Hora -->
+                <div class="radar-chart-container">
+                    <div class="radar-chart-header">
+                        <span class="detail-title">📊 Passagens Noturnas por Hora (18h às 06h)</span>
+                        <span id="radar-chart-total" class="solar-curve-subtext">0 passagens registradas</span>
+                    </div>
+                    <div style="height: 180px; position: relative;">
+                        <canvas id="radarNightChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Feed de Últimos Eventos -->
+                <div class="radar-events-feed">
+                    <div class="radar-feed-header">
+                        <span>🕒 Últimos Registros do Sensor</span>
+                    </div>
+                    <div id="radar-events-list" class="radar-events-list">
+                        <div class="radar-event-empty">Aguardando detecção de pessoas...</div>
+                    </div>
+                </div>
+            </div>
+
             <div id="light-cards" class="grid">
                 <!-- Cards de luz serão inseridos aqui -->
             </div>

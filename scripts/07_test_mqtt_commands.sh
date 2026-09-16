@@ -25,4 +25,9 @@ send_cmd "home/outdoor/fundos/set" "ON"
 sleep 2
 send_cmd "home/outdoor/fundos/set" "OFF"
 
+# Sequência de teste para Muro
+send_cmd "home/outdoor/muro/set" "ON"
+sleep 2
+send_cmd "home/outdoor/muro/set" "OFF"
+
 echo "=== Teste finalizado ==="

@@ -212,3 +212,48 @@ def test_send_command_mqtt_offline(mock_mqtt):
 
     assert response.status_code == 503
     assert response.json()["detail"] == "MQTT Broker offline"
+
+@patch('web_api.main.get_db_conn')
+@patch('web_api.main.release_db_conn')
+def test_get_muro_night_stats_success(mock_release, mock_get_conn):
+    mock_conn = MagicMock()
+    mock_cur = MagicMock()
+    mock_get_conn.return_value = mock_conn
+    mock_conn.cursor.return_value = mock_cur
+
+    from datetime import datetime, timezone, timedelta
+    mock_timestamp = datetime(2026, 9, 15, 21, 30, 0, tzinfo=timezone(timedelta(hours=-3)))
+    mock_cur.fetchone.return_value = (5, mock_timestamp)
+
+    response = client.get("/api/muro/night_stats")
+    assert response.status_code == 200
+    data = response.json()
+    assert data["trigger_count"] == 5
+    assert data["last_trigger"] is not None
+    assert "radar_presence" in data
+    assert "muro_state" in data
+
+@patch('web_api.main.get_db_conn')
+@patch('web_api.main.release_db_conn')
+def test_get_radar_analytics_success(mock_release, mock_get_conn):
+    mock_conn = MagicMock()
+    mock_cur = MagicMock()
+    mock_get_conn.return_value = mock_conn
+    mock_conn.cursor.return_value = mock_cur
+
+    from datetime import datetime, timezone, timedelta
+    mock_timestamp = datetime(2026, 9, 15, 22, 10, 0, tzinfo=timezone(timedelta(hours=-3)))
+    mock_cur.fetchone.return_value = (7, mock_timestamp)
+    mock_cur.fetchall.side_effect = [
+        [(21, 3), (22, 4)], # hour distribution
+        [(mock_timestamp, "ON", "radar_trigger")] # recent events
+    ]
+
+    response = client.get("/api/radar/analytics")
+    assert response.status_code == 200
+    data = response.json()
+    assert "live" in data
+    assert "night" in data
+    assert data["night"]["night_total"] == 7
+    assert len(data["night"]["hourly_distribution"]) == 13
+    assert len(data["night"]["recent_events"]) == 1

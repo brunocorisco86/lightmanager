@@ -33,6 +33,10 @@ const char* set_fundos = "home/outdoor/fundos/set";
 const char* state_fundos = "home/outdoor/fundos/state";
 const int pinFundos = D2;
 
+const char* set_muro = "home/outdoor/muro/set";
+const char* state_muro = "home/outdoor/muro/state";
+const int pinMuro = D5; // GPIO 14 (Canal Muro - Rele SSR Low-Level Trigger)
+
 const char* system_reboot = "home/outdoor/system/reboot";
 const char* status_topic = "home/outdoor/status";
 const char* fallback_on_topic = "home/outdoor/fallback/on";
@@ -47,6 +51,8 @@ unsigned long lastReconnectAttempt = 0;
 unsigned long lastHealthCheck = 0;
 unsigned long lastMqttConnected = 0;
 unsigned long lastWiFiConnected = 0;
+unsigned long lastMuroOnTime = 0;
+const unsigned long MURO_SAFETY_TIMEOUT_MS = 150000; // 2.5 min fail-safe autônomo
 
 int fallback_on_hour = 18;
 int fallback_on_minute = 15;
@@ -130,6 +136,18 @@ void callback(char* topic, byte* payload, unsigned int length) {
       digitalWrite(pinFundos, RELAY_OFF);
       client.publish(state_fundos, "OFF", true);
     }
+  } else if (String(topic) == set_muro) {
+    if (messageTemp == "ON") {
+      digitalWrite(pinMuro, RELAY_ON);
+      client.publish(state_muro, "ON", true);
+      lastMuroOnTime = millis();
+      Serial.println("Comando MQTT: Muro -> ON");
+    } else if (messageTemp == "OFF") {
+      digitalWrite(pinMuro, RELAY_OFF);
+      client.publish(state_muro, "OFF", true);
+      lastMuroOnTime = 0;
+      Serial.println("Comando MQTT: Muro -> OFF");
+    }
   } else if (String(topic) == system_reboot) {
     if (messageTemp == "REBOOT") {
       Serial.println("Comando REBOOT recebido via MQTT!");
@@ -183,6 +201,7 @@ boolean reconnect() {
     Serial.println("CONECTADO!");
     client.subscribe(set_frente);
     client.subscribe(set_fundos);
+    client.subscribe(set_muro);
     client.subscribe(system_reboot);
     client.subscribe(fallback_on_topic);
     client.subscribe(fallback_off_topic);
@@ -190,6 +209,7 @@ boolean reconnect() {
     // Publica estado atual ao reconectar para sincronizar site
     client.publish(state_frente, (digitalRead(pinFrente) == RELAY_ON ? "ON" : "OFF"), true);
     client.publish(state_fundos, (digitalRead(pinFundos) == RELAY_ON ? "ON" : "OFF"), true);
+    client.publish(state_muro, (digitalRead(pinMuro) == RELAY_ON ? "ON" : "OFF"), true);
   } else {
     Serial.print("Falhou, rc=");
     Serial.println(client.state());
@@ -202,8 +222,10 @@ void setup() {
 
   digitalWrite(pinFrente, RELAY_OFF);
   digitalWrite(pinFundos, RELAY_OFF);
+  digitalWrite(pinMuro, RELAY_OFF);
   pinMode(pinFrente, OUTPUT);
   pinMode(pinFundos, OUTPUT);
+  pinMode(pinMuro, OUTPUT);
 
   setup_wifi();
 
@@ -267,6 +289,16 @@ void loop() {
     }
   }
 
+  // Fail-safe de Segurança do Muro: Se permanecer ligado por mais de 2.5 min sem comando OFF
+  if (digitalRead(pinMuro) == RELAY_ON && lastMuroOnTime > 0 && (now - lastMuroOnTime > MURO_SAFETY_TIMEOUT_MS)) {
+    digitalWrite(pinMuro, RELAY_OFF);
+    lastMuroOnTime = 0;
+    if (client.connected()) {
+      client.publish(state_muro, "OFF", true);
+    }
+    Serial.println("⚠️ Fail-safe do Muro acionado: luz desligada apos 2.5 min!");
+  }
+
   // Watchdog local de Autocura (Se ficar sem WiFi ou MQTT por mais de 10 minutos, reinicia)
   if (now - lastWiFiConnected > 600000 || now - lastMqttConnected > 600000) {
     Serial.println("🚨 Watchdog local disparado! Sem conexao por mais de 10 min. Reiniciando...");
@@ -326,6 +358,7 @@ void loop() {
       payload += q + "status" + q + ":" + q + "online" + q + ",";
       payload += q + "frente" + q + ":" + q + (digitalRead(pinFrente) == RELAY_ON ? "ON" : "OFF") + q + ",";
       payload += q + "fundos" + q + ":" + q + (digitalRead(pinFundos) == RELAY_ON ? "ON" : "OFF") + q + ",";
+      payload += q + "muro" + q + ":" + q + (digitalRead(pinMuro) == RELAY_ON ? "ON" : "OFF") + q + ",";
       payload += q + "rssi" + q + ":" + String(WiFi.RSSI()) + ",";
       payload += q + "ip" + q + ":" + q + WiFi.localIP().toString() + q;
       payload += "}";

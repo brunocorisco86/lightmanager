@@ -1,51 +1,59 @@
 ---
 name: embedded_flasher
-description: Compile, flash, and test ESP8266/Wemos D1 R1 microcontrollers using esptool and MQTT connection validation.
+description: Compile, flash, and test ESP8266/Wemos D1 R1 and ESP32-C3 SuperMini microcontrollers using arduino-cli, esptool, and MQTT connection validation.
 ---
 
 # Skill: Gravador de Firmware Embarcado (embedded_flasher)
 
-Esta skill permite ao assistente gerenciar o processo de compilação, gravação e testes pós-flash do firmware do Wemos D1 R1 (ESP8266) deste repositório.
+Esta skill permite ao assistente gerenciar o processo de compilação, gravação e testes pós-flash de microcontroladores do repositório:
+1. **Wemos D1 R1 (ESP8266):** Controle dos relés de iluminação externa (Frente, Fundos, Muro).
+2. **ESP32-C3 SuperMini (RISC-V):** Leitura de presença do radar mmWave LD2420 e acionamento MQTT com temporizador de 2 minutos.
 
 ---
 
-## ⚡ Fluxo de Trabalho do Agente
+## ⚡ 1. Fluxo Wemos D1 R1 (ESP8266)
 
-Quando o usuário solicitar a gravação do firmware, siga este roteiro estruturado:
+* **Porta Típica:** `/dev/ttyUSB0` (Driver CH340).
+* **Script de Flash:**
+  ```bash
+  bash scripts/08_flash_wemos.sh
+  ```
+* **Validação:** Ping em `192.168.1.111` e tópico `home/outdoor/status`.
 
-### 1. Verificação Prévia de Hardware
-Antes de iniciar a gravação, certifique-se de que a porta serial USB está ativa e acessível:
-* Porta Padrão: `/dev/ttyUSB0`
-* Verifique a presença do dispositivo USB executando:
-  ```bash
-  ls -l /dev/ttyUSB0
-  ```
-* Se o dispositivo não for encontrado, liste os barramentos USB com:
-  ```bash
-  lsusb
-  dmesg | grep tty
-  ```
-* **Problema de Permissão:** Caso ocorra erro de permissão (ex: *Permission Denied*), instrua o usuário a ajustar o acesso ou adicione o usuário ao grupo correto:
-  ```bash
-  sudo chmod a+rw /dev/ttyUSB0
-  # Ou adicionar ao grupo dialout (requer logout para surtir efeito)
-  sudo usermod -a -G dialout $USER
-  ```
+---
 
-### 2. Executar o Script de Flash
-Uma vez confirmada a porta USB, execute a gravação utilizando o script utilitário localizado na pasta de scripts:
+## ⚡ 2. Fluxo ESP32-C3 SuperMini (RISC-V + Radar LD2420)
+
+### Características de Hardware
+* **Interface USB:** USB CDC Nativo JTAG/Serial (`/dev/ttyACM0` ou `/dev/ttyACM1`, ID `303a:1001`).
+* **Flags de Compilação Obrigatórias:**
+  `build.extra_flags=-DARDUINO_USB_MODE=1 -DARDUINO_USB_CDC_ON_BOOT=1` (permite uso de `Serial.begin(115200)` via USB nativo).
+* **Pinagem com Sensor Radar LD2420:**
+  - VCC -> 3V3
+  - GND -> GND
+  - OUT -> GPIO 2 (`pinMode(2, INPUT_PULLDOWN)`)
+  - TX -> GPIO 20 (`Serial1` RX)
+  - RX -> GPIO 21 (`Serial1` TX)
+  - LED Onboard -> GPIO 8 (Active LOW)
+
+### Roteiro de Gravação
+1. Verifique se o dispositivo está conectado:
+   ```bash
+   ls -l /dev/ttyACM*
+   ```
+2. Execute o script automatizado de compilação, flash e validação MQTT:
+   ```bash
+   bash scripts/09_flash_esp32c3.sh
+   ```
+3. Se a placa não entrar no modo de gravação automaticamente:
+   - Pressione e segure o botão **BOOT** (GPIO 9).
+   - Dê um clique no botão **RESET**.
+   - Solte o botão **BOOT**.
+   - Reexecute o script de flash.
+
+### Monitoramento Serial ao Vivo
+Para observar os pulsos de detecção de pessoas em tempo real:
 ```bash
-bash scripts/08_flash_wemos.sh
+arduino-cli monitor -p /dev/ttyACM0 -c baudrate=115200
 ```
 
-Monitore a saída do console para garantir que o `esptool` conclua com sucesso:
-* Conexão estabelecida com o ESP8266.
-* Limpeza e gravação do bloco de memória concluídas com `100%`.
-
-### 3. Validação de Rede e Comunicação MQTT
-O script de flash realiza testes automáticos pós-gravação. No entanto, valide manualmente se necessário:
-* **Ping Test:** `ping -c 3 192.168.1.111` (IP estático configurado no firmware).
-* **MQTT Test:** Verifique se as mensagens de transição e o Heartbeat estão chegando ao Broker rodando:
-  ```bash
-  mosquitto_sub -h 192.168.1.7 -u bruno -P blurbang -t "home/outdoor/status" -v
-  ```

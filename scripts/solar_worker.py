@@ -330,6 +330,7 @@ def on_connect(client, userdata, flags, rc, properties):
     logging.info(f"Conectado ao Broker MQTT. Resultado (rc): {rc}")
     client.subscribe("home/outdoor/+/state", qos=1)
     client.subscribe("home/outdoor/status", qos=1)
+    client.subscribe("home/outdoor/radar/presence", qos=1)
 
 def on_message(client, userdata, msg):
     # Ignora mensagens retidas (historicas) para evitar falsos positivos no watchdog
@@ -337,11 +338,19 @@ def on_message(client, userdata, msg):
         touch_last_seen()
     
     payload_str = msg.payload.decode()
+
+    # Trata evento de presença do sensor radar LD2420
+    if msg.topic == "home/outdoor/radar/presence":
+        presence_state = payload_str.strip()
+        logging.info(f"📡 Radar de Presença LD2420: {presence_state}")
+        if presence_state in ["ON", "OFF"]:
+            log_event_to_db("home/outdoor/muro", presence_state, source="radar_trigger")
+        return
     if "/status" in msg.topic:
         logging.info(f"💓 Heartbeat recebido do embarcado: {payload_str}")
         try:
             status_data = json.loads(payload_str)
-            for key in ["frente", "fundos"]:
+            for key in ["frente", "fundos", "muro"]:
                 if key in status_data:
                     sensor_topic = f"home/outdoor/{key}"
                     sensor_state = status_data[key]

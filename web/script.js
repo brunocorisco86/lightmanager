@@ -114,9 +114,183 @@ async function updateStatus() {
     }
 }
 
+let radarNightChartInstance = null;
+
+async function updateRadarAnalytics() {
+    try {
+        const res = await fetchData('radar/analytics');
+        if (!res) return;
+
+        const live = res.live || {};
+        const night = res.night || {};
+
+        // 1. Presença e Sonar
+        const presenceBadge = document.getElementById('radar-presence-badge');
+        const sonarWrapper = document.getElementById('radar-sonar-wrapper');
+        const hasPresence = (live.presence === true || live.presence === 'ON' || live.presence === 'true');
+
+        if (presenceBadge) {
+            presenceBadge.innerText = hasPresence ? '🟢 PESSOA DETECTADA' : '⚪ ÁREA LIVRE';
+            presenceBadge.className = `badge-presence ${hasPresence ? 'presence-active' : 'presence-idle'}`;
+        }
+        if (sonarWrapper) {
+            if (hasPresence) {
+                sonarWrapper.classList.add('presence-active-wrapper');
+            } else {
+                sonarWrapper.classList.remove('presence-active-wrapper');
+            }
+        }
+
+        // 2. IP e Wi-Fi
+        const ipBadge = document.getElementById('radar-ip-badge');
+        if (ipBadge && live.ip) {
+            ipBadge.innerText = live.ip;
+        }
+        const rssiEl = document.getElementById('radar-rssi');
+        if (rssiEl) {
+            rssiEl.innerText = live.rssi ? `${live.rssi} dBm` : '-- dBm';
+        }
+
+        // 3. Contadores
+        const nightCountEl = document.getElementById('muro-night-count');
+        if (nightCountEl) {
+            nightCountEl.innerText = night.night_total !== undefined ? night.night_total : 0;
+        }
+        const todayCountEl = document.getElementById('muro-today-count');
+        if (todayCountEl) {
+            todayCountEl.innerText = live.motion_count !== undefined ? live.motion_count : 0;
+        }
+
+        // 4. Último acionamento
+        const lastTriggerEl = document.getElementById('muro-last-trigger');
+        if (lastTriggerEl) {
+            const lastTime = live.last_motion || night.last_trigger;
+            if (lastTime) {
+                const dt = new Date(lastTime);
+                lastTriggerEl.innerText = dt.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit', second: '2-digit'});
+            } else {
+                lastTriggerEl.innerText = 'Sem detecções hoje';
+            }
+        }
+
+        // 5. Temporizador visual de 2 minutos
+        const timerStatusEl = document.getElementById('muro-timer-status');
+        const timerSecEl = document.getElementById('muro-timer-sec');
+        const progressBar = document.getElementById('muro-progress-bar');
+        const remSec = live.timeout_remaining_s || 0;
+
+        if (timerStatusEl && timerSecEl && progressBar) {
+            if (hasPresence) {
+                timerStatusEl.innerText = 'Ativo (Presença contínua)';
+                timerSecEl.innerText = '120s / 120s';
+                progressBar.style.width = '100%';
+            } else if (remSec > 0) {
+                timerStatusEl.innerText = `Ativo (${remSec}s restantes)`;
+                timerSecEl.innerText = `${remSec}s / 120s`;
+                const pct = Math.min(100, Math.max(0, (remSec / 120) * 100));
+                progressBar.style.width = `${pct}%`;
+            } else {
+                timerStatusEl.innerText = 'Inativo (2 min)';
+                timerSecEl.innerText = '0s / 120s';
+                progressBar.style.width = '0%';
+            }
+        }
+
+        // 6. Atualização do Gráfico Noturno
+        const totalChartText = document.getElementById('radar-chart-total');
+        if (totalChartText) {
+            totalChartText.innerText = `${night.night_total || 0} passagens registradas na noite`;
+        }
+
+        if (night.hourly_distribution && night.hourly_distribution.length > 0) {
+            renderRadarNightChart(night.hourly_distribution);
+        }
+
+        // 7. Feed dos Últimos Eventos
+        const eventsList = document.getElementById('radar-events-list');
+        if (eventsList && night.recent_events && night.recent_events.length > 0) {
+            eventsList.innerHTML = '';
+            night.recent_events.forEach(ev => {
+                const dt = new Date(ev.timestamp);
+                const timeStr = dt.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit', second: '2-digit'});
+                const isON = ev.event === 'ON';
+                const row = document.createElement('div');
+                row.className = 'radar-event-row';
+                row.innerHTML = `
+                    <span class="radar-event-time">${timeStr}</span>
+                    <span>${isON ? '🏃 Movimento Detectado' : '🚶 Movimento Cessado'}</span>
+                    <span class="radar-event-badge ${isON ? 'radar-badge-on' : 'radar-badge-off'}">${ev.event}</span>
+                `;
+                eventsList.appendChild(row);
+            });
+        }
+    } catch (e) {
+        console.error("Erro ao atualizar telemetria do radar:", e);
+    }
+}
+
+function renderRadarNightChart(hourlyData) {
+    const canvas = document.getElementById('radarNightChart');
+    if (!canvas) return;
+
+    const labels = hourlyData.map(d => d.hour);
+    const dataPoints = hourlyData.map(d => d.count);
+
+    if (radarNightChartInstance) {
+        radarNightChartInstance.data.labels = labels;
+        radarNightChartInstance.data.datasets[0].data = dataPoints;
+        radarNightChartInstance.update('none');
+        return;
+    }
+
+    const ctx = canvas.getContext('2d');
+    radarNightChartInstance = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Detecções de Presença',
+                data: dataPoints,
+                backgroundColor: 'rgba(56, 189, 248, 0.7)',
+                borderColor: '#38bdf8',
+                borderWidth: 1.5,
+                borderRadius: 4,
+                hoverBackgroundColor: '#38bdf8'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            animation: { duration: 300 },
+            scales: {
+                x: {
+                    grid: { display: false },
+                    ticks: { color: '#94a3b8', font: { size: 11 } }
+                },
+                y: {
+                    beginAtZero: true,
+                    ticks: { precision: 0, color: '#94a3b8', font: { size: 11 } },
+                    grid: { color: '#334155' }
+                }
+            },
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return ` ${context.raw} passagens`;
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
+
 // Alias para o botão Refresh do HTML
 function loadStatus() {
     updateStatus();
+    updateRadarAnalytics();
     updateSunInfo();
 }
 
@@ -701,6 +875,7 @@ async function loadSolarCurveChart() {
 // Inicialização
 updateSunInfo();
 updateStatus();
+updateRadarAnalytics();
 updateSolarGeneration();
 updateSolarForecast();
 loadSolarCurveChart();
@@ -712,6 +887,7 @@ if (document.getElementById("log-service-selector")) {
 
 // Polling suave
 setInterval(updateStatus, 5000);
+setInterval(updateRadarAnalytics, 2000);
 setInterval(updateSolarGeneration, 10000);
 
 // Terminal de Logs Sob Demanda (Estático / Tail)

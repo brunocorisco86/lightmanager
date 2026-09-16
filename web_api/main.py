@@ -51,6 +51,16 @@ except ValueError:
 
 # Cache de estados
 light_states = {}
+radar_telemetry = {
+    "presence": False,
+    "motion_count": 0,
+    "timeout_remaining_s": 0,
+    "rssi": None,
+    "ip": None,
+    "online": False,
+    "last_seen": None,
+    "last_motion": None
+}
 SUN_CACHE_FILE = os.path.abspath(os.path.join(PROJECT_ROOT, 'sun_cache.json'))
 sun_cache = {"date": None, "results": None}
 
@@ -61,12 +71,41 @@ def on_connect(client, userdata, flags, rc, properties):
     print(f"Conectado ao MQTT Broker com resultado: {rc}")
     client.subscribe("home/outdoor/+/state")
     client.subscribe("home/outdoor/+/log")
+    client.subscribe("home/outdoor/radar/#")
 
 def on_message(client, userdata, msg):
     topic = msg.topic
     payload = msg.payload.decode()
     
-    if topic.endswith("/state"):
+    if topic == "home/outdoor/radar/status":
+        light_states[topic] = payload
+        try:
+            data = json.loads(payload)
+            radar_telemetry["online"] = (data.get("status") == "online")
+            if "presence" in data:
+                radar_telemetry["presence"] = bool(data["presence"])
+            if "motion_count" in data:
+                radar_telemetry["motion_count"] = int(data["motion_count"])
+            if "timeout_remaining_s" in data:
+                radar_telemetry["timeout_remaining_s"] = int(data["timeout_remaining_s"])
+            if "rssi" in data:
+                radar_telemetry["rssi"] = int(data["rssi"])
+            if "ip" in data:
+                radar_telemetry["ip"] = str(data["ip"])
+            sp_tz = timezone(timedelta(hours=-3))
+            radar_telemetry["last_seen"] = datetime.now(sp_tz).isoformat()
+        except Exception as e:
+            print(f"Erro ao processar telemetria do radar: {e}")
+    elif topic == "home/outdoor/radar/presence":
+        light_states[topic] = payload
+        is_on = (payload == "ON")
+        radar_telemetry["presence"] = is_on
+        sp_tz = timezone(timedelta(hours=-3))
+        now_iso = datetime.now(sp_tz).isoformat()
+        radar_telemetry["last_seen"] = now_iso
+        if is_on:
+            radar_telemetry["last_motion"] = now_iso
+    elif topic.endswith("/state"):
         light_states[topic] = payload
         print(f"Estado recebido: {topic} -> {payload}")
     elif topic.endswith("/log"):
@@ -375,6 +414,183 @@ def get_history():
     except Exception as e:
         print(f"Erro DB History: {e}")
         return []
+    finally:
+        if conn:
+            release_db_conn(conn)
+
+@app.get("/api/muro/night_stats")
+def get_muro_night_stats():
+    # Retorna métricas de acionamento noturno da Luz do Muro pelo sensor radar
+    sp_tz = timezone(timedelta(hours=-3))
+    now = datetime.now(sp_tz)
+    
+    # Define o ciclo noturno mais recente baseado no pôr do sol
+    sun_data = get_sun_times()
+    sunset_dt = None
+    if sun_data and "sunset" in sun_data:
+        try:
+            sunset_str = sun_data["sunset"]
+            sunset_raw = datetime.fromisoformat(sunset_str.replace("Z", "+00:00")).astimezone(sp_tz)
+            if now < sunset_raw:
+                sunset_dt = sunset_raw - timedelta(days=1)
+            else:
+                sunset_dt = sunset_raw
+        except Exception:
+            pass
+
+    if not sunset_dt:
+        if now.hour < 18:
+            sunset_dt = now.replace(hour=18, minute=0, second=0, microsecond=0) - timedelta(days=1)
+        else:
+            sunset_dt = now.replace(hour=18, minute=0, second=0, microsecond=0)
+            
+    conn = None
+    try:
+        conn = get_db_conn()
+        cur = conn.cursor()
+        
+        query = """
+            SELECT COUNT(*), MAX(le.timestamp)
+            FROM light_events le
+            JOIN light_points lp ON le.point_id = lp.id
+            WHERE lp.mqtt_topic = 'home/outdoor/muro'
+              AND le.event_type = 'ON'
+              AND le.timestamp >= %s;
+        """
+        cur.execute(query, (sunset_dt,))
+        row = cur.fetchone()
+        trigger_count = row[0] if row else 0
+        last_trigger = row[1].isoformat() if (row and row[1]) else None
+        
+        cur.close()
+        
+        return {
+            "night_start": sunset_dt.isoformat(),
+            "trigger_count": trigger_count,
+            "last_trigger": last_trigger,
+            "radar_presence": light_states.get("home/outdoor/radar/presence", "OFF"),
+            "muro_state": light_states.get("home/outdoor/muro/state", "OFF")
+        }
+    except Exception as e:
+        print(f"Erro ao buscar night_stats do muro: {e}")
+        return {
+            "night_start": sunset_dt.isoformat() if sunset_dt else None,
+            "trigger_count": 0,
+            "last_trigger": None,
+            "radar_presence": light_states.get("home/outdoor/radar/presence", "OFF"),
+            "muro_state": light_states.get("home/outdoor/muro/state", "OFF"),
+            "error": str(e)
+        }
+    finally:
+        if conn:
+            release_db_conn(conn)
+
+@app.get("/api/radar/analytics")
+def get_radar_analytics():
+    sp_tz = timezone(timedelta(hours=-3))
+    now = datetime.now(sp_tz)
+    
+    sun_data = get_sun_times()
+    sunset_dt = None
+    if sun_data and "sunset" in sun_data:
+        try:
+            sunset_str = sun_data["sunset"]
+            sunset_raw = datetime.fromisoformat(sunset_str.replace("Z", "+00:00")).astimezone(sp_tz)
+            if now < sunset_raw:
+                sunset_dt = sunset_raw - timedelta(days=1)
+            else:
+                sunset_dt = sunset_raw
+        except Exception:
+            pass
+
+    if not sunset_dt:
+        if now.hour < 18:
+            sunset_dt = now.replace(hour=18, minute=0, second=0, microsecond=0) - timedelta(days=1)
+        else:
+            sunset_dt = now.replace(hour=18, minute=0, second=0, microsecond=0)
+            
+    conn = None
+    try:
+        conn = get_db_conn()
+        cur = conn.cursor()
+        
+        # 1. Total noturno e último acionamento
+        cur.execute("""
+            SELECT COUNT(*), MAX(le.timestamp)
+            FROM light_events le
+            JOIN light_points lp ON le.point_id = lp.id
+            WHERE lp.mqtt_topic = 'home/outdoor/muro'
+              AND le.event_type = 'ON'
+              AND le.timestamp >= %s;
+        """, (sunset_dt,))
+        row = cur.fetchone()
+        night_total = row[0] if row else 0
+        last_trigger = row[1].isoformat() if (row and row[1]) else None
+        
+        # 2. Histograma por hora da noite (18h às 06h)
+        cur.execute("""
+            SELECT EXTRACT(HOUR FROM le.timestamp AT TIME ZONE 'America/Sao_Paulo') as hr, COUNT(*)
+            FROM light_events le
+            JOIN light_points lp ON le.point_id = lp.id
+            WHERE lp.mqtt_topic = 'home/outdoor/muro'
+              AND le.event_type = 'ON'
+              AND le.timestamp >= %s
+            GROUP BY hr;
+        """, (sunset_dt,))
+        hour_rows = cur.fetchall()
+        hour_map = {int(r[0]): int(r[1]) for r in hour_rows}
+        
+        night_hours = [18, 19, 20, 21, 22, 23, 0, 1, 2, 3, 4, 5, 6]
+        hourly_distribution = [
+            {"hour": f"{h:02d}h", "count": hour_map.get(h, 0)}
+            for h in night_hours
+        ]
+        
+        # 3. Últimos 10 eventos recentes
+        cur.execute("""
+            SELECT le.timestamp, le.event_type, le.source
+            FROM light_events le
+            JOIN light_points lp ON le.point_id = lp.id
+            WHERE lp.mqtt_topic = 'home/outdoor/muro'
+            ORDER BY le.timestamp DESC, le.id DESC
+            LIMIT 10;
+        """)
+        event_rows = cur.fetchall()
+        recent_events = [{
+            "timestamp": r[0].isoformat() if r[0] else None,
+            "event": r[1],
+            "source": r[2]
+        } for r in event_rows]
+        
+        cur.close()
+        
+        live_telemetry = dict(radar_telemetry)
+        live_telemetry["muro_state"] = light_states.get("home/outdoor/muro/state", "OFF")
+        live_telemetry["radar_presence_state"] = light_states.get("home/outdoor/radar/presence", "OFF")
+        
+        return {
+            "live": live_telemetry,
+            "night": {
+                "night_start": sunset_dt.isoformat(),
+                "night_total": night_total,
+                "last_trigger": last_trigger,
+                "hourly_distribution": hourly_distribution,
+                "recent_events": recent_events
+            }
+        }
+    except Exception as e:
+        print(f"Erro em radar/analytics: {e}")
+        return {
+            "live": radar_telemetry,
+            "night": {
+                "night_start": sunset_dt.isoformat() if sunset_dt else None,
+                "night_total": 0,
+                "last_trigger": None,
+                "hourly_distribution": [],
+                "recent_events": [],
+                "error": str(e)
+            }
+        }
     finally:
         if conn:
             release_db_conn(conn)
