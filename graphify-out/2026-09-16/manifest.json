@@ -611,6 +611,12 @@
     "ast_hash": "bfa308f8d071a8520990e6c2364181ed",
     "semantic_hash": ""
   },
+  "sun_cache.json": {
+    "mtime": 1789524357.48355,
+    "seen": 1789524393.0952275,
+    "ast_hash": "0866db44d0eba4a9089e22b9160d5ff6",
+    "semantic_hash": ""
+  },
   "tests/test_log_analyzer.py": {
     "mtime": 1789525312.552428,
     "seen": 1789525807.1245725,
@@ -621,24 +627,6 @@
     "mtime": 1789526383.3397849,
     "seen": 1789527574.689786,
     "ast_hash": "1bb3cb099f3fe52facb58e3688a2b78d",
-    "semantic_hash": ""
-  },
-  "firmware/test_ld2420_distance/LD2420.cpp": {
-    "mtime": 1789529155.0456235,
-    "seen": 1789530007.3654432,
-    "ast_hash": "43a00757e3e83fba4b25c63bbd2e5381",
-    "semantic_hash": ""
-  },
-  "firmware/test_ld2420_distance/LD2420.h": {
-    "mtime": 1789529154.9588475,
-    "seen": 1789530007.3654454,
-    "ast_hash": "38a228f1dbb168824e8c16824f57561f",
-    "semantic_hash": ""
-  },
-  "scripts/test_sensor.sh": {
-    "mtime": 1789527642.466889,
-    "seen": 1789530007.3654885,
-    "ast_hash": "a1594c683efe6db138f64fb401d3b933",
     "semantic_hash": ""
   }
 }
