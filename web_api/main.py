@@ -119,6 +119,18 @@ def ensure_light_points_schema(conn):
             cur.execute("ALTER TABLE light_points ADD COLUMN IF NOT EXISTS camera_channels VARCHAR(50) DEFAULT '';")
             cur.execute("ALTER TABLE light_points ADD COLUMN IF NOT EXISTS camera_hold_seconds INTEGER DEFAULT 120;")
             cur.execute("ALTER TABLE light_points ADD COLUMN IF NOT EXISTS camera_night_only BOOLEAN DEFAULT TRUE;")
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS nvr_detections (
+                    id SERIAL PRIMARY KEY,
+                    channel SMALLINT NOT NULL,
+                    channel_code VARCHAR(10) NOT NULL,
+                    is_night BOOLEAN DEFAULT FALSE,
+                    triggered_lights VARCHAR(150) DEFAULT '',
+                    hold_seconds INTEGER DEFAULT 0,
+                    timestamp TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+                );
+                CREATE INDEX IF NOT EXISTS idx_nvr_detections_ts ON nvr_detections(timestamp DESC);
+            """)
         conn.commit()
         _schema_checked = True
     except Exception as e:
@@ -385,6 +397,101 @@ def get_nvr_channels():
             }
             for ch in range(1, 10)
         ]
+
+@app.get("/api/nvr/detections")
+def get_nvr_detections(hours: int = 24, limit: int = 200, channel: str | None = None):
+    """Retorna o histórico de detecções humanas do NVR para o Dot Plot e Mini-Terminal."""
+    conn = get_db_conn()
+    try:
+        cur = conn.cursor()
+        cur.execute("SET timezone TO 'America/Sao_Paulo';")
+
+        # 1. Resumo de hoje (a partir de 00:00 BRT)
+        cur.execute("""
+            SELECT
+                COUNT(*),
+                COUNT(*) FILTER (WHERE COALESCE(triggered_lights, '') <> ''),
+                COUNT(*) FILTER (WHERE COALESCE(triggered_lights, '') = '')
+            FROM nvr_detections
+            WHERE timestamp >= CURRENT_DATE AT TIME ZONE 'America/Sao_Paulo';
+        """)
+        cnt_row = cur.fetchone() or (0, 0, 0)
+
+        cur.execute("""
+            SELECT channel_code, triggered_lights, timestamp
+            FROM nvr_detections
+            ORDER BY timestamp DESC LIMIT 1;
+        """)
+        last_row = cur.fetchone()
+        last_det = None
+        if last_row:
+            last_det = {
+                "channel_code": last_row[0],
+                "triggered_lights": last_row[1] or "",
+                "timestamp": last_row[2].isoformat() if last_row[2] else None,
+            }
+
+        # 2. Lista filtrada por janela de horas e canal opcional
+        safe_hours = max(1, min(int(hours or 24), 720))
+        safe_limit = max(1, min(int(limit or 200), 1000))
+        if channel and channel.strip() and channel.strip().upper() != "ALL":
+            ch_filter = channel.strip().upper()
+            if not ch_filter.startswith("D") and ch_filter.isdigit():
+                ch_filter = f"D{int(ch_filter):02d}"
+            cur.execute(
+                f"""
+                SELECT id, channel, channel_code, is_night, triggered_lights, hold_seconds, timestamp
+                FROM nvr_detections
+                WHERE timestamp >= NOW() - INTERVAL '{safe_hours} hours'
+                  AND channel_code = %s
+                ORDER BY timestamp DESC
+                LIMIT %s;
+                """,
+                (ch_filter, safe_limit),
+            )
+        else:
+            cur.execute(
+                f"""
+                SELECT id, channel, channel_code, is_night, triggered_lights, hold_seconds, timestamp
+                FROM nvr_detections
+                WHERE timestamp >= NOW() - INTERVAL '{safe_hours} hours'
+                ORDER BY timestamp DESC
+                LIMIT %s;
+                """,
+                (safe_limit,),
+            )
+
+        rows = cur.fetchall()
+        cur.close()
+        detections = [
+            {
+                "id": r[0],
+                "channel": int(r[1]),
+                "channel_code": r[2],
+                "is_night": bool(r[3]),
+                "triggered_lights": r[4] or "",
+                "hold_seconds": int(r[5] or 0),
+                "timestamp": r[6].isoformat() if r[6] else None,
+            }
+            for r in rows
+        ]
+        return {
+            "summary": {
+                "total_today": int(cnt_row[0] or 0),
+                "triggered_today": int(cnt_row[1] or 0),
+                "saved_daytime_today": int(cnt_row[2] or 0),
+                "last_detection": last_det,
+            },
+            "detections": detections,
+        }
+    except Exception as e:
+        print(f"Erro DB NVR Detections: {e}")
+        return {
+            "summary": {"total_today": 0, "triggered_today": 0, "saved_daytime_today": 0, "last_detection": None},
+            "detections": [],
+        }
+    finally:
+        release_db_conn(conn)
 
 @app.delete("/api/config/points/{point_id}")
 def delete_point(point_id: int):
@@ -944,7 +1051,8 @@ LOG_FILES = {
     "bot": os.path.join(LOGS_DIR, "bot.log"),
     "solar": os.path.join(LOGS_DIR, "solar.log"),
     "broker": "/var/log/mosquitto/mosquitto.log",
-    "devices": os.path.join(LOGS_DIR, "devices.log")
+    "devices": os.path.join(LOGS_DIR, "devices.log"),
+    "nvr": os.path.join(LOGS_DIR, "nvr.log")
 }
 
 # Fallback se o log do broker real não for acessível (ex: local/dev ou permissões)
@@ -963,8 +1071,8 @@ def get_service_log_tail(service: str, lines: int = 100):
     file_path = LOG_FILES[service]
     
     if not os.path.exists(file_path):
-        if service == "devices":
-            return {"service": service, "lines": ["[SISTEMA] Nenhum log de dispositivo registrado ainda."]}
+        if service in ("devices", "nvr"):
+            return {"service": service, "lines": [f"[SISTEMA] Nenhum log de {service} registrado ainda."]}
         raise HTTPException(status_code=404, detail="Arquivo de log não encontrado.")
         
     try:
@@ -982,11 +1090,11 @@ def download_service_log(service: str):
         raise HTTPException(status_code=400, detail=f"Serviço '{service}' inválido.")
     file_path = LOG_FILES[service]
     if not os.path.exists(file_path):
-        if service == "devices":
+        if service in ("devices", "nvr"):
             return Response(
                 content="",
                 media_type="text/plain",
-                headers={"Content-Disposition": "attachment; filename=devices_log.txt"}
+                headers={"Content-Disposition": f"attachment; filename={service}_log.txt"}
             )
         raise HTTPException(status_code=404, detail="Arquivo de log não encontrado.")
     

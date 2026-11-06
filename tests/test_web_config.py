@@ -92,6 +92,45 @@ def test_nvr_channels_endpoint():
     assert any(c["code"] == "D03" for c in channels)
     assert any(c["code"] == "D04" for c in channels)
 
+
+def test_nvr_detections_endpoint():
+    conn = get_db_connection()
+    cur = conn.cursor()
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS nvr_detections (
+            id SERIAL PRIMARY KEY,
+            channel SMALLINT NOT NULL,
+            channel_code VARCHAR(10) NOT NULL,
+            is_night BOOLEAN DEFAULT FALSE,
+            triggered_lights VARCHAR(150) DEFAULT '',
+            hold_seconds INTEGER DEFAULT 0,
+            timestamp TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+        );
+    """)
+    cur.execute(
+        """
+        INSERT INTO nvr_detections (channel, channel_code, is_night, triggered_lights, hold_seconds)
+        VALUES (%s, %s, %s, %s, %s) RETURNING id
+        """,
+        (3, "D03", True, "Muro", 120),
+    )
+    det_id = cur.fetchone()[0]
+    conn.commit()
+
+    try:
+        response = client.get("/api/nvr/detections?hours=24&channel=D03")
+        assert response.status_code == 200
+        data = response.json()
+        assert "summary" in data
+        assert "detections" in data
+        assert data["summary"]["total_today"] >= 1
+        assert any(d["id"] == det_id and d["channel_code"] == "D03" and d["triggered_lights"] == "Muro" for d in data["detections"])
+    finally:
+        cur.execute("DELETE FROM nvr_detections WHERE id = %s", (det_id,))
+        conn.commit()
+        cur.close()
+        conn.close()
+
 def test_solar_history_endpoint():
     conn = get_db_connection()
     cur = conn.cursor()

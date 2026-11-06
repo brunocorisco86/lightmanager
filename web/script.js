@@ -854,6 +854,194 @@ async function loadSolarCurveChart() {
     }
 }
 
+let nvrDotChartInstance = null;
+
+async function loadNvrDetections() {
+    const hoursEl = document.getElementById('nvr-hours-selector');
+    const chEl = document.getElementById('nvr-channel-selector');
+    const hours = hoursEl ? parseInt(hoursEl.value, 10) : 24;
+    const channel = chEl ? chEl.value : 'ALL';
+
+    try {
+        const data = await fetchData(`nvr/detections?hours=${hours}&limit=250&channel=${encodeURIComponent(channel)}`);
+        if (!data) return;
+
+        // 1. Atualiza KPIs do topo
+        const sum = data.summary || {};
+        const totalEl = document.getElementById('nvr-total-today');
+        const trigEl = document.getElementById('nvr-triggered-today');
+        const savedEl = document.getElementById('nvr-saved-today');
+        const lastEl = document.getElementById('nvr-last-event');
+
+        if (totalEl) totalEl.innerText = sum.total_today ?? 0;
+        if (trigEl) trigEl.innerText = sum.triggered_today ?? 0;
+        if (savedEl) savedEl.innerText = sum.saved_daytime_today ?? 0;
+        if (lastEl) {
+            if (sum.last_detection && sum.last_detection.timestamp) {
+                const dt = new Date(sum.last_detection.timestamp);
+                const diffMin = Math.max(0, Math.round((Date.now() - dt.getTime()) / 60000));
+                const agoStr = diffMin === 0 ? 'agora mesmo' : (diffMin < 60 ? `há ${diffMin} min` : `às ${dt.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}`);
+                const chCode = sum.last_detection.channel_code || 'NVR';
+                const trigTxt = sum.last_detection.triggered_lights ? ` ➔ 💡 ${sum.last_detection.triggered_lights}` : '';
+                lastEl.innerText = `${chCode} (${agoStr}${trigTxt})`;
+            } else {
+                lastEl.innerText = 'Sem registros';
+            }
+        }
+
+        const detections = data.detections || [];
+
+        // 2. Preenche Mini-Terminal
+        const miniTerm = document.getElementById('nvr-mini-terminal');
+        if (miniTerm) {
+            miniTerm.innerHTML = '';
+            if (detections.length === 0) {
+                miniTerm.innerHTML = '<div class="terminal-line system-msg">Nenhuma passagem humana registrada no período selecionado.</div>';
+            } else {
+                detections.forEach(d => {
+                    const dt = new Date(d.timestamp);
+                    const tsFmt = dt.toLocaleString('pt-BR', {
+                        day: '2-digit', month: '2-digit',
+                        hour: '2-digit', minute: '2-digit', second: '2-digit'
+                    });
+                    const line = document.createElement('div');
+                    const triggered = !!(d.triggered_lights && d.triggered_lights.trim());
+                    line.className = `terminal-line ${triggered ? 'nvr-trig-line' : 'nvr-day-line'}`;
+                    const actionTxt = triggered
+                        ? `🚨 [${d.channel_code}] Pessoa detectada ➔ 💡 LIGOU ${d.triggered_lights} (${d.hold_seconds || 120}s)`
+                        : `👁️ [${d.channel_code}] Pessoa detectada ➔ ${d.is_night ? 'Sem luz vinculada' : '☀️ Dia (Luz poupada)'}`;
+                    line.textContent = `[${tsFmt}] ${actionTxt}`;
+                    miniTerm.appendChild(line);
+                });
+            }
+        }
+
+        // 3. Renderiza Dot Plot (Scatter Chart.js)
+        const canvas = document.getElementById('nvrDotChart');
+        if (!canvas) return;
+
+        if (nvrDotChartInstance) {
+            nvrDotChartInstance.destroy();
+            nvrDotChartInstance = null;
+        }
+
+        // Lista de câmeras no eixo Y (sempre inclui D03 e D04 + qualquer outra que tenha evento)
+        const chSet = new Set(['D03', 'D04']);
+        detections.forEach(d => { if (d.channel_code) chSet.add(d.channel_code); });
+        const chLabels = Array.from(chSet).sort();
+        const chToY = {};
+        chLabels.forEach((code, idx) => { chToY[code] = idx + 1; });
+
+        const nightPoints = [];
+        const dayPoints = [];
+
+        detections.forEach(d => {
+            const tsMs = new Date(d.timestamp).getTime();
+            const yVal = chToY[d.channel_code] || 1;
+            const ptObj = {
+                x: tsMs,
+                y: yVal,
+                channel_code: d.channel_code,
+                triggered_lights: d.triggered_lights,
+                hold_seconds: d.hold_seconds,
+                is_night: d.is_night,
+                raw_ts: d.timestamp
+            };
+            if (d.triggered_lights && d.triggered_lights.trim()) {
+                nightPoints.push(ptObj);
+            } else {
+                dayPoints.push(ptObj);
+            }
+        });
+
+        const nowMs = Date.now();
+        const minMs = nowMs - hours * 3600 * 1000;
+
+        const ctx = canvas.getContext('2d');
+        nvrDotChartInstance = new Chart(ctx, {
+            type: 'scatter',
+            data: {
+                datasets: [
+                    {
+                        label: '💡 Acionou Luz (Noite)',
+                        data: nightPoints,
+                        backgroundColor: '#fbbf24',
+                        borderColor: '#10b981',
+                        borderWidth: 2,
+                        pointRadius: 6,
+                        pointHoverRadius: 9
+                    },
+                    {
+                        label: '👁️ Só Detecção (Dia / Poupada)',
+                        data: dayPoints,
+                        backgroundColor: '#38bdf8',
+                        borderColor: '#0284c7',
+                        borderWidth: 1.5,
+                        pointRadius: 5,
+                        pointHoverRadius: 8
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const raw = context.raw || {};
+                                const dtStr = new Date(raw.x).toLocaleString('pt-BR');
+                                const act = raw.triggered_lights
+                                    ? `💡 Ligou ${raw.triggered_lights} (${raw.hold_seconds || 120}s)`
+                                    : (raw.is_night ? 'Sem luz vinculada' : '☀️ Dia (Luz poupada)');
+                                return `📹 ${raw.channel_code} em ${dtStr} — ${act}`;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        type: 'linear',
+                        min: minMs,
+                        max: nowMs,
+                        grid: { color: '#1e293b' },
+                        ticks: {
+                            color: '#94a3b8',
+                            font: { size: 10 },
+                            maxTicksLimit: 8,
+                            callback: function(value) {
+                                const dt = new Date(value);
+                                if (hours <= 24) {
+                                    return dt.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+                                }
+                                return dt.toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+                            }
+                        }
+                    },
+                    y: {
+                        type: 'linear',
+                        min: 0.5,
+                        max: chLabels.length + 0.5,
+                        grid: { color: '#334155' },
+                        ticks: {
+                            stepSize: 1,
+                            color: '#e2e8f0',
+                            font: { weight: '600', size: 11 },
+                            callback: function(value) {
+                                const label = chLabels[value - 1];
+                                return label ? `📹 ${label}` : '';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    } catch (e) {
+        console.error('Erro ao carregar detecções NVR:', e);
+    }
+}
+
 // Inicialização
 updateSunInfo();
 updateStatus();
@@ -862,6 +1050,7 @@ updateSolarForecast();
 loadSolarCurveChart();
 loadCharts();
 loadMonthlyStats();
+loadNvrDetections();
 if (document.getElementById("log-service-selector")) {
     loadLogs();
 }
@@ -869,6 +1058,7 @@ if (document.getElementById("log-service-selector")) {
 // Polling suave
 setInterval(updateStatus, 5000);
 setInterval(updateSolarGeneration, 10000);
+setInterval(loadNvrDetections, 15000);
 
 // Terminal de Logs Sob Demanda (Estático / Tail)
 async function loadLogs() {

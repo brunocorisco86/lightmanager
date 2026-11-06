@@ -63,6 +63,9 @@ last_hour_logged = -1
 last_solar_report_date = None
 active_camera_timers = {}
 camera_timers_lock = threading.Lock()
+last_nvr_detection_ts = {}
+NVR_DEBOUNCE_SECONDS = int(os.getenv("NVR_DEBOUNCE_SECONDS", "15"))
+NVR_LOG_FILE = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "logs", "nvr.log"))
 
 def send_telegram_message(text):
     """Envia uma notificação para o Telegram com tratamento de Rate-Limiting e retentativas."""
@@ -612,11 +615,25 @@ def is_currently_night(now_br=None) -> bool:
     return now_br.hour >= 18 or (now_br.hour < 6 or (now_br.hour == 6 and now_br.minute <= 30))
 
 
+def append_nvr_log(message: str, now_br=None):
+    """Acrescenta uma linha formatada no arquivo logs/nvr.log para o mini-terminal."""
+    try:
+        if now_br is None:
+            now_br = datetime.now(BR_TZ)
+        os.makedirs(os.path.dirname(NVR_LOG_FILE), exist_ok=True)
+        ts_str = now_br.strftime("%Y-%m-%d %H:%M:%S")
+        with open(NVR_LOG_FILE, "a", encoding="utf-8") as f:
+            f.write(f"[{ts_str}] {message}\n")
+    except Exception as e:
+        logging.warning(f"Erro ao gravar em nvr.log: {e}")
+
+
 def process_nvr_alarm_packet(client, pkt: dict):
     """
     Processa um pacote AlarmInfo (msg_id=1504) recebido do NVR XiongMai.
     Aciona via Broker MQTT (<topic>/set -> 'ON') os pontos configurados com trigger_mode='camera'
     que incluam o canal detectado em camera_channels e inicia/renova o timer de desligamento.
+    Também registra a passagem humana na tabela nvr_detections com debounce de 15s por canal.
     """
     info = pkt.get("AlarmInfo", pkt) if isinstance(pkt, dict) else {}
     ch_idx = info.get("Channel")
@@ -629,6 +646,9 @@ def process_nvr_alarm_packet(client, pkt: dict):
     ch_num = ch_idx + 1
     ch_code = f"D{ch_num:02d}"
     source_tag = f"nvr_d{ch_num:02d}"
+    now_ts = time.time()
+    now_br = datetime.now(BR_TZ)
+    night_flag = is_currently_night(now_br)
 
     conn = None
     cur = None
@@ -646,17 +666,22 @@ def process_nvr_alarm_packet(client, pkt: dict):
             """
         )
         rows = cur.fetchall()
+        triggered_names = []
+        max_hold_sec = 0
+
         for point_id, name, topic, cam_channels_str, hold_sec, night_only in rows:
             channels_list = [c.strip() for c in str(cam_channels_str).split(",") if c.strip()]
             if str(ch_num) not in channels_list and ch_code not in channels_list:
                 continue
 
-            if night_only and not is_currently_night():
+            if night_only and not night_flag:
                 logging.info(f"☀️ Detecção humana no canal {ch_code} ignorada para '{name}' ({topic}): modo somente noturno ativo.")
                 continue
 
             hold_seconds = max(5, int(hold_sec or 120))
-            expire_ts = time.time() + hold_seconds
+            max_hold_sec = max(max_hold_sec, hold_seconds)
+            triggered_names.append(name)
+            expire_ts = now_ts + hold_seconds
 
             with camera_timers_lock:
                 already_active = topic in active_camera_timers
@@ -670,6 +695,25 @@ def process_nvr_alarm_packet(client, pkt: dict):
                 log_event_to_db(topic, "ON", source=source_tag, cursor=cur)
             else:
                 logging.info(f"📹 Gatilho Câmera {ch_code}: Renovando timer de '{name}' ({topic}) por +{hold_seconds}s")
+
+        # Debounce por canal (padrão 15s) para agrupar rajadas da mesma passagem física em 1 registro limpo
+        last_ts = last_nvr_detection_ts.get(ch_num, 0.0)
+        if (now_ts - last_ts) >= NVR_DEBOUNCE_SECONDS:
+            last_nvr_detection_ts[ch_num] = now_ts
+            trig_str = ", ".join(triggered_names)
+            cur.execute(
+                """
+                INSERT INTO nvr_detections (channel, channel_code, is_night, triggered_lights, hold_seconds, timestamp)
+                VALUES (%s, %s, %s, %s, %s, %s)
+                """,
+                (ch_num, ch_code, night_flag, trig_str, max_hold_sec, now_br),
+            )
+            conn.commit()
+            if trig_str:
+                append_nvr_log(f"🚨 [{ch_code}] Pessoa detectada ➔ 💡 LIGOU {trig_str} ({max_hold_sec}s)", now_br)
+            else:
+                reason = "☀️ Dia - Luz poupada" if not night_flag else "Sem luz vinculada"
+                append_nvr_log(f"👁️ [{ch_code}] Pessoa detectada ➔ ({reason})", now_br)
     except Exception as e:
         logging.error(f"Erro ao processar alarme NVR ({ch_code}): {e}")
     finally:

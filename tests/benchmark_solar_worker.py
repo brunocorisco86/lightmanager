@@ -277,6 +277,7 @@ class TestSolarWorkerPerformance(unittest.TestCase):
 
         solar_worker.current_states = {"home/outdoor/muro": "OFF"}
         solar_worker.active_camera_timers.clear()
+        solar_worker.last_nvr_detection_ts.clear()
         mock_time.time.return_value = 1000.0
 
         client = MagicMock()
@@ -298,14 +299,26 @@ class TestSolarWorkerPerformance(unittest.TestCase):
         self.assertIn("home/outdoor/muro", solar_worker.active_camera_timers)
         self.assertEqual(solar_worker.active_camera_timers["home/outdoor/muro"], 1120.0)
 
+        # Burst packet 3 seconds later (t=1003.0) from same walk-by:
+        # Must renew timer to 1123.0, but debounce must prevent duplicate INSERT INTO nvr_detections
+        mock_time.time.return_value = 1003.0
+        solar_worker.process_nvr_alarm_packet(client, alarm_pkt)
+        self.assertEqual(solar_worker.active_camera_timers["home/outdoor/muro"], 1123.0)
+
+        nvr_det_inserts = [
+            c for c in mock_cur.execute.call_args_list
+            if "INSERT INTO nvr_detections" in c[0][0]
+        ]
+        self.assertEqual(len(nvr_det_inserts), 1)
+
         # Before timer expires (at t=1050.0), should remain ON
         client.publish.reset_mock()
         solar_worker.check_expired_camera_timers(client, now_ts=1050.0)
         client.publish.assert_not_called()
         self.assertEqual(solar_worker.current_states.get("home/outdoor/muro"), "ON")
 
-        # At t=1120.0 (after 120s), must publish OFF to Broker MQTT
-        solar_worker.check_expired_camera_timers(client, now_ts=1120.0)
+        # At t=1123.0 (after 120s from last packet), must publish OFF to Broker MQTT
+        solar_worker.check_expired_camera_timers(client, now_ts=1123.0)
         client.publish.assert_called_with("home/outdoor/muro/set", "OFF", qos=1, retain=True)
         self.assertEqual(solar_worker.current_states.get("home/outdoor/muro"), "OFF")
         self.assertNotIn("home/outdoor/muro", solar_worker.active_camera_timers)

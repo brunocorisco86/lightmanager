@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Light Manager - Painel</title>
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
-    <link rel="stylesheet" href="style.css?v=1.0.2">
+    <link rel="stylesheet" href="style.css?v=1.0.3">
     <script src="chart.min.js?v=4.4.1"></script>
 </head>
 <body>
@@ -191,6 +191,59 @@
             </div>
         </section>
 
+        <section class="nvr-section">
+            <div class="nvr-header">
+                <div>
+                    <h2>📹 Radar de Detecção Humana IA (NVR XiongMai)</h2>
+                    <div id="nvr-kpi-bar" class="nvr-kpi-bar">
+                        <span class="nvr-kpi-pill">🚶 Hoje: <b id="nvr-total-today">0</b></span>
+                        <span class="nvr-kpi-pill triggered">💡 Acionaram Luz: <b id="nvr-triggered-today">0</b></span>
+                        <span class="nvr-kpi-pill saved">☀️ Poupadas (Dia): <b id="nvr-saved-today">0</b></span>
+                        <span class="nvr-kpi-pill">🕒 Última: <b id="nvr-last-event">Nenhuma hoje</b></span>
+                    </div>
+                </div>
+                <div class="nvr-controls">
+                    <select id="nvr-hours-selector" class="select-period" onchange="loadNvrDetections()">
+                        <option value="24" selected>Últimas 24 horas</option>
+                        <option value="72">Últimos 3 dias</option>
+                        <option value="168">Últimos 7 dias</option>
+                    </select>
+                    <select id="nvr-channel-selector" class="select-period" onchange="loadNvrDetections()">
+                        <option value="ALL" selected>Todas as Câmeras</option>
+                        <option value="D03">Câmera D03 (Frente)</option>
+                        <option value="D04">Câmera D04 (Frente)</option>
+                        <option value="D06">Câmera D06</option>
+                    </select>
+                    <button onclick="loadNvrDetections()" class="btn-terminal-control" title="Atualizar Detecções">🔄</button>
+                </div>
+            </div>
+
+            <div class="nvr-observability-grid">
+                <div class="nvr-dotplot-box">
+                    <div class="nvr-box-title">
+                        <span>🎯 Dot Plot de Passagens por Câmera (Linha = Câmera | Bolinha = Pessoa)</span>
+                        <span class="nvr-legend-inline">
+                            <span class="dot-legend-item"><i class="dot-sample night"></i> Ligou Luz</span>
+                            <span class="dot-legend-item"><i class="dot-sample day"></i> Só Detecção (Dia)</span>
+                        </span>
+                    </div>
+                    <div class="nvr-chart-wrapper">
+                        <canvas id="nvrDotChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="nvr-terminal-box">
+                    <div class="nvr-box-title">
+                        <span>💻 Mini-Terminal de Eventos NVR</span>
+                        <small style="color: #64748b;">1 linha por passagem (debounce 15s)</small>
+                    </div>
+                    <div id="nvr-mini-terminal" class="nvr-mini-terminal">
+                        <div class="terminal-line system-msg">Aguardando eventos de detecção humana do NVR...</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <section class="monthly-summary">
             <h2>Resumo Mensal (Mês Atual)</h2>
             <div id="monthly-stats-card" class="card-summary">
@@ -253,6 +306,7 @@
                         <option value="api" selected>Web API</option>
                         <option value="bot">Telegram Bot</option>
                         <option value="solar">Solar Worker</option>
+                        <option value="nvr">NVR Detecções (IA)</option>
                         <option value="broker">Mosquitto Broker</option>
                         <option value="devices">Embarcados (MQTT)</option>
                     </select>
@@ -273,6 +327,6 @@
             </div>
         </section>
     </div>
-    <script src="script.js?v=1.0.2"></script>
+    <script src="script.js?v=1.0.3"></script>
 </body>
 </html>

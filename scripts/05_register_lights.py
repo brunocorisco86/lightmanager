@@ -87,6 +87,19 @@ def init_db():
         );
         CREATE INDEX IF NOT EXISTS idx_solar_gen_timestamp ON solar_generation(timestamp DESC);
     ''')
+
+    cur.execute('''
+        CREATE TABLE IF NOT EXISTS nvr_detections (
+            id SERIAL PRIMARY KEY,
+            channel SMALLINT NOT NULL,
+            channel_code VARCHAR(10) NOT NULL,
+            is_night BOOLEAN DEFAULT FALSE,
+            triggered_lights VARCHAR(150) DEFAULT '',
+            hold_seconds INTEGER DEFAULT 0,
+            timestamp TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+        );
+        CREATE INDEX IF NOT EXISTS idx_nvr_detections_ts ON nvr_detections(timestamp DESC);
+    ''')
     conn.commit()
     cur.close()
     conn.close()
