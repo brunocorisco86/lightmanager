@@ -23,6 +23,13 @@ try:
 except ImportError:
     from solar_report import send_daily_solar_telegram_report
 
+try:
+    from scripts.nvr_tool import DVRIPClient
+except ImportError:
+    from nvr_tool import DVRIPClient
+
+import select
+
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - SOLAR_WORKER - %(message)s')
 
 # Configurações
@@ -33,6 +40,13 @@ MQTT_PORT = int(os.getenv("MQTT_PORT", 1883))
 MQTT_USER = os.getenv("MQTT_USER")
 MQTT_PASS = os.getenv("MQTT_PASSWORD")
 CACHE_FILE = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "sun_cache.json"))
+
+# Configurações NVR XiongMai (Detecção Humana via DVRIP 34567)
+NVR_HOST = os.getenv("NVR_HOST", "192.168.1.20")
+NVR_PORT = int(os.getenv("NVR_PORT", "34567"))
+NVR_USER = os.getenv("NVR_USER", "brunoconter")
+NVR_PASS = os.getenv("NVR_PASS", "blurbang")
+NVR_ENABLED = os.getenv("NVR_ENABLED", "true").lower() in ("1", "true", "yes")
 
 # Telegram
 TG_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
@@ -47,6 +61,8 @@ LAST_SEEN_FILE = "/tmp/wemos_last_seen"
 current_states = {} 
 last_hour_logged = -1
 last_solar_report_date = None
+active_camera_timers = {}
+camera_timers_lock = threading.Lock()
 
 def send_telegram_message(text):
     """Envia uma notificação para o Telegram com tratamento de Rate-Limiting e retentativas."""
@@ -162,8 +178,8 @@ def log_event_to_db(topic, state, source="mqtt_capture", cursor=None):
         if res:
             point_id = res[0]
             
-            # Se o estado transicionar para OFF e for de mqtt_capture ou solar_trigger, calcula e registra o consumo
-            if state == "OFF" and source in ("mqtt_capture", "solar_trigger"):
+            # Se o estado transicionar para OFF e for de mqtt_capture, solar_trigger ou nvr_timeout, calcula e registra o consumo
+            if state == "OFF" and source in ("mqtt_capture", "solar_trigger", "nvr_timeout"):
                 # Busca o primeiro acendimento real (ON) após o último desligamento (OFF)
                 cur.execute(
                     """
@@ -577,6 +593,158 @@ def run_automation_cycle(client):
         if conn:
             release_db_conn(conn)
 
+
+def is_currently_night(now_br=None) -> bool:
+    """Retorna True se o horário atual em BRT estiver entre o pôr do sol e o nascer do sol."""
+    if now_br is None:
+        now_br = datetime.now(BR_TZ)
+    sun_results = get_today_sun_data()
+    if sun_results:
+        try:
+            sunrise_br = datetime.fromisoformat(sun_results["sunrise"]).astimezone(BR_TZ)
+            sunset_br = datetime.fromisoformat(sun_results["sunset"]).astimezone(BR_TZ)
+            if sunset_br < sunrise_br:
+                return sunset_br <= now_br < sunrise_br
+            return now_br >= sunset_br or now_br < sunrise_br
+        except Exception:
+            pass
+    # Fallback conservador caso API solar esteja indisponível (18:00 às 06:30 BRT)
+    return now_br.hour >= 18 or (now_br.hour < 6 or (now_br.hour == 6 and now_br.minute <= 30))
+
+
+def process_nvr_alarm_packet(client, pkt: dict):
+    """
+    Processa um pacote AlarmInfo (msg_id=1504) recebido do NVR XiongMai.
+    Aciona via Broker MQTT (<topic>/set -> 'ON') os pontos configurados com trigger_mode='camera'
+    que incluam o canal detectado em camera_channels e inicia/renova o timer de desligamento.
+    """
+    info = pkt.get("AlarmInfo", pkt) if isinstance(pkt, dict) else {}
+    ch_idx = info.get("Channel")
+    status = info.get("Status")
+    if not isinstance(ch_idx, int) or ch_idx < 0:
+        return
+    if status != "Start":
+        return
+
+    ch_num = ch_idx + 1
+    ch_code = f"D{ch_num:02d}"
+    source_tag = f"nvr_d{ch_num:02d}"
+
+    conn = None
+    cur = None
+    try:
+        conn = get_db_conn()
+        if not conn:
+            return
+        cur = conn.cursor()
+        cur.execute(
+            """
+            SELECT id, name, mqtt_topic, COALESCE(camera_channels, ''),
+                   COALESCE(camera_hold_seconds, 120), COALESCE(camera_night_only, TRUE)
+            FROM light_points
+            WHERE trigger_mode = 'camera'
+            """
+        )
+        rows = cur.fetchall()
+        for point_id, name, topic, cam_channels_str, hold_sec, night_only in rows:
+            channels_list = [c.strip() for c in str(cam_channels_str).split(",") if c.strip()]
+            if str(ch_num) not in channels_list and ch_code not in channels_list:
+                continue
+
+            if night_only and not is_currently_night():
+                logging.info(f"☀️ Detecção humana no canal {ch_code} ignorada para '{name}' ({topic}): modo somente noturno ativo.")
+                continue
+
+            hold_seconds = max(5, int(hold_sec or 120))
+            expire_ts = time.time() + hold_seconds
+
+            with camera_timers_lock:
+                already_active = topic in active_camera_timers
+                active_camera_timers[topic] = expire_ts
+
+            client.publish(f"{topic}/set", "ON", qos=1, retain=True)
+
+            if current_states.get(topic) != "ON" or not already_active:
+                current_states[topic] = "ON"
+                logging.info(f"📹 Gatilho Câmera {ch_code}: LIGANDO '{name}' ({topic}) por {hold_seconds}s via Broker MQTT")
+                log_event_to_db(topic, "ON", source=source_tag, cursor=cur)
+            else:
+                logging.info(f"📹 Gatilho Câmera {ch_code}: Renovando timer de '{name}' ({topic}) por +{hold_seconds}s")
+    except Exception as e:
+        logging.error(f"Erro ao processar alarme NVR ({ch_code}): {e}")
+    finally:
+        if cur:
+            cur.close()
+        if conn:
+            release_db_conn(conn)
+
+
+def check_expired_camera_timers(client, now_ts: float | None = None):
+    """
+    Verifica os timers ativos de pontos acionados por câmera.
+    Quando o tempo expira, publica 'OFF' no Broker MQTT (<topic>/set) e registra 'nvr_timeout'.
+    """
+    if now_ts is None:
+        now_ts = time.time()
+
+    expired_topics = []
+    with camera_timers_lock:
+        for topic, expire_ts in list(active_camera_timers.items()):
+            if now_ts >= expire_ts:
+                expired_topics.append(topic)
+                del active_camera_timers[topic]
+
+    for topic in expired_topics:
+        try:
+            logging.info(f"⏱️ Timer de câmera expirado para {topic}: DESLIGANDO ('OFF') via Broker MQTT")
+            client.publish(f"{topic}/set", "OFF", qos=1, retain=True)
+            current_states[topic] = "OFF"
+            log_event_to_db(topic, "OFF", source="nvr_timeout")
+        except Exception as e:
+            logging.error(f"Erro ao desligar {topic} por timeout de câmera: {e}")
+
+
+def nvr_guard_worker(mqtt_client):
+    """
+    Thread leve (somente-leitura no NVR) que mantém sessão Guard (msg_id=1500) aberta
+    em 192.168.1.20:34567 para receber eventos de detecção humana (msg_id=1504)
+    e gerenciar o desligamento automático no Broker MQTT.
+    """
+    if not NVR_ENABLED:
+        logging.info("📹 Integração NVR desabilitada via NVR_ENABLED=false.")
+        return
+
+    logging.info(f"📹 Iniciando NVR Guard Worker em {NVR_HOST}:{NVR_PORT} (usuário: {NVR_USER})...")
+    while True:
+        nvr = DVRIPClient(NVR_HOST, NVR_PORT, NVR_USER, NVR_PASS, timeout=8.0)
+        try:
+            nvr.connect_and_login()
+            _, guard_res = nvr.request(1500, {"SessionID": nvr.session_hex})
+            logging.info(f"🛡️ NVR Guard ativo em {NVR_HOST}:{NVR_PORT} (Session={nvr.session_hex}, Ret={guard_res.get('Ret')})")
+            last_ka = time.time()
+
+            while True:
+                check_expired_camera_timers(mqtt_client)
+                if not nvr.sock:
+                    break
+                rlist, _, _ = select.select([nvr.sock], [], [], 1.0)
+                if rlist:
+                    (rmsg, _), pkt = nvr.recv_packet()
+                    if rmsg == 1504 or (isinstance(pkt, dict) and "AlarmInfo" in pkt):
+                        process_nvr_alarm_packet(mqtt_client, pkt)
+
+                if time.time() - last_ka >= 18.0:
+                    nvr.send_packet(1006, {"Name": "KeepAlive", "SessionID": nvr.session_hex})
+                    last_ka = time.time()
+        except Exception as e:
+            logging.warning(f"⚠️ Conexão NVR Guard interrompida ({e}). Reconectando em 10s...")
+            for _ in range(10):
+                check_expired_camera_timers(mqtt_client)
+                time.sleep(1)
+        finally:
+            nvr.close()
+
+
 if __name__ == "__main__":
     client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
     client.on_connect = on_connect
@@ -589,6 +757,10 @@ if __name__ == "__main__":
     client.loop_start()
 
     logging.info(f"Serviço Solar & Event Logger iniciado (Fuso: GMT-3)")
+
+    # Inicia a thread leve de escuta de eventos do NVR XiongMai e controle de timers
+    nvr_thread = threading.Thread(target=nvr_guard_worker, args=(client,), daemon=True)
+    nvr_thread.start()
     
     last_rollover_date = None
     

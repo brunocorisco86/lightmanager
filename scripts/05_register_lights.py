@@ -29,12 +29,20 @@ def init_db():
             offset_on_minutes INTEGER DEFAULT 0,
             offset_off_minutes INTEGER DEFAULT 0,
             manual_override VARCHAR(10) DEFAULT NULL,
+            trigger_mode VARCHAR(20) DEFAULT 'solar',
+            camera_channels VARCHAR(50) DEFAULT '',
+            camera_hold_seconds INTEGER DEFAULT 120,
+            camera_night_only BOOLEAN DEFAULT TRUE,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         );
     ''')
     
     # Migração para bancos existentes
     cur.execute("ALTER TABLE light_points ADD COLUMN IF NOT EXISTS manual_override VARCHAR(10) DEFAULT NULL;")
+    cur.execute("ALTER TABLE light_points ADD COLUMN IF NOT EXISTS trigger_mode VARCHAR(20) DEFAULT 'solar';")
+    cur.execute("ALTER TABLE light_points ADD COLUMN IF NOT EXISTS camera_channels VARCHAR(50) DEFAULT '';")
+    cur.execute("ALTER TABLE light_points ADD COLUMN IF NOT EXISTS camera_hold_seconds INTEGER DEFAULT 120;")
+    cur.execute("ALTER TABLE light_points ADD COLUMN IF NOT EXISTS camera_night_only BOOLEAN DEFAULT TRUE;")
 
     
     cur.execute('''

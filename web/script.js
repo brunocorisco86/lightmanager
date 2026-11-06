@@ -85,6 +85,25 @@ async function updateSunInfo() {
     }
 }
 
+function formatRuleBadge(light) {
+    const mode = light.trigger_mode || 'solar';
+    if (mode === 'camera') {
+        const chs = (light.camera_channels || '')
+            .split(',')
+            .map(c => c.trim())
+            .filter(Boolean)
+            .map(c => c.startsWith('D') ? c : `D${String(c).padStart(2, '0')}`)
+            .join(', ') || 'Sem canal';
+        const hold = light.camera_hold_seconds || 120;
+        return `<div class="rule-badge rule-camera">📹 Câmeras: ${chs} • ⏱️ ${hold}s</div>`;
+    }
+    if (mode === 'manual') {
+        return `<div class="rule-badge rule-manual">🖐️ Somente Manual</div>`;
+    }
+    const onOff = `ON ${light.offset_on >= 0 ? '+' : ''}${light.offset_on || 0}m | OFF ${light.offset_off >= 0 ? '+' : ''}${light.offset_off || 0}m`;
+    return `<div class="rule-badge rule-solar">☀️ Ciclo Solar (${onOff})</div>`;
+}
+
 async function updateStatus() {
     try {
         const status = await fetchData('status');
@@ -99,6 +118,7 @@ async function updateStatus() {
             
             card.innerHTML = `
                 <h3>${light.name}</h3>
+                ${formatRuleBadge(light)}
                 <span class="status-badge ${isON ? 'status-on' : 'status-off'}">
                     ${light.state}
                 </span>
@@ -159,38 +179,126 @@ function showTab(event, tabName) {
     if (tabName === 'manage') loadConfigList();
 }
 
+function togglePointMode(id) {
+    const modeSelect = document.getElementById(`mode-${id}`);
+    if (!modeSelect) return;
+    const mode = modeSelect.value;
+    const solarPanel = document.getElementById(`panel-solar-${id}`);
+    const camPanel = document.getElementById(`panel-camera-${id}`);
+    if (solarPanel) solarPanel.style.display = (mode === 'solar') ? 'flex' : 'none';
+    if (camPanel) camPanel.style.display = (mode === 'camera') ? 'block' : 'none';
+}
+
+function toggleCameraChip(pointId, chNum) {
+    const chip = document.getElementById(`chip-${pointId}-${chNum}`);
+    if (!chip) return;
+    chip.classList.toggle('active');
+}
+
+function toggleNewPointMode() {
+    const mode = document.getElementById('new-trigger-mode')?.value || 'solar';
+    const camBox = document.getElementById('new-camera-fields');
+    if (camBox) camBox.style.display = (mode === 'camera') ? 'block' : 'none';
+}
+
 /* Config CRUD Functions */
 async function loadConfigList() {
     const list = document.getElementById('config-list');
     if (!list) return;
     try {
-        const points = await fetchData('config/points');
+        const [points, nvrChannels] = await Promise.all([
+            fetchData('config/points'),
+            fetchData('nvr/channels').catch(() => [])
+        ]);
         
         if (!points || points.length === 0) {
             list.innerHTML = '<p style="color: #94a3b8;">Nenhum ponto cadastrado.</p>';
             return;
         }
 
+        const chMap = {};
+        (nvrChannels || []).forEach(c => { chMap[c.channel] = c; });
+
         list.innerHTML = '';
         points.forEach(p => {
+            const mode = p.trigger_mode || 'solar';
+            const selectedChs = new Set(
+                (p.camera_channels || '')
+                    .split(',')
+                    .map(s => parseInt(s.replace(/\D/g, ''), 10))
+                    .filter(n => !isNaN(n))
+            );
+            const holdSec = p.camera_hold_seconds || 120;
+            const nightOnly = p.camera_night_only !== false;
+
+            let chipsHtml = '';
+            for (let ch = 1; ch <= 9; ch++) {
+                const info = chMap[ch] || {};
+                const isSelected = selectedChs.has(ch);
+                const isOnline = info.status === 'Connected';
+                const hasAI = !!info.human_detection;
+                const titleTip = `Canal D0${ch} | Status: ${info.status || 'Offline'}${info.ip ? ' (' + info.ip + ')' : ''}${hasAI ? ' | IA Humana Ativa' : ''}`;
+                chipsHtml += `
+                    <button type="button"
+                        id="chip-${p.id}-${ch}"
+                        data-ch="${ch}"
+                        class="cam-chip ${isSelected ? 'active' : ''} ${isOnline ? 'online' : ''}"
+                        onclick="toggleCameraChip(${p.id}, ${ch})"
+                        title="${titleTip}">
+                        D0${ch}${hasAI ? ' 🧠' : ''}
+                    </button>
+                `;
+            }
+
             const item = document.createElement('div');
             item.className = 'config-item';
             item.innerHTML = `
                 <div style="display: flex; justify-content: space-between; align-items: start;">
                     <div>
-                        <div style="margin-bottom: 5px;"><strong>${p.name}</strong></div>
-                        <div style="font-size: 0.8em; color: #94a3b8; margin-bottom: 10px;">${p.topic}</div>
+                        <div style="margin-bottom: 3px;"><strong>${p.name}</strong> <span style="font-size: 0.8em; color: #38bdf8;">(${p.power}W)</span></div>
+                        <div style="font-size: 0.78em; color: #94a3b8; margin-bottom: 10px;">Tópico Broker: <code>${p.topic}/set</code></div>
                     </div>
                     <button class="btn-off" style="padding: 5px 8px; background: transparent; color: #ef4444;" onclick="deletePoint(${p.id}, '${p.name}')" title="Excluir">🗑️</button>
                 </div>
-                <div class="config-row">
+
+                <div style="margin-bottom: 10px;">
+                    <label style="font-size: 0.82em; color: #cbd5e1; display: block; margin-bottom: 4px;">Regra de Acionamento:</label>
+                    <select id="mode-${p.id}" class="select-period" style="width: 100%;" onchange="togglePointMode(${p.id})">
+                        <option value="solar" ${mode === 'solar' ? 'selected' : ''}>☀️ Ciclo Solar (Liga Pôr do Sol / Desliga Nascer do Sol)</option>
+                        <option value="camera" ${mode === 'camera' ? 'selected' : ''}>📹 Câmeras NVR (Detecção Humana + Timer de Economia)</option>
+                        <option value="manual" ${mode === 'manual' ? 'selected' : ''}>🖐️ Somente Manual</option>
+                    </select>
+                </div>
+
+                <div id="panel-solar-${p.id}" class="config-row" style="display: ${mode === 'solar' ? 'flex' : 'none'}; margin-bottom: 10px;">
                     <div>
-                        Ligar: <input type="number" id="on-${p.id}" value="${p.offset_on}" style="width: 50px;"> <small>min</small>
+                        Ligar (Pôr do Sol): <input type="number" id="on-${p.id}" value="${p.offset_on}" style="width: 55px;"> <small>min</small>
                     </div>
                     <div>
-                        Desligar: <input type="number" id="off-${p.id}" value="${p.offset_off}" style="width: 50px;"> <small>min</small>
+                        Desligar (Aurora): <input type="number" id="off-${p.id}" value="${p.offset_off}" style="width: 55px;"> <small>min</small>
                     </div>
-                    <button class="btn-on" style="padding: 5px 12px;" onclick="saveConfig(${p.id})" title="Salvar">💾</button>
+                </div>
+
+                <div id="panel-camera-${p.id}" class="camera-config-box" style="display: ${mode === 'camera' ? 'block' : 'none'}; margin-bottom: 10px;">
+                    <div style="font-size: 0.82em; color: #cbd5e1; margin-bottom: 6px;">
+                        Canais do NVR que acionam esta luz <small style="color: #94a3b8;">(🧠 = IA Humana ativa no NVR)</small>:
+                    </div>
+                    <div class="cam-chips-row">
+                        ${chipsHtml}
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-top: 10px;">
+                        <div>
+                            <label style="font-size: 0.85em; color: #cbd5e1;">⏱️ Tempo aceso antes de desligar:</label>
+                            <input type="number" id="hold-${p.id}" value="${holdSec}" min="5" step="5" style="width: 75px;"> <small>seg</small>
+                        </div>
+                        <label style="font-size: 0.85em; color: #cbd5e1; display: flex; align-items: center; gap: 6px; cursor: pointer;">
+                            <input type="checkbox" id="night-${p.id}" ${nightOnly ? 'checked' : ''} style="width: auto; margin: 0;"> Acionar apenas à noite
+                        </label>
+                    </div>
+                </div>
+
+                <div style="display: flex; justify-content: flex-end;">
+                    <button class="btn-on" style="padding: 6px 14px; width: auto;" onclick="saveConfig(${p.id})" title="Salvar Regra">💾 Salvar Regra</button>
                 </div>
             `;
             list.appendChild(item);
@@ -232,20 +340,44 @@ async function deletePoint(id, name) {
 }
 
 async function saveConfig(id) {
-    const offset_on = document.getElementById(`on-${id}`).value;
-    const offset_off = document.getElementById(`off-${id}`).value;
+    const offset_on = document.getElementById(`on-${id}`)?.value || 0;
+    const offset_off = document.getElementById(`off-${id}`)?.value || 0;
+    const trigger_mode = document.getElementById(`mode-${id}`)?.value || 'solar';
+    const hold_sec = document.getElementById(`hold-${id}`)?.value || 120;
+    const night_only = document.getElementById(`night-${id}`)?.checked ?? true;
+
+    const selectedChs = [];
+    for (let ch = 1; ch <= 9; ch++) {
+        const chip = document.getElementById(`chip-${id}-${ch}`);
+        if (chip && chip.classList.contains('active')) {
+            selectedChs.push(String(ch));
+        }
+    }
+
+    if (trigger_mode === 'camera' && selectedChs.length === 0) {
+        alert("⚠️ Selecione pelo menos um canal de câmera (ex: D03, D04) para o modo Câmeras NVR.");
+        return;
+    }
     
     try {
         const res = await fetch(`/api/config/points/${id}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ 
-                offset_on_minutes: parseInt(offset_on), 
-                offset_off_minutes: parseInt(offset_off) 
+                offset_on_minutes: parseInt(offset_on, 10) || 0, 
+                offset_off_minutes: parseInt(offset_off, 10) || 0,
+                trigger_mode: trigger_mode,
+                camera_channels: selectedChs.join(','),
+                camera_hold_seconds: Math.max(5, parseInt(hold_sec, 10) || 120),
+                camera_night_only: !!night_only
             })
         });
-        if (res.ok) alert("✅ Configuração salva!");
-        else alert("❌ Erro ao salvar.");
+        if (res.ok) {
+            alert("✅ Regra salva com sucesso!");
+            updateStatus();
+        } else {
+            alert("❌ Erro ao salvar.");
+        }
     } catch (e) {
         alert("❌ Erro de conexão.");
     }
@@ -256,17 +388,30 @@ async function createNewPoint(event) {
     const name = document.getElementById('new-name').value;
     const topic = document.getElementById('new-topic').value;
     const power = document.getElementById('new-power').value;
+    const trigger_mode = document.getElementById('new-trigger-mode')?.value || 'solar';
+    const camera_channels = document.getElementById('new-camera-channels')?.value || '3,4';
+    const camera_hold_seconds = parseInt(document.getElementById('new-camera-hold')?.value || '120', 10);
+    const camera_night_only = document.getElementById('new-camera-night')?.checked ?? true;
     
     try {
         const res = await fetch('/api/config/points', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ name, mqtt_topic: topic, power_w: parseFloat(power) })
+            body: JSON.stringify({
+                name,
+                mqtt_topic: topic,
+                power_w: parseFloat(power),
+                trigger_mode,
+                camera_channels: trigger_mode === 'camera' ? camera_channels : '',
+                camera_hold_seconds,
+                camera_night_only
+            })
         });
         
         if (res.ok) {
             alert("✅ Ponto cadastrado!");
             document.getElementById('new-point-form').reset();
+            toggleNewPointMode();
             showTab('manage');
             updateStatus();
         } else {
@@ -278,18 +423,28 @@ async function createNewPoint(event) {
     }
 }
 
+function formatHistorySource(src) {
+    if (!src || src === 'solar_trigger') return '☀️ Ciclo Solar';
+    if (src === 'nvr_timeout') return '⏱️ Timeout Câmera';
+    if (src.startsWith('nvr_d')) {
+        const ch = src.replace('nvr_d', 'D').toUpperCase();
+        return `📹 Câmera ${ch}`;
+    }
+    return src;
+}
+
 async function loadSolarHistory() {
     const body = document.getElementById('solar-history-body');
     if (!body) return;
     try {
-        body.innerHTML = '<tr><td colspan="3">Carregando...</td></tr>';
+        body.innerHTML = '<tr><td colspan="4">Carregando...</td></tr>';
         const limitSelector = document.getElementById('solar-limit-selector');
         const limit = limitSelector ? limitSelector.value : 50;
         const history = await fetchData(`config/solar_history?limit=${limit}`);
         
         body.innerHTML = '';
         if (!history || history.length === 0) {
-            body.innerHTML = '<tr><td colspan="3" style="text-align: center; color: #94a3b8;">Nenhum registro.</td></tr>';
+            body.innerHTML = '<tr><td colspan="4" style="text-align: center; color: #94a3b8;">Nenhum registro.</td></tr>';
             return;
         }
         
@@ -299,12 +454,13 @@ async function loadSolarHistory() {
             row.innerHTML = `
                 <td>${date.toLocaleString('pt-BR')}</td>
                 <td>${h.name}</td>
+                <td style="font-size: 0.85em; color: #cbd5e1;">${formatHistorySource(h.source)}</td>
                 <td style="color: ${h.event === 'ON' ? '#34d399' : '#f87171'}; font-weight: bold;">${h.event}</td>
             `;
             body.appendChild(row);
         });
     } catch (e) {
-        body.innerHTML = `<tr><td colspan="3" style="color: #ef4444;">Erro: ${e.message}</td></tr>`;
+        body.innerHTML = `<tr><td colspan="4" style="color: #ef4444;">Erro: ${e.message}</td></tr>`;
     }
 }
 

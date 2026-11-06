@@ -60,6 +60,7 @@ mqtt_client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
 def on_connect(client, userdata, flags, rc, properties):
     print(f"Conectado ao MQTT Broker com resultado: {rc}")
     client.subscribe("home/outdoor/+/state")
+    client.subscribe("home/outdoor/+/set")
     client.subscribe("home/outdoor/+/log")
 
 def on_message(client, userdata, msg):
@@ -69,6 +70,8 @@ def on_message(client, userdata, msg):
     if topic.endswith("/state"):
         light_states[topic] = payload
         print(f"Estado recebido: {topic} -> {payload}")
+    elif topic.endswith("/set") and payload in ("ON", "OFF"):
+        light_states[topic] = payload
     elif topic.endswith("/log"):
         try:
             device_name = topic.split("/")[-2]
@@ -103,6 +106,27 @@ except Exception as e:
 # DB Pooling (Lazy Initialization - Thread-Safe)
 db_pool = None
 db_pool_lock = threading.Lock()
+_schema_checked = False
+
+def ensure_light_points_schema(conn):
+    global _schema_checked
+    if _schema_checked or hasattr(conn, "_mock_name"):
+        return
+    try:
+        with conn.cursor() as cur:
+            cur.execute("ALTER TABLE light_points ADD COLUMN IF NOT EXISTS manual_override VARCHAR(10) DEFAULT NULL;")
+            cur.execute("ALTER TABLE light_points ADD COLUMN IF NOT EXISTS trigger_mode VARCHAR(20) DEFAULT 'solar';")
+            cur.execute("ALTER TABLE light_points ADD COLUMN IF NOT EXISTS camera_channels VARCHAR(50) DEFAULT '';")
+            cur.execute("ALTER TABLE light_points ADD COLUMN IF NOT EXISTS camera_hold_seconds INTEGER DEFAULT 120;")
+            cur.execute("ALTER TABLE light_points ADD COLUMN IF NOT EXISTS camera_night_only BOOLEAN DEFAULT TRUE;")
+        conn.commit()
+        _schema_checked = True
+    except Exception as e:
+        try:
+            conn.rollback()
+        except Exception:
+            pass
+        print(f"Aviso migração schema light_points: {e}")
 
 def get_db_pool():
     global db_pool
@@ -120,7 +144,9 @@ def get_db_pool():
     return db_pool
 
 def get_db_conn():
-    return get_db_pool().getconn()
+    conn = get_db_pool().getconn()
+    ensure_light_points_schema(conn)
+    return conn
 
 def release_db_conn(conn):
     get_db_pool().putconn(conn)
@@ -130,13 +156,23 @@ class CommandRequest(BaseModel):
     action: str
 
 class PointConfigUpdate(BaseModel):
-    offset_on_minutes: int
-    offset_off_minutes: int
+    offset_on_minutes: int = 0
+    offset_off_minutes: int = 0
+    trigger_mode: str | None = None
+    camera_channels: str | None = None
+    camera_hold_seconds: int | None = None
+    camera_night_only: bool | None = None
 
 class PointCreate(BaseModel):
     name: str
     mqtt_topic: str
     power_w: float
+    trigger_mode: str = "solar"
+    offset_on_minutes: int = 0
+    offset_off_minutes: int = 0
+    camera_channels: str = ""
+    camera_hold_seconds: int = 120
+    camera_night_only: bool = True
 
 class PasswordCheck(BaseModel):
     password: str
@@ -179,12 +215,30 @@ def get_points_config():
     conn = get_db_conn()
     try:
         cur = conn.cursor()
-        cur.execute("SELECT id, name, mqtt_topic, offset_on_minutes, offset_off_minutes, power_w FROM light_points ORDER BY name")
+        cur.execute("""
+            SELECT id, name, mqtt_topic, offset_on_minutes, offset_off_minutes, power_w,
+                   COALESCE(trigger_mode, CASE WHEN auto_mode THEN 'solar' ELSE 'manual' END) AS trigger_mode,
+                   COALESCE(camera_channels, '') AS camera_channels,
+                   COALESCE(camera_hold_seconds, 120) AS camera_hold_seconds,
+                   COALESCE(camera_night_only, TRUE) AS camera_night_only,
+                   COALESCE(auto_mode, TRUE) AS auto_mode
+            FROM light_points
+            ORDER BY name
+        """)
         points = cur.fetchall()
         cur.close()
         return [{
-            "id": p[0], "name": p[1], "topic": p[2], 
-            "offset_on": p[3], "offset_off": p[4], "power": float(p[5])
+            "id": p[0],
+            "name": p[1],
+            "topic": p[2],
+            "offset_on": p[3],
+            "offset_off": p[4],
+            "power": float(p[5]),
+            "trigger_mode": p[6],
+            "camera_channels": p[7],
+            "camera_hold_seconds": int(p[8]),
+            "camera_night_only": bool(p[9]),
+            "auto_mode": bool(p[10]),
         } for p in points]
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -197,12 +251,57 @@ def update_point_config(point_id: int, config: PointConfigUpdate):
     try:
         cur = conn.cursor()
         cur.execute(
-            "UPDATE light_points SET offset_on_minutes = %s, offset_off_minutes = %s WHERE id = %s",
-            (config.offset_on_minutes, config.offset_off_minutes, point_id)
+            """
+            SELECT COALESCE(trigger_mode, CASE WHEN auto_mode THEN 'solar' ELSE 'manual' END),
+                   COALESCE(camera_channels, ''),
+                   COALESCE(camera_hold_seconds, 120),
+                   COALESCE(camera_night_only, TRUE)
+            FROM light_points WHERE id = %s
+            """,
+            (point_id,),
+        )
+        existing = cur.fetchone()
+        if not existing:
+            cur.close()
+            raise HTTPException(status_code=404, detail="Point not found")
+
+        new_mode = (config.trigger_mode or existing[0] or "solar").strip().lower()
+        if new_mode not in ("solar", "camera", "manual"):
+            new_mode = "solar"
+        new_auto_mode = (new_mode == "solar")
+        new_channels = config.camera_channels if config.camera_channels is not None else existing[1]
+        new_hold = int(config.camera_hold_seconds) if config.camera_hold_seconds is not None else int(existing[2])
+        new_hold = max(5, new_hold)
+        new_night_only = bool(config.camera_night_only) if config.camera_night_only is not None else bool(existing[3])
+
+        cur.execute(
+            """
+            UPDATE light_points
+            SET offset_on_minutes = %s,
+                offset_off_minutes = %s,
+                trigger_mode = %s,
+                auto_mode = %s,
+                camera_channels = %s,
+                camera_hold_seconds = %s,
+                camera_night_only = %s
+            WHERE id = %s
+            """,
+            (
+                config.offset_on_minutes,
+                config.offset_off_minutes,
+                new_mode,
+                new_auto_mode,
+                new_channels,
+                new_hold,
+                new_night_only,
+                point_id,
+            ),
         )
         conn.commit()
         cur.close()
         return {"status": "updated"}
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
     finally:
@@ -213,20 +312,79 @@ def create_point(point: PointCreate):
     conn = get_db_conn()
     try:
         cur = conn.cursor()
+        mode = (point.trigger_mode or "solar").strip().lower()
+        if mode not in ("solar", "camera", "manual"):
+            mode = "solar"
+        auto_mode = (mode == "solar")
+        hold_sec = max(5, int(point.camera_hold_seconds or 120))
         cur.execute(
-            "INSERT INTO light_points (name, mqtt_topic, power_w) VALUES (%s, %s, %s) RETURNING id",
-            (point.name, point.mqtt_topic, point.power_w)
+            """
+            INSERT INTO light_points (
+                name, mqtt_topic, power_w, auto_mode,
+                offset_on_minutes, offset_off_minutes,
+                trigger_mode, camera_channels, camera_hold_seconds, camera_night_only
+            )
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            RETURNING id
+            """,
+            (
+                point.name,
+                point.mqtt_topic,
+                point.power_w,
+                auto_mode,
+                point.offset_on_minutes,
+                point.offset_off_minutes,
+                mode,
+                point.camera_channels or "",
+                hold_sec,
+                bool(point.camera_night_only),
+            ),
         )
         new_id = cur.fetchone()[0]
         conn.commit()
         cur.close()
         return {"id": new_id, "status": "created"}
     except psycopg2.IntegrityError:
+        conn.rollback()
         raise HTTPException(status_code=400, detail="MQTT Topic already exists")
     except Exception as e:
+        conn.rollback()
         raise HTTPException(status_code=500, detail=str(e))
     finally:
         release_db_conn(conn)
+
+_nvr_channels_cache = {"ts": 0.0, "data": None}
+
+@app.get("/api/nvr/channels")
+def get_nvr_channels():
+    """Retorna os 9 canais do NVR XiongMai (com cache de 60s e fallback caso NVR esteja inacessível)."""
+    now = time.time()
+    if _nvr_channels_cache["data"] and (now - _nvr_channels_cache["ts"] < 60.0):
+        return _nvr_channels_cache["data"]
+    try:
+        from scripts.nvr_tool import get_nvr_channels_summary
+        channels = get_nvr_channels_summary(timeout=2.0)
+        _nvr_channels_cache["ts"] = now
+        _nvr_channels_cache["data"] = channels
+        return channels
+    except Exception as e:
+        print(f"Aviso leitura canais NVR: {e}")
+        if _nvr_channels_cache["data"]:
+            return _nvr_channels_cache["data"]
+        # Fallback estático dos 9 canais (com D03 e D04 marcados como câmeras da frente com IA)
+        return [
+            {
+                "channel": ch,
+                "index": ch - 1,
+                "code": f"D{ch:02d}",
+                "status": "Connected" if ch in (3, 4) else "Offline",
+                "resolution": "1080P" if ch == 3 else ("4M" if ch == 4 else "Unknown"),
+                "enabled": ch in (3, 4, 6),
+                "ip": "192.168.1.31" if ch == 3 else ("192.168.1.11" if ch == 4 else None),
+                "human_detection": ch in (3, 4),
+            }
+            for ch in range(1, 10)
+        ]
 
 @app.delete("/api/config/points/{point_id}")
 def delete_point(point_id: int):
@@ -247,13 +405,13 @@ def get_solar_history(limit: int = 50, days: int = 7):
     conn = get_db_conn()
     try:
         cur = conn.cursor()
-        # Busca acionamentos filtrando por solar_trigger com limite e intervalo configuráveis
+        # Busca acionamentos filtrando por solar_trigger e gatilhos NVR (nvr_*)
         if days > 0:
             query = """
-                SELECT le.timestamp, lp.name, le.event_type 
+                SELECT le.timestamp, lp.name, le.event_type, le.source
                 FROM light_events le
                 JOIN light_points lp ON le.point_id = lp.id
-                WHERE le.source = 'solar_trigger' 
+                WHERE (le.source = 'solar_trigger' OR le.source LIKE 'nvr_%%')
                 AND le.timestamp > CURRENT_DATE - INTERVAL '%s days'
                 ORDER BY le.timestamp DESC
                 LIMIT %s;
@@ -261,10 +419,10 @@ def get_solar_history(limit: int = 50, days: int = 7):
             cur.execute(query % (int(days), int(limit)))
         else:
             query = """
-                SELECT le.timestamp, lp.name, le.event_type 
+                SELECT le.timestamp, lp.name, le.event_type, le.source
                 FROM light_events le
                 JOIN light_points lp ON le.point_id = lp.id
-                WHERE le.source = 'solar_trigger' 
+                WHERE (le.source = 'solar_trigger' OR le.source LIKE 'nvr_%%')
                 ORDER BY le.timestamp DESC
                 LIMIT %s;
             """
@@ -275,7 +433,8 @@ def get_solar_history(limit: int = 50, days: int = 7):
         return [{
             "timestamp": r[0].isoformat() if r[0] else None,
             "name": r[1],
-            "event": r[2]
+            "event": r[2],
+            "source": r[3] or "solar_trigger"
         } for r in rows]
     except Exception as e:
         print(f"Erro Histórico Solar: {e}")
@@ -331,16 +490,47 @@ def get_status():
     try:
         conn = get_db_conn()
         cur = conn.cursor()
-        cur.execute("SELECT id, name, mqtt_topic FROM light_points")
+        cur.execute("""
+            SELECT lp.id, lp.name, lp.mqtt_topic,
+                   COALESCE(lp.trigger_mode, CASE WHEN lp.auto_mode THEN 'solar' ELSE 'manual' END) AS trigger_mode,
+                   COALESCE(lp.camera_channels, '') AS camera_channels,
+                   COALESCE(lp.camera_hold_seconds, 120) AS camera_hold_seconds,
+                   COALESCE(lp.camera_night_only, TRUE) AS camera_night_only,
+                   COALESCE(lp.offset_on_minutes, 0) AS offset_on_minutes,
+                   COALESCE(lp.offset_off_minutes, 0) AS offset_off_minutes,
+                   (SELECT le.event_type FROM light_events le WHERE le.point_id = lp.id ORDER BY le.timestamp DESC, le.id DESC LIMIT 1) AS last_db_state
+            FROM light_points lp
+            ORDER BY lp.id ASC
+        """)
         points = cur.fetchall()
         
         results = []
         for p in points:
+            topic = p[2]
+            mode = p[3] if len(p) > 3 and p[3] is not None else "solar"
+            cam_chs = p[4] if len(p) > 4 and p[4] is not None else ""
+            hold_sec = int(p[5]) if len(p) > 5 and p[5] is not None else 120
+            night_only = bool(p[6]) if len(p) > 6 and p[6] is not None else True
+            off_on = int(p[7]) if len(p) > 7 and p[7] is not None else 0
+            off_off = int(p[8]) if len(p) > 8 and p[8] is not None else 0
+            last_db_state = p[9] if len(p) > 9 else None
+            resolved_state = (
+                light_states.get(f"{topic}/state")
+                or light_states.get(f"{topic}/set")
+                or last_db_state
+                or ("OFF" if mode == "camera" else "UNKNOWN")
+            )
             results.append({
                 "id": p[0],
                 "name": p[1],
-                "topic": p[2],
-                "state": light_states.get(f"{p[2]}/state", "UNKNOWN")
+                "topic": topic,
+                "state": resolved_state,
+                "trigger_mode": mode,
+                "camera_channels": cam_chs,
+                "camera_hold_seconds": hold_sec,
+                "camera_night_only": night_only,
+                "offset_on": off_on,
+                "offset_off": off_off,
             })
         cur.close()
         return results

@@ -263,5 +263,52 @@ class TestSolarWorkerPerformance(unittest.TestCase):
         self.assertEqual(args_event_on[2], "day_rollover")
         self.assertEqual(args_event_on[3], dt_real(2026, 6, 24, 0, 0, 0, tzinfo=solar_worker.BR_TZ))
 
+    @patch('solar_worker.get_db_conn')
+    @patch('solar_worker.is_currently_night', return_value=True)
+    @patch('solar_worker.time')
+    def test_nvr_camera_trigger_and_timeout_off(self, mock_time, mock_is_night, mock_get_db_conn):
+        mock_conn, mock_cur = self.setup_mocks(mock_get_db_conn)
+
+        # Point configured for camera mode on D03, D04 with 120s hold timer
+        mock_cur.fetchall.return_value = [
+            (3, "Muro", "home/outdoor/muro", "3,4", 120, True)
+        ]
+        mock_cur.fetchone.return_value = [3]
+
+        solar_worker.current_states = {"home/outdoor/muro": "OFF"}
+        solar_worker.active_camera_timers.clear()
+        mock_time.time.return_value = 1000.0
+
+        client = MagicMock()
+        alarm_pkt = {
+            "AlarmInfo": {
+                "Channel": 2,  # 0-based index 2 => D03 (channel 3)
+                "Event": "MotionDetect",
+                "Status": "Start",
+                "StartTime": "2026-11-05 21:00:00"
+            },
+            "Name": "AlarmInfo"
+        }
+
+        solar_worker.process_nvr_alarm_packet(client, alarm_pkt)
+
+        # Must have published ON to Broker MQTT
+        client.publish.assert_called_with("home/outdoor/muro/set", "ON", qos=1, retain=True)
+        self.assertEqual(solar_worker.current_states.get("home/outdoor/muro"), "ON")
+        self.assertIn("home/outdoor/muro", solar_worker.active_camera_timers)
+        self.assertEqual(solar_worker.active_camera_timers["home/outdoor/muro"], 1120.0)
+
+        # Before timer expires (at t=1050.0), should remain ON
+        client.publish.reset_mock()
+        solar_worker.check_expired_camera_timers(client, now_ts=1050.0)
+        client.publish.assert_not_called()
+        self.assertEqual(solar_worker.current_states.get("home/outdoor/muro"), "ON")
+
+        # At t=1120.0 (after 120s), must publish OFF to Broker MQTT
+        solar_worker.check_expired_camera_timers(client, now_ts=1120.0)
+        client.publish.assert_called_with("home/outdoor/muro/set", "OFF", qos=1, retain=True)
+        self.assertEqual(solar_worker.current_states.get("home/outdoor/muro"), "OFF")
+        self.assertNotIn("home/outdoor/muro", solar_worker.active_camera_timers)
+
 if __name__ == '__main__':
     unittest.main()

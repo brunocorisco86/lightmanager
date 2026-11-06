@@ -730,3 +730,70 @@ button:active { transform: scale(0.95); }
     border-color: #38bdf8;
     box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.2);
 }
+
+/* Badges de Regra de Negócio nos Cards */
+.rule-badge {
+    font-size: 0.76rem;
+    padding: 4px 10px;
+    border-radius: 999px;
+    margin-bottom: 10px;
+    display: inline-block;
+    font-weight: 500;
+}
+
+.rule-solar {
+    background: rgba(251, 191, 36, 0.14);
+    color: #fbbf24;
+    border: 1px solid rgba(251, 191, 36, 0.3);
+}
+
+.rule-camera {
+    background: rgba(56, 189, 248, 0.14);
+    color: #38bdf8;
+    border: 1px solid rgba(56, 189, 248, 0.35);
+}
+
+.rule-manual {
+    background: rgba(148, 163, 184, 0.14);
+    color: #cbd5e1;
+    border: 1px solid rgba(148, 163, 184, 0.3);
+}
+
+/* Console de Câmeras NVR */
+.camera-config-box {
+    background: rgba(15, 23, 42, 0.65);
+    border: 1px solid #334155;
+    border-radius: 8px;
+    padding: 10px 12px;
+}
+
+.cam-chips-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.cam-chip {
+    background: #1e293b;
+    color: #94a3b8;
+    border: 1px solid #334155;
+    border-radius: 6px;
+    padding: 4px 9px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    cursor: pointer;
+    width: auto;
+    transition: all 0.15s ease;
+}
+
+.cam-chip.online {
+    border-color: rgba(16, 185, 129, 0.5);
+    color: #cbd5e1;
+}
+
+.cam-chip.active {
+    background: #0284c7;
+    color: #ffffff;
+    border-color: #38bdf8;
+    box-shadow: 0 0 8px rgba(56, 189, 248, 0.35);
+}

@@ -59,6 +59,38 @@ def test_config_points_crud():
     point = next(p for p in response.json() if p["id"] == point_id)
     assert point["offset_on"] == 10
     assert point["offset_off"] == -20
+    assert point["trigger_mode"] == "solar"
+    assert point["auto_mode"] is True
+
+    # 4. Testar Mudança para Regra de Câmeras NVR (trigger_mode='camera')
+    cam_update = {
+        "offset_on_minutes": 0,
+        "offset_off_minutes": 0,
+        "trigger_mode": "camera",
+        "camera_channels": "3,4",
+        "camera_hold_seconds": 120,
+        "camera_night_only": True
+    }
+    response = client.put(f"/api/config/points/{point_id}", json=cam_update)
+    assert response.status_code == 200
+
+    response = client.get("/api/config/points")
+    point = next(p for p in response.json() if p["id"] == point_id)
+    assert point["trigger_mode"] == "camera"
+    assert point["camera_channels"] == "3,4"
+    assert point["camera_hold_seconds"] == 120
+    assert point["camera_night_only"] is True
+    assert point["auto_mode"] is False
+
+
+def test_nvr_channels_endpoint():
+    response = client.get("/api/nvr/channels")
+    assert response.status_code == 200
+    channels = response.json()
+    assert isinstance(channels, list)
+    assert len(channels) == 9
+    assert any(c["code"] == "D03" for c in channels)
+    assert any(c["code"] == "D04" for c in channels)
 
 def test_solar_history_endpoint():
     conn = get_db_connection()

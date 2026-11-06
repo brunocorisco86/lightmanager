@@ -32,29 +32,50 @@
                 </div>
                 <div class="modal-body">
                     <div class="tabs">
-                        <button class="tab-btn active" onclick="showTab(event, 'manage')">Gerenciar</button>
+                        <button class="tab-btn active" onclick="showTab(event, 'manage')">Gerenciar Regras</button>
                         <button class="tab-btn" onclick="showTab(event, 'new')">Novo Ponto</button>
-                        <button class="tab-btn" onclick="showTab(event, 'solar')">Histórico Solar</button>
+                        <button class="tab-btn" onclick="showTab(event, 'solar')">Histórico Automático</button>
                     </div>
 
                     <div id="tab-manage" class="tab-content active">
-                        <h3>Pontos Cadastrados</h3>
+                        <h3>Console de Regras por Ponto (Solar vs. Câmeras NVR)</h3>
                         <div id="config-list">Carregando...</div>
                     </div>
 
                     <div id="tab-new" class="tab-content">
-                        <h3>Cadastrar Novo Ponto</h3>
+                        <h3>Cadastrar Novo Ponto (Ex.: ESP32-C3 / Relé MQTT)</h3>
                         <form id="new-point-form" onsubmit="createNewPoint(event)">
-                            <input type="text" id="new-name" placeholder="Nome (ex: Garagem)" required>
-                            <input type="text" id="new-topic" placeholder="Tópico MQTT (ex: home/outdoor/garagem)" required>
-                            <input type="number" id="new-power" placeholder="Potência (Watts)" required>
+                            <input type="text" id="new-name" placeholder="Nome (ex: Muro, Garagem)" required>
+                            <input type="text" id="new-topic" placeholder="Tópico MQTT (ex: home/outdoor/muro)" required>
+                            <input type="number" id="new-power" placeholder="Potência (Watts)" step="0.1" required>
+                            <label for="new-trigger-mode" style="font-size: 0.85em; color: #94a3b8; margin-top: 4px; display: block;">Regra de Acionamento:</label>
+                            <select id="new-trigger-mode" class="select-period" style="width: 100%; margin-bottom: 10px;" onchange="toggleNewPointMode()">
+                                <option value="solar">☀️ Ciclo Solar (Pôr/Nascer do Sol)</option>
+                                <option value="camera">📹 Câmeras NVR (Detecção Humana + Timer)</option>
+                                <option value="manual">🖐️ Somente Manual</option>
+                            </select>
+                            <div id="new-camera-fields" style="display: none; background: rgba(15, 23, 42, 0.6); padding: 10px; border-radius: 8px; margin-bottom: 10px; border: 1px solid #334155;">
+                                <div style="margin-bottom: 8px;">
+                                    <label style="font-size: 0.85em; color: #cbd5e1;">Canais NVR (ex: 3,4 para D03 e D04):</label>
+                                    <input type="text" id="new-camera-channels" value="3,4" placeholder="3,4">
+                                </div>
+                                <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+                                    <div>
+                                        <label style="font-size: 0.85em; color: #cbd5e1;">Tempo aceso (seg):</label>
+                                        <input type="number" id="new-camera-hold" value="120" min="5" step="5" style="width: 85px;">
+                                    </div>
+                                    <label style="font-size: 0.85em; color: #cbd5e1; display: flex; align-items: center; gap: 6px; cursor: pointer;">
+                                        <input type="checkbox" id="new-camera-night" checked style="width: auto; margin: 0;"> Apenas à noite
+                                    </label>
+                                </div>
+                            </div>
                             <button type="submit" class="btn-save">Cadastrar</button>
                         </form>
                     </div>
 
                     <div id="tab-solar" class="tab-content">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
-                            <h3 style="margin: 0;">Últimos Acionamentos Automáticos</h3>
+                            <h3 style="margin: 0;">Últimos Acionamentos Automáticos (Solar & Câmeras)</h3>
                             <div>
                                 <select id="solar-limit-selector" class="select-period" onchange="loadSolarHistory()">
                                     <option value="20">20 registros</option>
@@ -70,6 +91,7 @@
                                    <tr>
                                        <th>Hora</th>
                                        <th>Local</th>
+                                       <th>Origem</th>
                                        <th>Ação</th>
                                    </tr>
                                </thead>
