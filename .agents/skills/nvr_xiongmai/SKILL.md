@@ -131,3 +131,27 @@ python3 scripts/nvr_tool.py human-config
 # 3. Monitorar em tempo real no terminal os eventos de detecção de pessoas (Guard 1500 -> AlarmInfo 1504)
 python3 scripts/nvr_tool.py listen
 ```
+
+---
+
+## 💡 6. Integração com o Light Manager (`solar_worker.py` & Web Console)
+
+1. **Arquitetura 100% via Broker MQTT (Hardware-Agnóstica):**
+   * Nenhum firmware embarcado (`.ino`) precisa conhecer o NVR ou controlar timers de câmera.
+   * A thread `nvr_guard_worker` dentro de `scripts/solar_worker.py` mantém uma sessão `GuardReq` (`1500`) aberta em `192.168.1.20:34567` e gerencia o ciclo `ON` $\rightarrow$ `camera_hold_seconds` (padrão `120s`) $\rightarrow$ `OFF` publicando diretamente no tópico `<mqtt_topic>/set` (`QoS 1, Retain=True`).
+   * Qualquer hardware relé (ESP32-C3 ou Wemos) que assine `<mqtt_topic>/set` no broker Mosquitto responde imediatamente.
+
+2. **Regras de Negócio por Ponto (`light_points`):**
+   * `trigger_mode = 'solar'` (`auto_mode = TRUE`): Liga no pôr do sol e desliga no nascer do sol (**Frente** e **Fundos**).
+   * `trigger_mode = 'camera'` (`auto_mode = FALSE`): Acionado quando qualquer canal listado em `camera_channels` (ex.: `'3,4'` para `D03` e `D04`) envia `AlarmInfo` (`Status == "Start"`), permanecendo ligado por `camera_hold_seconds` segundos e desligando em seguida (**Muro** em `home/outdoor/muro`).
+   * `trigger_mode = 'manual'` (`auto_mode = FALSE`): Somente acionamento manual.
+
+3. **Observabilidade de Baixa Pegada (Dot Plot + Mini-Terminal):**
+   * **Debounce de 15s por canal (`NVR_DEBOUNCE_SECONDS = 15`):** Agrupa rajadas de pacotes da mesma caminhada física em **1 único registro limpo** na tabela `nvr_detections` e em `logs/nvr.log`, enquanto continua renovando normalmente o timer da lâmpada.
+   * **Endpoints FastAPI (`web_api/main.py`):**
+     * `GET /api/nvr/channels`: Lista os 9 canais do NVR (cache de 60s).
+     * `GET /api/nvr/detections?hours=24&channel=ALL`: Retorna o resumo do dia e os eventos para renderização client-side do **Dot Plot Temporal** (`Chart.js Scatter`, onde cada linha horizontal no eixo Y é uma câmera `D03`, `D04` e cada bolinha é uma passagem humana) e do **Mini-Terminal**.
+
+4. **Guardrails Obrigatórios:**
+   * **Somente-Leitura no NVR:** Jamais enviar comandos `1040` (`OPSystemConfig` de escrita) ou alterar IPs/configurações no NVR `192.168.1.20`.
+   * **Silêncio no Telegram/ntfy para Câmeras:** Detecções humanas do NVR **NUNCA** devem enviar mensagens no Bot do Telegram ou ntfy (para não incomodar o usuário à noite). Apenas os gatilhos do **Ciclo Solar** (`solar_trigger`) enviam notificações no Telegram.
