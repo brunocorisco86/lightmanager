@@ -57,7 +57,7 @@ class TestCameraWatchdog(unittest.TestCase):
             "00:13:00:f6:69:a0": {"ip": "192.168.1.4", "host_ip": "192.168.1.4", "raw": {}},
         }
 
-        def fake_probe(ip, port, proto, user, pwd, timeout=3.5, retries=2):
+        def fake_probe(ip, port, proto, user, pwd, timeout=3.5, retries=2, **kwargs):
             valid_ips = {
                 "192.168.1.201",
                 "192.168.1.4",
