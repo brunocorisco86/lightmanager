@@ -1,0 +1,517 @@
+{
+  "bot/bot.py": {
+    "mtime": 1789525312.5214272,
+    "ast_hash": "7a50c7d7eddf93d92028a553bc3c43bc",
+    "semantic_hash": ""
+  },
+  "reports/generate_daily.py": {
+    "mtime": 1784505017.6843467,
+    "ast_hash": "540143666ef88fc06129272296b61368",
+    "semantic_hash": ""
+  },
+  "reports/generate_daily.sh": {
+    "mtime": 1782076757.5567536,
+    "ast_hash": "ea1a9395e40930c8cc1d81a47c3b924b",
+    "semantic_hash": ""
+  },
+  "run_tests.sh": {
+    "mtime": 1789525312.551428,
+    "ast_hash": "057a5af3df54d39983d81ebb71de1b80",
+    "semantic_hash": ""
+  },
+  "scripts/00_setup_python.sh": {
+    "mtime": 1782168349.5073884,
+    "ast_hash": "6cb9ac8383ab1571a8071ad8754d8e01",
+    "semantic_hash": ""
+  },
+  "scripts/01_setup_env.sh": {
+    "mtime": 1779501603.626549,
+    "ast_hash": "0c29aa84390f175104614144a20abc91",
+    "semantic_hash": ""
+  },
+  "scripts/02_install_alpine_deps.sh": {
+    "mtime": 1784505017.6843467,
+    "ast_hash": "ef90c1016400cd3ba02cda00d0f09443",
+    "semantic_hash": ""
+  },
+  "scripts/03_setup_mosquitto.sh": {
+    "mtime": 1784505368.2243133,
+    "ast_hash": "2509fdc03706821d7372cce6752e0c1e",
+    "semantic_hash": ""
+  },
+  "scripts/04_docker_management.sh": {
+    "mtime": 1779486709.7043285,
+    "ast_hash": "9ad3d4149da51814ade0e1137e6a62d3",
+    "semantic_hash": ""
+  },
+  "scripts/05_register_lights.py": {
+    "mtime": 1793925609.411052,
+    "ast_hash": "a76107a0e14b1129be86638abf512104",
+    "semantic_hash": ""
+  },
+  "scripts/06_monitor_mqtt.sh": {
+    "mtime": 1779505893.742145,
+    "ast_hash": "446bbe23625f86ced04e52cf6c2618cf",
+    "semantic_hash": ""
+  },
+  "scripts/07_test_mqtt_commands.sh": {
+    "mtime": 1793921048.4449615,
+    "ast_hash": "e52afae2b9e922b2e4a59c94ab7048c0",
+    "semantic_hash": ""
+  },
+  "scripts/08_flash_wemos.sh": {
+    "mtime": 1782341922.7328465,
+    "ast_hash": "9a172843892b42002a3e8ad8ee3b74fe",
+    "semantic_hash": ""
+  },
+  "scripts/__init__.py": {
+    "mtime": 1779843269.5223017,
+    "ast_hash": "7d39fd9514ccdf6a8ae1481d21a8032e",
+    "semantic_hash": ""
+  },
+  "scripts/backup_r2.sh": {
+    "mtime": 1779843269.5223017,
+    "ast_hash": "96036f6c29610de278748e8c78f66aa1",
+    "semantic_hash": ""
+  },
+  "scripts/entrypoint.sh": {
+    "mtime": 1780000540.5545022,
+    "ast_hash": "3333582e34c9bebc8489ffa0cff1c85d",
+    "semantic_hash": ""
+  },
+  "scripts/housekeeping.py": {
+    "mtime": 1785620200.9155252,
+    "ast_hash": "a16d5ee3afb4aa189cef193b3f7510b8",
+    "semantic_hash": ""
+  },
+  "scripts/internet_watchdog.sh": {
+    "mtime": 1784505017.6843467,
+    "ast_hash": "8ea94623f4a872244430d2b56b8ffecf",
+    "semantic_hash": ""
+  },
+  "scripts/log_analyzer.py": {
+    "mtime": 1789525312.551428,
+    "ast_hash": "4ddf59d0cb05ef48b79bcc1bff510832",
+    "semantic_hash": ""
+  },
+  "scripts/manage_users.py": {
+    "mtime": 1779843269.5223017,
+    "ast_hash": "f4bb007a60d0e6fbe5a8b37e0c1a2db6",
+    "semantic_hash": ""
+  },
+  "scripts/mqtt_control/desligar_frente.sh": {
+    "mtime": 1779510640.2665055,
+    "ast_hash": "af4c5f5f8b575efb52d65622a7ab10ad",
+    "semantic_hash": ""
+  },
+  "scripts/mqtt_control/desligar_fundos.sh": {
+    "mtime": 1779510647.1376002,
+    "ast_hash": "5839ac62a86e16c6e5ce4082b114857b",
+    "semantic_hash": ""
+  },
+  "scripts/mqtt_control/ligar_frente.sh": {
+    "mtime": 1779510636.6554558,
+    "ast_hash": "0da4b7b3aa883ade19c514116d66e543",
+    "semantic_hash": ""
+  },
+  "scripts/mqtt_control/ligar_fundos.sh": {
+    "mtime": 1779510643.8525548,
+    "ast_hash": "ce81ae31e92b41d834f9ca052a879ee2",
+    "semantic_hash": ""
+  },
+  "scripts/network_watchdog.sh": {
+    "mtime": 1780000548.0375667,
+    "ast_hash": "db29fae3f0accf1cfb632c379778b067",
+    "semantic_hash": ""
+  },
+  "scripts/restart_api.sh": {
+    "mtime": 1779843269.5223017,
+    "ast_hash": "44b6fb7a29f4771a7dfcb7375e8894ec",
+    "semantic_hash": ""
+  },
+  "scripts/restart_bot.sh": {
+    "mtime": 1782076446.1693778,
+    "ast_hash": "a5ee3fe040fc954aec16f886f3c1295d",
+    "semantic_hash": ""
+  },
+  "scripts/restart_solar.sh": {
+    "mtime": 1779843269.5223017,
+    "ast_hash": "f3ce9e35990d721b38a329bfff6606b2",
+    "semantic_hash": ""
+  },
+  "scripts/setup.sh": {
+    "mtime": 1782168346.5865114,
+    "ast_hash": "6cb9ac8383ab1571a8071ad8754d8e01",
+    "semantic_hash": ""
+  },
+  "scripts/solar_worker.py": {
+    "mtime": 1793925711.754783,
+    "ast_hash": "729fe9cb8ec3960694563d754dbdd244",
+    "semantic_hash": ""
+  },
+  "scripts/tariff_sync.py": {
+    "mtime": 1782345976.7105997,
+    "ast_hash": "bba8a24bc17b784f69ee97ddf6a55e8b",
+    "semantic_hash": ""
+  },
+  "scripts/test_telegram_real.py": {
+    "mtime": 1779843269.5227568,
+    "ast_hash": "70092b13f239901386d089ac39627ef6",
+    "semantic_hash": ""
+  },
+  "scripts/update_hosts.sh": {
+    "mtime": 1782336454.7318454,
+    "ast_hash": "d0295a5085167b20c1dd9fcb0b171729",
+    "semantic_hash": ""
+  },
+  "scripts/weather_offset_sync.py": {
+    "mtime": 1782168338.6908445,
+    "ast_hash": "eec3e5b8ea27674b85c2553c27bb7f05",
+    "semantic_hash": ""
+  },
+  "templates/api_sunrise_sunset/response_with_time_format.json": {
+    "mtime": 1779484355.4121997,
+    "ast_hash": "12a53e0d4b27778be61fbfb80b738332",
+    "semantic_hash": ""
+  },
+  "templates/api_sunrise_sunset/response_without_time_format.json": {
+    "mtime": 1779484388.3749402,
+    "ast_hash": "12a53e0d4b27778be61fbfb80b738332",
+    "semantic_hash": ""
+  },
+  "tests/benchmark_solar_worker.py": {
+    "mtime": 1793926018.3082166,
+    "ast_hash": "7a00003a476ef1028e930a506fe3f344",
+    "semantic_hash": ""
+  },
+  "tests/test_api.py": {
+    "mtime": 1779485234.9102695,
+    "ast_hash": "e2bebf865c32fee54f3aafe60161f168",
+    "semantic_hash": ""
+  },
+  "tests/test_auth.py": {
+    "mtime": 1779843269.5227568,
+    "ast_hash": "71244779f39408cba9fd192af98a3f22",
+    "semantic_hash": ""
+  },
+  "tests/test_automation_improvements.py": {
+    "mtime": 1785709193.339165,
+    "ast_hash": "d8a2c139da70a76b77ed98c669a5c3ac",
+    "semantic_hash": ""
+  },
+  "tests/test_backup.py": {
+    "mtime": 1781989081.8939269,
+    "ast_hash": "72e9ffa447ac0dea19133938d20cbbb0",
+    "semantic_hash": ""
+  },
+  "tests/test_bot_integrity.py": {
+    "mtime": 1789525312.552428,
+    "ast_hash": "90b1eb606d7ed4d96844e789b6eaf278",
+    "semantic_hash": ""
+  },
+  "tests/test_command_reliability.py": {
+    "mtime": 1779843269.5227568,
+    "ast_hash": "4b7df341f9792efca605f0f7639e4ec0",
+    "semantic_hash": ""
+  },
+  "tests/test_housekeeping.py": {
+    "mtime": 1785620206.1463838,
+    "ast_hash": "047a0a76ca8bf479fd648f0906e21f83",
+    "semantic_hash": ""
+  },
+  "tests/test_telegram.py": {
+    "mtime": 1779843269.5227568,
+    "ast_hash": "856fcafa7f621260fec0cde47bfb0c91",
+    "semantic_hash": ""
+  },
+  "tests/test_timezone.py": {
+    "mtime": 1779843269.5227568,
+    "ast_hash": "5fb78a6658663d943b0fea548a1ca095",
+    "semantic_hash": ""
+  },
+  "tests/test_weather_sync.py": {
+    "mtime": 1782168804.800512,
+    "ast_hash": "aeaaf86b77d4766585b8aecc720eec35",
+    "semantic_hash": ""
+  },
+  "tests/test_web_api.py": {
+    "mtime": 1793921048.4449615,
+    "ast_hash": "31fa70642201616e91b9edc766387ede",
+    "semantic_hash": ""
+  },
+  "tests/test_web_config.py": {
+    "mtime": 1793926016.300239,
+    "ast_hash": "d3b4e344154fa578d6af6ad6b5b4ef18",
+    "semantic_hash": ""
+  },
+  "web/script.js": {
+    "mtime": 1793925944.4560502,
+    "ast_hash": "4e2ad630b19afaa7381a8bf88e23b07c",
+    "semantic_hash": ""
+  },
+  "web_api/main.py": {
+    "mtime": 1793925857.268053,
+    "ast_hash": "47fe98ddf47b6e66f9b4cc0880f0e3f0",
+    "semantic_hash": ""
+  },
+  ".agents/AGENTS.md": {
+    "mtime": 1785709370.0717492,
+    "ast_hash": "066d2582d9db39385415cdb8d0ce26a2",
+    "semantic_hash": ""
+  },
+  ".agents/rules/graphify.md": {
+    "mtime": 1784505017.6813464,
+    "ast_hash": "f1e53ecc9194573d3c28fc116c743a2e",
+    "semantic_hash": ""
+  },
+  ".agents/skills/embedded_flasher/SKILL.md": {
+    "mtime": 1793921048.4409618,
+    "ast_hash": "17bfb590843247ff2a9a3332443b9299",
+    "semantic_hash": ""
+  },
+  ".agents/skills/git_deployer/SKILL.md": {
+    "mtime": 1785605106.5686786,
+    "ast_hash": "9a6be3911e7ce3b523cb562ce97d69bd",
+    "semantic_hash": ""
+  },
+  ".agents/skills/lightmanager/SKILL.md": {
+    "mtime": 1789525312.5204272,
+    "ast_hash": "4dee62172b8ae7c85a67d71da0d39fd9",
+    "semantic_hash": ""
+  },
+  ".agents/workflows/graphify.md": {
+    "mtime": 1784505017.6813464,
+    "ast_hash": "0bc020d491fca99550c1ea3de0a5f862",
+    "semantic_hash": ""
+  },
+  ".github/workflows/gemini-dispatch.yml": {
+    "mtime": 1779482643.7970831,
+    "ast_hash": "9380de2174588d546c363cd62a2faac2",
+    "semantic_hash": ""
+  },
+  ".github/workflows/gemini-invoke.yml": {
+    "mtime": 1779482643.7720873,
+    "ast_hash": "0651660893a82ee37812e56276c804d6",
+    "semantic_hash": ""
+  },
+  ".github/workflows/gemini-plan-execute.yml": {
+    "mtime": 1779482643.7900844,
+    "ast_hash": "948871f10bad26d233b3b7d4ee6de4ca",
+    "semantic_hash": ""
+  },
+  ".github/workflows/gemini-review.yml": {
+    "mtime": 1779482643.7910843,
+    "ast_hash": "b9fc3b1365ee8462df611548c9da188f",
+    "semantic_hash": ""
+  },
+  ".github/workflows/gemini-scheduled-triage.yml": {
+    "mtime": 1779482643.8010826,
+    "ast_hash": "9e08751f1fc47fb6faf91806567c9fe2",
+    "semantic_hash": ""
+  },
+  ".github/workflows/gemini-triage.yml": {
+    "mtime": 1779482643.7730873,
+    "ast_hash": "48ab63aa2b770a6978e061b8de3ff5c7",
+    "semantic_hash": ""
+  },
+  "DIARIO_ALTERACOES.md": {
+    "mtime": 1789525312.5214272,
+    "ast_hash": "4101e09538224c740d33a20c3898c101",
+    "semantic_hash": ""
+  },
+  "README.md": {
+    "mtime": 1785603096.196366,
+    "ast_hash": "e0966f53488f0e9e5279032488ab334f",
+    "semantic_hash": ""
+  },
+  "bot/requirements.txt": {
+    "mtime": 1782168890.2324665,
+    "ast_hash": "405533196faedba447374e76872d027f",
+    "semantic_hash": ""
+  },
+  "crontab_template.txt": {
+    "mtime": 1785606512.3258708,
+    "ast_hash": "f374dfefde4f1b81044ced34ff86b6ef",
+    "semantic_hash": ""
+  },
+  "docker-compose.yml": {
+    "mtime": 1779843269.520921,
+    "ast_hash": "d983c93916b81b53e4866a86a82fa366",
+    "semantic_hash": ""
+  },
+  "docs/R2_BACKUP_SETUP.md": {
+    "mtime": 1784505017.6842768,
+    "ast_hash": "bd4bd46927fa1964e989faf67b5c9c3f",
+    "semantic_hash": ""
+  },
+  "docs/ROADMAP.md": {
+    "mtime": 1785607108.6147912,
+    "ast_hash": "dea4cb8535e299744454934718042639",
+    "semantic_hash": ""
+  },
+  "docs/STACK.md": {
+    "mtime": 1779541503.1407406,
+    "ast_hash": "f49107f4f8003ce945f34c60fd30a91c",
+    "semantic_hash": ""
+  },
+  "requirements.txt": {
+    "mtime": 1785604368.8129792,
+    "ast_hash": "d8185ea97537af37996fd332cbfaff0e",
+    "semantic_hash": ""
+  },
+  "templates/api_sunrise_sunset/request_parameters.md": {
+    "mtime": 1779485071.8163764,
+    "ast_hash": "63d8df23f0fc02f48f3b05c62e742670",
+    "semantic_hash": ""
+  },
+  "templates/api_sunrise_sunset/template_sunsise_sunset.md": {
+    "mtime": 1779484309.4250863,
+    "ast_hash": "02c3c498ea3a19edd7b065ece1a85d85",
+    "semantic_hash": ""
+  },
+  "web/index.html": {
+    "mtime": 1793925898.6255746,
+    "ast_hash": "83ec52cfd545392d2211c5b8b5c2f3b8",
+    "semantic_hash": ""
+  },
+  "web/login.html": {
+    "mtime": 1785607275.2438285,
+    "ast_hash": "8910ff4007b3ef4f373711871eaa9e77",
+    "semantic_hash": ""
+  },
+  "scripts/solar_scraper.py": {
+    "mtime": 1789525312.551428,
+    "ast_hash": "5208c97ee837494e1ab3228d513fcd42",
+    "semantic_hash": ""
+  },
+  "tests/test_solar_scraper.py": {
+    "mtime": 1785603644.5607383,
+    "ast_hash": "fb27f5a9985943f0cf1b0e40ec0f6f53",
+    "semantic_hash": ""
+  },
+  "scripts/solar_ai_expert.py": {
+    "mtime": 1789525312.551428,
+    "ast_hash": "3da9304c25fa3f602d44da4df067951a",
+    "semantic_hash": ""
+  },
+  "scripts/solar_forecast.py": {
+    "mtime": 1785605162.6033912,
+    "ast_hash": "01778be4ad95da3b46dcc663c4ddf904",
+    "semantic_hash": ""
+  },
+  "scripts/solar_monthly_report.py": {
+    "mtime": 1785606821.7673514,
+    "ast_hash": "3848f941214d9c8438d7caa27bf94385",
+    "semantic_hash": ""
+  },
+  "scripts/solar_rain_alert.py": {
+    "mtime": 1789525312.551428,
+    "ast_hash": "f19830bf06d9500d02a3857fb66a3962",
+    "semantic_hash": ""
+  },
+  "scripts/solar_report.py": {
+    "mtime": 1785605188.2492802,
+    "ast_hash": "98b6bdd3e417e9cdc6465cfa0b1f12dc",
+    "semantic_hash": ""
+  },
+  "tests/test_solar_ai_expert.py": {
+    "mtime": 1789525312.552428,
+    "ast_hash": "22be0fa4db073c717ffeefb5e0450dbf",
+    "semantic_hash": ""
+  },
+  "tests/test_solar_anomalies.py": {
+    "mtime": 1789525312.552428,
+    "ast_hash": "a8dd029b3af34d84794834eefec8235b",
+    "semantic_hash": ""
+  },
+  "tests/test_solar_forecast.py": {
+    "mtime": 1785605225.1661415,
+    "ast_hash": "0fd9c9450d9f38ae33398bdf46bebcd3",
+    "semantic_hash": ""
+  },
+  "tests/test_solar_monthly_report.py": {
+    "mtime": 1785606825.1383681,
+    "ast_hash": "42ec878cf2f09bbda1c28f3df3c872d3",
+    "semantic_hash": ""
+  },
+  "tests/test_solar_rain_alert.py": {
+    "mtime": 1789525312.552428,
+    "ast_hash": "207f1f7ccca97da9c4e9b1e2d557ad8c",
+    "semantic_hash": ""
+  },
+  "tests/test_solar_report.py": {
+    "mtime": 1785604596.0846267,
+    "ast_hash": "ab452d6859e19f08d916489252bff09c",
+    "semantic_hash": ""
+  },
+  "web/favicon.svg": {
+    "mtime": 1785607260.4916887,
+    "ast_hash": "2422701a44331f88e2839ee8c3cf35a0",
+    "semantic_hash": ""
+  },
+  "web/chart.min.js": {
+    "mtime": 1785683275.6745474,
+    "ast_hash": "283d65ad75eca387c3fc8d0f8d37ae3b",
+    "semantic_hash": ""
+  },
+  "scripts/nvr_tool.py": {
+    "mtime": 1793923935.3731802,
+    "ast_hash": "cf81bf8e161cff1942ca488759e64713",
+    "semantic_hash": ""
+  },
+  "tests/test_log_analyzer.py": {
+    "mtime": 1789525312.552428,
+    "ast_hash": "c087fc213b6ec320ec729fad26c4d124",
+    "semantic_hash": ""
+  },
+  ".agents/skills/graphify/SKILL.md": {
+    "mtime": 1784505817.4718232,
+    "ast_hash": "f8d5ef667aae74129e01fcca97bbfddd",
+    "semantic_hash": ""
+  },
+  ".agents/skills/graphify/references/add-watch.md": {
+    "mtime": 1784505817.472163,
+    "ast_hash": "d59d027fe449f06aa03905a01184e779",
+    "semantic_hash": ""
+  },
+  ".agents/skills/graphify/references/exports.md": {
+    "mtime": 1784505817.4722803,
+    "ast_hash": "9da2a2152e60a22f07f05fed5158f287",
+    "semantic_hash": ""
+  },
+  ".agents/skills/graphify/references/extraction-spec.md": {
+    "mtime": 1784505817.472196,
+    "ast_hash": "42fef56a01698118f7fd722acdadea34",
+    "semantic_hash": ""
+  },
+  ".agents/skills/graphify/references/github-and-merge.md": {
+    "mtime": 1784505817.472313,
+    "ast_hash": "cde13df085e4c492aeb7ba298a996d0d",
+    "semantic_hash": ""
+  },
+  ".agents/skills/graphify/references/hooks.md": {
+    "mtime": 1784505817.4720857,
+    "ast_hash": "3f545db6ce646650bb9de588f5512a27",
+    "semantic_hash": ""
+  },
+  ".agents/skills/graphify/references/query.md": {
+    "mtime": 1784505817.472237,
+    "ast_hash": "3c46f8ad006874260614ed8657d02307",
+    "semantic_hash": ""
+  },
+  ".agents/skills/graphify/references/transcribe.md": {
+    "mtime": 1784505817.4720416,
+    "ast_hash": "67b6a5fa6c0974e18f60db9f8932fbd8",
+    "semantic_hash": ""
+  },
+  ".agents/skills/graphify/references/update.md": {
+    "mtime": 1784505817.4721186,
+    "ast_hash": "c698309979460d0f02ba616417844399",
+    "semantic_hash": ""
+  },
+  ".agents/skills/nvr_xiongmai/SKILL.md": {
+    "mtime": 1793923924.6406555,
+    "ast_hash": "214b5f04e1480e92bb74a4afcf970aa1",
+    "semantic_hash": ""
+  }
+}

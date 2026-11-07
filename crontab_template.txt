@@ -6,6 +6,7 @@
 */5 * * * * pgrep -x mosquitto > /dev/null || sudo rc-service mosquitto start
 */10 * * * * /bin/bash /home/bruno/lightmanager/scripts/network_watchdog.sh
 */10 * * * * /bin/bash /home/bruno/lightmanager/scripts/internet_watchdog.sh
+*/10 * * * * /home/bruno/lightmanager/.venv/bin/python3 /home/bruno/lightmanager/scripts/camera_watchdog.py heal >> /home/bruno/lightmanager/logs/camera_watchdog.log 2>&1
 
 # --- PROCESSOS PERSISTENTES (REBOOT COM DELAY) ---
 @reboot sleep 40 && /bin/bash /home/bruno/lightmanager/scripts/entrypoint.sh api
