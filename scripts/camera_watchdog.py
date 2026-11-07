@@ -67,7 +67,7 @@ CAMERA_CATALOG = [
         "index": 1,
         "code": "D02",
         "name": "Câmera D02 (XM210 V5.08)",
-        "preferred_ip": None,  # Obtém IP via DHCP no Wi-Fi; rastreado via LanSentry + UDP 1531
+        "preferred_ip": "192.168.1.4",  # IP habitual no Wi-Fi; rastreado via LanSentry + UDP 1531
         "lan_mac": "f8:16:0c:96:d5:f6",
         "xm_mac": "00:13:00:f6:69:a0",
         "port": 34567,

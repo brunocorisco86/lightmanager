@@ -618,9 +618,9 @@
     "semantic_hash": ""
   },
   "scripts/camera_watchdog.py": {
-    "mtime": 1794019738.5981722,
-    "seen": 1794019901.1883576,
-    "ast_hash": "867d2b1941d2bfd535e33e412006b7e0",
+    "mtime": 1794020748.0548558,
+    "seen": 1794020810.3013434,
+    "ast_hash": "902dd396269dfc4735e055fc54ed54d8",
     "semantic_hash": ""
   },
   "tests/test_camera_watchdog.py": {
