@@ -67,7 +67,7 @@ CAMERA_CATALOG = [
         "index": 1,
         "code": "D02",
         "name": "Câmera D02 (XM210 V5.08)",
-        "preferred_ip": "192.168.1.4",  # IP habitual no Wi-Fi; rastreado via LanSentry + UDP 1531
+        "preferred_ip": "192.168.1.2",  # IP habitual no Wi-Fi; rastreado via LanSentry + UDP 1531
         "lan_mac": "f8:16:0c:96:d5:f6",
         "xm_mac": "00:13:00:f6:69:a0",
         "port": 34567,
@@ -408,17 +408,20 @@ def evaluate_and_heal(
             udp_ip = udp_info.get("ip") or ""
 
             # Ordem de candidatos de IP para testar saúde da câmera:
-            # 1. IP preferencial fixo (.201, .203, .204, .206, .3)
-            # 2. IP atual configurado no NVR
-            # 3. IP descoberto via UDP 1531 broadcast
-            # 4. IP descoberto via LanSentry (MAC Layer-2)
+            # Se o canal já está Connected no NVR, testa primeiro o nvr_ip atual para evitar timeout em IPs DHCP antigos.
             candidate_ips = []
-            for cand in (cam["preferred_ip"], nvr_ip, udp_ip, lan_ip):
+            ordered_cands = (
+                (nvr_ip, udp_ip, lan_ip, cam["preferred_ip"])
+                if nvr_status == "Connected" and nvr_ip
+                else (cam["preferred_ip"], nvr_ip, udp_ip, lan_ip)
+            )
+            for cand in ordered_cands:
                 if cand and cand not in candidate_ips:
                     candidate_ips.append(cand)
 
             best_ip = None
             best_probe = {"ok": False, "latency_ms": None, "error": "unreachable", "locked_206": False}
+            creds_match = (nvr_user_cfg == cam["user"] and nvr_pass_cfg == cam["password"])
 
             for cand_ip in candidate_ips:
                 probe = probe_camera_endpoint(
@@ -427,7 +430,10 @@ def evaluate_and_heal(
                     cam["protocol"],
                     cam["user"],
                     cam["password"],
-                    lightweight=(nvr_status == "Connected" and cand_ip == nvr_ip),
+                    lightweight=(
+                        (nvr_status == "Connected" and cand_ip == nvr_ip)
+                        or (creds_match and nvr_status == "NoConnect" and cam.get("nvr_mac_policy") == "empty")
+                    ),
                 )
                 if probe["ok"]:
                     best_ip = cand_ip
@@ -436,7 +442,12 @@ def evaluate_and_heal(
                 if best_probe["error"] == "unreachable" or probe["locked_206"]:
                     best_probe = probe
 
-            target_ip = best_ip or cam["preferred_ip"] or nvr_ip or udp_ip or lan_ip
+            # Câmeras Dual-IP com IP estático dedicado (.201, .204, .206) nunca devem alternar
+            # para o IP DHCP secundário no NVR, evitando reconexões desnecessárias do canal.
+            if cam.get("nvr_mac_policy") == "empty" and cam.get("preferred_ip"):
+                target_ip = cam["preferred_ip"]
+            else:
+                target_ip = best_ip or cam["preferred_ip"] or nvr_ip or udp_ip or lan_ip
             want_mac = expected_nvr_mac(cam)
 
             issues = []
@@ -446,8 +457,8 @@ def evaluate_and_heal(
                 issues.append("Canal desativado/NoConfig no NVR")
                 needs_nvr_update = True
 
-            if best_ip and nvr_ip != best_ip:
-                issues.append(f"IP divergente no NVR ({nvr_ip or '-'} -> {best_ip})")
+            if target_ip and nvr_ip != target_ip and (best_ip or cam.get("nvr_mac_policy") == "empty"):
+                issues.append(f"IP divergente no NVR ({nvr_ip or '-'} -> {target_ip})")
                 needs_nvr_update = True
 
             if nvr_user_cfg != cam["user"] or nvr_pass_cfg != cam["password"]:
