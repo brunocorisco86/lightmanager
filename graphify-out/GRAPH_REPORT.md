@@ -1,7 +1,7 @@
-# Graph Report - 9_LIGHT_MANAGER  (2026-11-06)
+# Graph Report - 9_LIGHT_MANAGER  (2026-11-07)
 
 ## Corpus Check
-- 93 files · ~66,289 words
+- 93 files · ~66,338 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
@@ -10,7 +10,7 @@
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `acba85f5`
+- Built from commit: `2bd23168`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 

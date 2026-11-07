@@ -234,10 +234,21 @@ def discover_xiongmai_udp(timeout: float = 2.0) -> dict[str, dict]:
     return discovered
 
 
-def probe_camera_endpoint(ip: str, port: int, protocol: str, user: str, password: str, timeout: float = 3.5, retries: int = 2) -> dict:
+def probe_camera_endpoint(
+    ip: str,
+    port: int,
+    protocol: str,
+    user: str,
+    password: str,
+    timeout: float = 3.5,
+    retries: int = 2,
+    lightweight: bool = False,
+) -> dict:
     """
     Testa a conectividade e autenticação real de uma câmera em um IP específico
     com retry contra jitter momentâneo de Wi-Fi.
+    Se lightweight=True (usado quando o canal já está Connected no NVR), mede
+    apenas o handshake TCP para não disputar sessão DVRIP no meio do stream Wi-Fi.
     Retorna {"ok": bool, "latency_ms": float | None, "error": str | None, "locked_206": bool}.
     """
     if not ip:
@@ -246,7 +257,7 @@ def probe_camera_endpoint(ip: str, port: int, protocol: str, user: str, password
     last_err = None
     for _ in range(max(1, retries)):
         t0 = time.perf_counter()
-        if protocol.upper() == "ONVIF" or port == 5000:
+        if lightweight or protocol.upper() == "ONVIF" or port == 5000:
             try:
                 s = socket.create_connection((ip, port), timeout=timeout)
                 s.close()
@@ -329,6 +340,8 @@ def build_decoder_entry(cam: dict, target_ip: str, template_entry: dict | None =
     dec["UserName"] = cam["user"]
     dec["PassWord"] = cam["password"]
     dec["MacAddr"] = expected_nvr_mac(cam)
+    if cam.get("code") == "D01":
+        dec["Interval"] = max(int(dec.get("Interval") or 10), 20)
     return entry
 
 
@@ -407,7 +420,12 @@ def evaluate_and_heal(
 
             for cand_ip in candidate_ips:
                 probe = probe_camera_endpoint(
-                    cand_ip, cam["port"], cam["protocol"], cam["user"], cam["password"]
+                    cand_ip,
+                    cam["port"],
+                    cam["protocol"],
+                    cam["user"],
+                    cam["password"],
+                    lightweight=(nvr_status == "Connected" and cand_ip == nvr_ip),
                 )
                 if probe["ok"]:
                     best_ip = cand_ip

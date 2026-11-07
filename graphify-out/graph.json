@@ -5929,7 +5929,7 @@
       "file_type": "code",
       "norm_label": "build_decoder_entry()",
       "source_file": "scripts/camera_watchdog.py",
-      "source_location": "L289"
+      "source_location": "L300"
     },
     {
       "id": "scripts_camera_watchdog_discover_xiongmai_udp",
@@ -5953,7 +5953,7 @@
       "file_type": "code",
       "norm_label": "evaluate_and_heal()",
       "source_file": "scripts/camera_watchdog.py",
-      "source_location": "L335"
+      "source_location": "L348"
     },
     {
       "id": "scripts_camera_watchdog_expected_nvr_mac",
@@ -5965,7 +5965,7 @@
       "file_type": "code",
       "norm_label": "expected_nvr_mac()",
       "source_file": "scripts/camera_watchdog.py",
-      "source_location": "L279"
+      "source_location": "L290"
     },
     {
       "id": "scripts_camera_watchdog_fetch_lansentry_mac_map",
@@ -6001,7 +6001,7 @@
       "file_type": "code",
       "norm_label": "main()",
       "source_file": "scripts/camera_watchdog.py",
-      "source_location": "L508"
+      "source_location": "L526"
     },
     {
       "id": "scripts_camera_watchdog_probe_camera_endpoint",
@@ -15406,7 +15406,7 @@
       "source_location": "L183"
     },
     {
-      "id": "scripts_camera_watchdog_rationale_238",
+      "id": "scripts_camera_watchdog_rationale_247",
       "label": "Testa a conectividade e autentica\u00e7\u00e3o real de uma c\u00e2mera em um IP espec\u00edfico com\u2026",
       "_origin": "ast",
       "community": 61,
@@ -15414,10 +15414,10 @@
       "file_type": "rationale",
       "norm_label": "testa a conectividade e autenticacao real de uma camera em um ip especifico com...",
       "source_file": "scripts/camera_watchdog.py",
-      "source_location": "L238"
+      "source_location": "L247"
     },
     {
-      "id": "scripts_camera_watchdog_rationale_280",
+      "id": "scripts_camera_watchdog_rationale_291",
       "label": "Retorna o valor esperado do campo MacAddr no NVR conforme a pol\u00edtica de cada\u2026",
       "_origin": "ast",
       "community": 61,
@@ -15425,10 +15425,10 @@
       "file_type": "rationale",
       "norm_label": "retorna o valor esperado do campo macaddr no nvr conforme a politica de cada...",
       "source_file": "scripts/camera_watchdog.py",
-      "source_location": "L280"
+      "source_location": "L291"
     },
     {
-      "id": "scripts_camera_watchdog_rationale_290",
+      "id": "scripts_camera_watchdog_rationale_301",
       "label": "Constr\u00f3i a estrutura de canal para NetWork.RemoteDeviceV3[idx].",
       "_origin": "ast",
       "community": 61,
@@ -15436,10 +15436,10 @@
       "file_type": "rationale",
       "norm_label": "constroi a estrutura de canal para network.remotedevicev3[idx].",
       "source_file": "scripts/camera_watchdog.py",
-      "source_location": "L290"
+      "source_location": "L301"
     },
     {
-      "id": "scripts_camera_watchdog_rationale_344",
+      "id": "scripts_camera_watchdog_rationale_357",
       "label": "Executa a auditoria completa de sa\u00fade das 6 c\u00e2meras cruzando NVR, LanSentry e\u2026",
       "_origin": "ast",
       "community": 61,
@@ -15447,7 +15447,7 @@
       "file_type": "rationale",
       "norm_label": "executa a auditoria completa de saude das 6 cameras cruzando nvr, lansentry e...",
       "source_file": "scripts/camera_watchdog.py",
-      "source_location": "L344"
+      "source_location": "L357"
     },
     {
       "id": "scripts_nvr_tool_rationale_118",
@@ -17456,7 +17456,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "scripts/camera_watchdog.py",
-      "source_location": "L331",
+      "source_location": "L342",
       "weight": 1.0
     },
     {
@@ -17480,7 +17480,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "scripts/camera_watchdog.py",
-      "source_location": "L353",
+      "source_location": "L366",
       "weight": 1.0
     },
     {
@@ -17492,7 +17492,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "scripts/camera_watchdog.py",
-      "source_location": "L354",
+      "source_location": "L367",
       "weight": 1.0
     },
     {
@@ -17504,7 +17504,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "scripts/camera_watchdog.py",
-      "source_location": "L356",
+      "source_location": "L369",
       "weight": 1.0
     },
     {
@@ -17516,7 +17516,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "scripts/camera_watchdog.py",
-      "source_location": "L409",
+      "source_location": "L422",
       "weight": 1.0
     },
     {
@@ -17528,7 +17528,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "scripts/camera_watchdog.py",
-      "source_location": "L420",
+      "source_location": "L438",
       "weight": 1.0
     },
     {
@@ -17540,7 +17540,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "scripts/camera_watchdog.py",
-      "source_location": "L457",
+      "source_location": "L475",
       "weight": 1.0
     },
     {
@@ -17552,7 +17552,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "scripts/camera_watchdog.py",
-      "source_location": "L528",
+      "source_location": "L546",
       "weight": 1.0
     },
     {
@@ -17564,7 +17564,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "scripts/camera_watchdog.py",
-      "source_location": "L260",
+      "source_location": "L271",
       "weight": 1.0
     },
     {
@@ -39144,7 +39144,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "scripts/camera_watchdog.py",
-      "source_location": "L279",
+      "source_location": "L290",
       "weight": 1.0
     },
     {
@@ -39155,7 +39155,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "scripts/camera_watchdog.py",
-      "source_location": "L289",
+      "source_location": "L300",
       "weight": 1.0
     },
     {
@@ -39166,7 +39166,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "scripts/camera_watchdog.py",
-      "source_location": "L335",
+      "source_location": "L348",
       "weight": 1.0
     },
     {
@@ -39177,7 +39177,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "scripts/camera_watchdog.py",
-      "source_location": "L508",
+      "source_location": "L526",
       "weight": 1.0
     },
     {
@@ -50005,47 +50005,47 @@
       "weight": 1.0
     },
     {
-      "source": "scripts_camera_watchdog_rationale_238",
+      "source": "scripts_camera_watchdog_rationale_247",
       "target": "scripts_camera_watchdog_probe_camera_endpoint",
       "relation": "rationale_for",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "scripts/camera_watchdog.py",
-      "source_location": "L238",
+      "source_location": "L247",
       "weight": 1.0
     },
     {
-      "source": "scripts_camera_watchdog_rationale_280",
+      "source": "scripts_camera_watchdog_rationale_291",
       "target": "scripts_camera_watchdog_expected_nvr_mac",
       "relation": "rationale_for",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "scripts/camera_watchdog.py",
-      "source_location": "L280",
+      "source_location": "L291",
       "weight": 1.0
     },
     {
-      "source": "scripts_camera_watchdog_rationale_290",
+      "source": "scripts_camera_watchdog_rationale_301",
       "target": "scripts_camera_watchdog_build_decoder_entry",
       "relation": "rationale_for",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "scripts/camera_watchdog.py",
-      "source_location": "L290",
+      "source_location": "L301",
       "weight": 1.0
     },
     {
-      "source": "scripts_camera_watchdog_rationale_344",
+      "source": "scripts_camera_watchdog_rationale_357",
       "target": "scripts_camera_watchdog_evaluate_and_heal",
       "relation": "rationale_for",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "scripts/camera_watchdog.py",
-      "source_location": "L344",
+      "source_location": "L357",
       "weight": 1.0
     },
     {
@@ -52256,5 +52256,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "acba85f51ae6b7963c6b497b83d458ebaa730e9e"
+  "built_at_commit": "2bd231684315e7ca0d3b28a3aa2c16fa2786522d"
 }
