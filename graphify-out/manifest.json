@@ -618,15 +618,15 @@
     "semantic_hash": ""
   },
   "scripts/camera_watchdog.py": {
-    "mtime": 1794021456.7065423,
-    "seen": 1794021483.2593994,
-    "ast_hash": "072dbc2e1690a51a1e0009b67667d7c1",
+    "mtime": 1794022134.346123,
+    "seen": 1794022164.5214343,
+    "ast_hash": "d363693f5f286707e0895c10a5e61ef8",
     "semantic_hash": ""
   },
   "tests/test_camera_watchdog.py": {
-    "mtime": 1794019673.1717882,
-    "seen": 1794019901.1883986,
-    "ast_hash": "c1334ea33ffe3fc62af606af63321494",
+    "mtime": 1794021575.0221515,
+    "seen": 1794022164.5214934,
+    "ast_hash": "a743f51ad94c83bd6097a754f3c448f0",
     "semantic_hash": ""
   },
   ".agents/skills/ip_cameras/SKILL.md": {

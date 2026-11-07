@@ -5953,7 +5953,7 @@
       "file_type": "code",
       "norm_label": "evaluate_and_heal()",
       "source_file": "scripts/camera_watchdog.py",
-      "source_location": "L348"
+      "source_location": "L350"
     },
     {
       "id": "scripts_camera_watchdog_expected_nvr_mac",
@@ -6001,7 +6001,7 @@
       "file_type": "code",
       "norm_label": "main()",
       "source_file": "scripts/camera_watchdog.py",
-      "source_location": "L526"
+      "source_location": "L528"
     },
     {
       "id": "scripts_camera_watchdog_probe_camera_endpoint",
@@ -15439,7 +15439,7 @@
       "source_location": "L301"
     },
     {
-      "id": "scripts_camera_watchdog_rationale_357",
+      "id": "scripts_camera_watchdog_rationale_359",
       "label": "Executa a auditoria completa de sa\u00fade das 6 c\u00e2meras cruzando NVR, LanSentry e\u2026",
       "_origin": "ast",
       "community": 61,
@@ -15447,7 +15447,7 @@
       "file_type": "rationale",
       "norm_label": "executa a auditoria completa de saude das 6 cameras cruzando nvr, lansentry e...",
       "source_file": "scripts/camera_watchdog.py",
-      "source_location": "L357"
+      "source_location": "L359"
     },
     {
       "id": "scripts_nvr_tool_rationale_118",
@@ -17480,7 +17480,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "scripts/camera_watchdog.py",
-      "source_location": "L366",
+      "source_location": "L368",
       "weight": 1.0
     },
     {
@@ -17492,7 +17492,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "scripts/camera_watchdog.py",
-      "source_location": "L367",
+      "source_location": "L369",
       "weight": 1.0
     },
     {
@@ -17504,7 +17504,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "scripts/camera_watchdog.py",
-      "source_location": "L369",
+      "source_location": "L371",
       "weight": 1.0
     },
     {
@@ -17516,7 +17516,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "scripts/camera_watchdog.py",
-      "source_location": "L422",
+      "source_location": "L424",
       "weight": 1.0
     },
     {
@@ -17528,7 +17528,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "scripts/camera_watchdog.py",
-      "source_location": "L438",
+      "source_location": "L440",
       "weight": 1.0
     },
     {
@@ -17540,7 +17540,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "scripts/camera_watchdog.py",
-      "source_location": "L475",
+      "source_location": "L477",
       "weight": 1.0
     },
     {
@@ -17552,7 +17552,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "scripts/camera_watchdog.py",
-      "source_location": "L546",
+      "source_location": "L548",
       "weight": 1.0
     },
     {
@@ -39166,7 +39166,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "scripts/camera_watchdog.py",
-      "source_location": "L348",
+      "source_location": "L350",
       "weight": 1.0
     },
     {
@@ -39177,7 +39177,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "scripts/camera_watchdog.py",
-      "source_location": "L526",
+      "source_location": "L528",
       "weight": 1.0
     },
     {
@@ -50038,14 +50038,14 @@
       "weight": 1.0
     },
     {
-      "source": "scripts_camera_watchdog_rationale_357",
+      "source": "scripts_camera_watchdog_rationale_359",
       "target": "scripts_camera_watchdog_evaluate_and_heal",
       "relation": "rationale_for",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "scripts/camera_watchdog.py",
-      "source_location": "L357",
+      "source_location": "L359",
       "weight": 1.0
     },
     {
@@ -52256,5 +52256,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "2bd231684315e7ca0d3b28a3aa2c16fa2786522d"
+  "built_at_commit": "5b2dd134885a1f344729f46bfbb964ea0eb22bd2"
 }

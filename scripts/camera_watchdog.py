@@ -342,6 +342,8 @@ def build_decoder_entry(cam: dict, target_ip: str, template_entry: dict | None =
     dec["MacAddr"] = expected_nvr_mac(cam)
     if cam.get("code") == "D01":
         dec["Interval"] = max(int(dec.get("Interval") or 10), 20)
+        dec["ConfName"] = "chConfig"
+        dec["SerialNo"] = ""
     return entry
 
 
