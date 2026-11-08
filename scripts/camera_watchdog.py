@@ -61,6 +61,7 @@ CAMERA_CATALOG = [
         "password": "7prkra",
         "wifi_ap": "quarto (192.168.1.44)",
         "nvr_mac_policy": "empty",  # Evita que o NVR sobrescreva .201 com o IP DHCP (.13)
+        "disable_night_led": True,  # Opção A: desliga 100% dos LEDs internos (IR + Branco) p/ preservar RF à noite
     },
     {
         "channel": 2,
@@ -297,6 +298,89 @@ def expected_nvr_mac(cam: dict) -> str:
     return ""
 
 
+def ensure_night_led_disabled(cam: dict, ip: str, dry_run: bool = False) -> str | None:
+    """
+    Garante que câmeras marcadas com disable_night_led=True (ex: D01) operem com
+    100% dos LEDs internos (IR + Branco) desligados (Opção A: DayNightColor=0x00000001,
+    WhiteLight=Close, LowLuxMode=1, FbExtraStateCtrl.ison=0), eliminando queda de
+    tensão/RF ao anoitecer. Usa flag persistente para não abrir sessão após aplicado.
+    """
+    if not cam.get("disable_night_led") or not ip:
+        return None
+
+    logs_dir = os.path.join(PROJECT_ROOT, "logs")
+    os.makedirs(logs_dir, exist_ok=True)
+    flag_path = os.path.join(logs_dir, f".{cam['code'].lower()}_night_led_off.flag")
+    if os.path.exists(flag_path):
+        return None
+
+    client = DVRIPClient(ip, cam["port"], cam["user"], cam["password"], timeout=4.0)
+    try:
+        client.connect_and_login()
+        wl = client.get_config("Camera.WhiteLight").get("Camera.WhiteLight")
+        cp = client.get_config("Camera.Param").get("Camera.Param")
+        cpe = client.get_config("Camera.ParamEx").get("Camera.ParamEx")
+        fb = client.get_config("FbExtraStateCtrl").get("FbExtraStateCtrl")
+
+        wl_ok = isinstance(wl, dict) and wl.get("WorkMode") == "Close" and wl.get("Brightness") == 0
+        cp_ok = isinstance(cp, list) and len(cp) > 0 and cp[0].get("DayNightColor") == "0x00000001"
+        cpe_ok = isinstance(cpe, list) and len(cpe) > 0 and cpe[0].get("LowLuxMode") == 1
+        fb_ok = not isinstance(fb, dict) or fb.get("ison") == 0
+
+        if wl_ok and cp_ok and cpe_ok and fb_ok:
+            if not dry_run:
+                with open(flag_path, "w", encoding="utf-8") as f:
+                    f.write(datetime.now(SP_TZ).isoformat())
+            return None
+
+        if dry_run:
+            return f"[{cam['code']}] [DRY-RUN] Desativar LEDs noturnos internos (Opção A) em {ip}"
+
+        rets = []
+        if isinstance(wl, dict):
+            wl_new = copy.deepcopy(wl)
+            wl_new["WorkMode"] = "Close"
+            wl_new["Brightness"] = 0
+            if isinstance(wl_new.get("WorkPeriod"), dict):
+                wl_new["WorkPeriod"]["Enable"] = 0
+            if isinstance(wl_new.get("MoveTrigLight"), dict):
+                wl_new["MoveTrigLight"]["Level"] = 0
+            _, r1 = client.request(1040, {"Name": "Camera.WhiteLight", "SessionID": client.session_hex, "Camera.WhiteLight": wl_new})
+            rets.append(r1.get("Ret"))
+
+        if isinstance(cp, list) and len(cp) > 0:
+            cp_new = copy.deepcopy(cp)
+            for ch_p in cp_new:
+                if isinstance(ch_p, dict) and ch_p.get("DayNightColor") not in (None, "0x00000000"):
+                    ch_p["DayNightColor"] = "0x00000001"
+            cp_new[0]["DayNightColor"] = "0x00000001"
+            _, r2 = client.request(1040, {"Name": "Camera.Param", "SessionID": client.session_hex, "Camera.Param": cp_new})
+            rets.append(r2.get("Ret"))
+
+        if isinstance(cpe, list) and len(cpe) > 0:
+            cpe_new = copy.deepcopy(cpe)
+            cpe_new[0]["LowLuxMode"] = 1
+            _, r3 = client.request(1040, {"Name": "Camera.ParamEx", "SessionID": client.session_hex, "Camera.ParamEx": cpe_new})
+            rets.append(r3.get("Ret"))
+
+        if isinstance(fb, dict):
+            fb_new = copy.deepcopy(fb)
+            fb_new["ison"] = 0
+            fb_new["PlayVoiceTip"] = 0
+            _, r4 = client.request(1040, {"Name": "FbExtraStateCtrl", "SessionID": client.session_hex, "FbExtraStateCtrl": fb_new})
+            rets.append(r4.get("Ret"))
+
+        if rets and all(r == 100 for r in rets):
+            with open(flag_path, "w", encoding="utf-8") as f:
+                f.write(datetime.now(SP_TZ).isoformat())
+            return f"[{cam['code']}] LEDs noturnos internos (IR + Branco) desativados permanentemente em {ip} (Ret={rets})"
+    except Exception as e:
+        print(f"⚠️ [{cam['code']}] Aviso ao verificar/desativar LEDs noturnos em {ip}: {e}")
+    finally:
+        client.close()
+    return None
+
+
 def build_decoder_entry(cam: dict, target_ip: str, template_entry: dict | None = None) -> dict:
     """Constrói a estrutura de canal para NetWork.RemoteDeviceV3[idx]."""
     if template_entry and isinstance(template_entry, dict) and template_entry.get("Decoder"):
@@ -474,6 +558,11 @@ def evaluate_and_heal(
 
             if best_probe["ok"]:
                 health_str = f"🟢 OK ({best_probe['latency_ms']} ms)"
+                if apply_heal and cam.get("disable_night_led") and best_ip:
+                    led_msg = ensure_night_led_disabled(cam, best_ip, dry_run=dry_run)
+                    if led_msg:
+                        actions_taken.append(led_msg)
+                        issues.append("LEDs noturnos internos desativados (Opção A)")
             elif best_probe["locked_206"]:
                 health_str = "🔒 Ret=206 (Lock)"
                 issues.append("Conta bloqueada temporariamente (30m)")
