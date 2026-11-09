@@ -1,16 +1,16 @@
-# Graph Report - 9_LIGHT_MANAGER  (2026-11-08)
+# Graph Report - 9_LIGHT_MANAGER  (2026-11-09)
 
 ## Corpus Check
-- 99 files · ~70,386 words
+- 99 files · ~70,790 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 1458 nodes · 3096 edges · 106 communities (68 shown, 33 thin omitted)
+- 1462 nodes · 3100 edges · 114 communities (68 shown, 41 thin omitted)
 - Extraction: 96% EXTRACTED · 4% INFERRED · 0% AMBIGUOUS · INFERRED: 116 edges (avg confidence: 0.85)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `520761e9`
+- Built from commit: `ba8ae4e8`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -25,7 +25,7 @@
 - Light Manager
 - P2
 - What You Must Do When Invoked
-- s
+- .notifyPlugins
 - fetch_solar_forecast
 - Light Manager Workspace Rules
 - 📦 Configuração de Backup: Cloudflare R2
@@ -69,11 +69,11 @@
 - restart_solar.sh
 - setup.sh
 - update_hosts.sh
-- no
+- ._generate
 - updateElements
-- bt
+- bn
 - DVRIPClient
-- bo
+- u
 - va
 - inRange
 - d
@@ -87,30 +87,38 @@
 - zt
 - eo
 - n
-- .add
-- de
+- wo
+- rs
 - ns
 - TestSolarWorkerPerformance
-- getPixelForValue
+- s
 - hi
 - fix_flapping_data.py
 - Diário de Alterações (Changelog) - 01/08/2026 (Roadmap Fotovoltaico Completo)
-- ko
+- .getUserBounds
 - Skill: NVR XiongMai `NBD88X09S-KL` (`nvr_xiongmai`)
 - graphify reference: extra exports and benchmark
-- ⚡ 6. Implementações do Dia 25/06/2026 (Persistência de Override Manual e Correção de Oscilação de Fallback)
+- .getContext
+- no
 - graphify reference: query, path, explain
-- da
+- e
+- .buildOrUpdateControllers
 - parse
-- rs
+- En
+- .getDatasetMeta
 - graphify reference: add a URL and watch a folder
+- ._resolveElementOptions
 - graphify reference: commit hook and native CLAUDE.md integration
 - graphify reference: incremental update and cluster-only
+- ._dataCheck
 - graphify reference: GitHub clone and cross-repo merge
+- generateLabels
 - graphify reference: transcribe video and audio
 - extraction-spec.md
+- ._update
+- beforeLayout
 - ☀️ 1. Resumo das Etapas Implementadas (Roadmap Solar)
-- 🔍 1. Problemas e Solicitações
+- DIARIO_ALTERACOES.md
 - ⚡ 5. Implementações do Dia 24/06/2026 (Time Sync Híbrido, Rollover e Tarifas ANEEL)
 - 🧠 8. Implementações do Dia 12/07/2026 (Housekeeping, Resiliência de DNS Unbound e Rate-limiting no Telegram)
 - 🔍 1. Problemas Identificados (Erros em Produção)
@@ -144,11 +152,11 @@
 ## Import Cycles
 - None detected.
 
-## Communities (106 total, 33 thin omitted)
+## Communities (114 total, 41 thin omitted)
 
 ### Community 0 - "Diário de Alterações (Changelog) - 21/06/2026"
-Cohesion: 0.25
-Nodes (8): ⛅ 3. Implementações do Dia 22/06/2026 (Sincronização Meteorológica), 🎙️ 7. Implementações do Dia 11/07/2026 (Comandos de Voz via Gemini API e Reorganização de Documentos), ☀️ 9. Implementações do Dia 04/08/2026 (Exibição de Geração e Saúde Solar no Comando `/status` do Bot Telegram), Diário de Alterações (Changelog) - 21/06/2026, 📊 Integração do Status Solar ao Comando `/status`, 🗣️ Reconhecimento de Comandos de Voz via Telegram Bot, 📂 Reorganização e Limpeza de Documentos (Eliminação de Redundâncias), 🌧️ Sincronização Inteligente de Offsets baseada em Cobertura de Nuvens
+Cohesion: 0.18
+Nodes (11): ⛅ 3. Implementações do Dia 22/06/2026 (Sincronização Meteorológica), ⚡ 6. Implementações do Dia 25/06/2026 (Persistência de Override Manual e Correção de Oscilação de Fallback), 🎙️ 7. Implementações do Dia 11/07/2026 (Comandos de Voz via Gemini API e Reorganização de Documentos), ☀️ 9. Implementações do Dia 04/08/2026 (Exibição de Geração e Saúde Solar no Comando `/status` do Bot Telegram), 🔄 Correção de Oscilação ao Ligar (Conflito de Fallback e Trigger Solar), Diário de Alterações (Changelog) - 21/06/2026, 📊 Integração do Status Solar ao Comando `/status`, 💾 Persistência de Decisão (Override Manual) (+3 more)
 
 ### Community 1 - "main.py"
 Cohesion: 0.06
@@ -186,9 +194,9 @@ Nodes (30): B-01 — Recompilar e gravar o firmware atual no Wemos (S/M) 🔴, B
 Cohesion: 0.08
 Nodes (24): For /graphify add and --watch, For /graphify query, For the commit hook and native CLAUDE.md integration, For --update and --cluster-only, /graphify, Honesty Rules, Interpreter guard for subcommands, Part A - Structural extraction for code files (+16 more)
 
-### Community 10 - "s"
-Cohesion: 0.17
-Nodes (15): b(), _calculateBarIndexPixels(), g(), _getStackCount(), _getStackIndex(), _getStacks(), is(), s() (+7 more)
+### Community 10 - ".notifyPlugins"
+Cohesion: 0.21
+Nodes (3): Ie(), ke(), wn()
 
 ### Community 11 - "fetch_solar_forecast"
 Cohesion: 0.08
@@ -203,8 +211,8 @@ Cohesion: 0.22
 Nodes (8): 1. Configuração no Painel Cloudflare, 2.1 Atualizar o `.env`, 2.2 Dependências, 2. Configuração no Servidor (Local), 3. Execução e Teste, 4. Agendamento (Crontab), 5. Política de Retenção e Custos (Free Tier), 📦 Configuração de Backup: Cloudflare R2
 
 ### Community 14 - "an"
-Cohesion: 0.05
-Nodes (21): addBox(), an(), ct(), fs(), ge(), generateLabels(), ke(), Mn() (+13 more)
+Cohesion: 0.13
+Nodes (3): an(), Mn(), reset()
 
 ### Community 15 - "⚡ Fluxo de Deploy em Produção"
 Cohesion: 0.22
@@ -227,8 +235,8 @@ Cohesion: 0.22
 Nodes (8): Valida se as bibliotecas críticas do bot estão instaladas., Verifica se as variáveis mínimas do bot existem no .env, Verifica se o arquivo bot.py não tem erros de sintaxe e pode ser carregado., Valida a execução sem exceções de NameError/TypeError da função…, test_bot_dependencies(), test_bot_env_vars(), test_bot_syntax(), test_get_solar_status_summary()
 
 ### Community 20 - "chart.min.js"
-Cohesion: 0.04
-Nodes (18): at(), be(), destroy(), es(), getMaxOverflow(), Ie(), Jo(), ln() (+10 more)
+Cohesion: 0.05
+Nodes (12): be(), destroy(), es(), Jo(), ln(), pe(), Qi(), rn() (+4 more)
 
 ### Community 21 - "⚡ Fluxo de Trabalho do Agente"
 Cohesion: 0.33
@@ -255,8 +263,8 @@ Cohesion: 0.40
 Nodes (4): Valida se as dependências do script de backup estão presentes no sistema., Garante que todas as variáveis necessárias para o backup no R2 estão no .env, test_backup_script_requirements(), test_r2_env_vars()
 
 ### Community 27 - "o"
-Cohesion: 0.10
-Nodes (30): a(), aa(), afterDatasetsUpdate(), ai(), cn(), dn(), draw(), e() (+22 more)
+Cohesion: 0.09
+Nodes (37): a(), aa(), at(), b(), cn(), dn(), draw(), Fn() (+29 more)
 
 ### Community 28 - "05_register_lights.py"
 Cohesion: 0.83
@@ -266,33 +274,33 @@ Nodes (3): get_db_connection(), init_db(), register_point()
 Cohesion: 0.83
 Nodes (3): create_user(), get_db_connection(), init_users_table()
 
-### Community 58 - "no"
-Cohesion: 0.07
-Nodes (14): beforeLayout(), buildLookupTable(), En, Fo(), _generate(), getDecimalForValue(), _getTimestampsForTable(), init() (+6 more)
+### Community 58 - "._generate"
+Cohesion: 0.17
+Nodes (7): buildLookupTable(), _generate(), _getTimestampsForTable(), initOffsets(), lt(), nt(), zo()
 
 ### Community 59 - "updateElements"
-Cohesion: 0.25
-Nodes (3): _calculateBarValuePixels(), getBasePixel(), updateElements()
+Cohesion: 0.21
+Nodes (4): Ae(), _calculateBarValuePixels(), getBasePixel(), updateElements()
 
-### Community 60 - "bt"
-Cohesion: 0.09
-Nodes (7): bt, Cs, fe(), ks(), nn(), os(), sn
+### Community 60 - "bn"
+Cohesion: 0.06
+Nodes (17): bn, bt, Cs, ei(), fe(), je(), ks(), nn() (+9 more)
 
 ### Community 61 - "DVRIPClient"
 Cohesion: 0.08
 Nodes (29): build_decoder_entry(), discover_xiongmai_udp(), ensure_night_led_disabled(), evaluate_and_heal(), expected_nvr_mac(), fetch_lansentry_mac_map(), hex_ip_to_str(), main() (+21 more)
 
+### Community 62 - "u"
+Cohesion: 0.23
+Nodes (5): addBox(), configure(), start(), u(), vn()
+
 ### Community 63 - "va"
-Cohesion: 0.06
-Nodes (23): Ae(), afterDraw(), afterEvent(), afterUpdate(), Bi(), Ci(), configure(), Ee() (+15 more)
+Cohesion: 0.07
+Nodes (15): afterDraw(), afterEvent(), afterUpdate(), f(), gs(), ki(), oa(), Oi() (+7 more)
 
 ### Community 64 - "inRange"
-Cohesion: 0.11
-Nodes (24): ao(), average(), dataset(), getCenterPoint(), ho(), Hs, _i(), index() (+16 more)
-
-### Community 65 - "d"
-Cohesion: 0.15
-Nodes (3): d(), Di(), kn()
+Cohesion: 0.14
+Nodes (21): ao(), average(), dataset(), getCenterPoint(), ho(), Hs, _i(), index() (+13 more)
 
 ### Community 66 - "test_web_api.py"
 Cohesion: 0.30
@@ -310,49 +318,41 @@ Nodes (21): fetch_monthly_solar_data(), generate_ai_monthly_consultant_report(),
 Cohesion: 0.27
 Nodes (5): patch, Valida se o manual_override é limpo no banco ao bater o minuto do gatilho solar., Valida se os horários de fallback enviados ao Wemos se ajustam aos offsets…, Verifica se o manual_override ativa o estado desejado forçado independentemente…, TestAutomationImprovements
 
-### Community 72 - ".getParsed"
-Cohesion: 0.33
-Nodes (3): getLabelAndValue(), getLabelForValue(), resolveDataElementOptions()
-
 ### Community 73 - "zt"
 Cohesion: 0.09
-Nodes (14): color(), Ft(), Gt(), It(), jt(), kt(), mt(), qt() (+6 more)
+Nodes (16): color(), Ee(), Ft(), Gt(), It(), jt(), kt(), Le() (+8 more)
 
 ### Community 74 - "eo"
-Cohesion: 0.17
-Nodes (4): ca(), Do(), eo(), Oe()
+Cohesion: 0.12
+Nodes (6): ca(), Do(), eo(), Gn(), Oe(), so()
 
 ### Community 75 - "n"
-Cohesion: 0.22
+Cohesion: 0.19
 Nodes (3): n(), ne(), numeric()
 
-### Community 76 - ".add"
-Cohesion: 0.20
-Nodes (8): ei(), j(), je(), qe(), ti(), vo(), wo(), ze()
+### Community 76 - "wo"
+Cohesion: 0.50
+Nodes (3): j(), vo(), wo()
 
-### Community 77 - "de"
-Cohesion: 0.18
-Nodes (5): ce(), de, dt(), he(), ia()
+### Community 77 - "rs"
+Cohesion: 0.06
+Nodes (14): ce(), ct(), de, dt(), fs(), ge(), he(), ls (+6 more)
 
-### Community 78 - "ns"
-Cohesion: 0.05
-Nodes (13): As(), beforeUpdate(), bn, initialize(), labelColor(), labelPointStyle(), ns(), on() (+5 more)
-
-### Community 80 - "getPixelForValue"
-Cohesion: 0.19
-Nodes (5): getPixelForTick(), getPixelForValue(), _getRuler(), In(), qs()
+### Community 80 - "s"
+Cohesion: 0.10
+Nodes (15): bo, _calculateBarIndexPixels(), et(), getPixelForTick(), getPixelForValue(), _getRuler(), _getStackCount(), _getStackIndex() (+7 more)
 
 ### Community 81 - "hi"
-Cohesion: 0.40
-Nodes (4): beforeDraw(), getRange(), hi(), Ni()
+Cohesion: 0.29
+Nodes (6): ai(), beforeDraw(), getRange(), hi(), Ni(), q()
 
 ### Community 84 - "Diário de Alterações (Changelog) - 01/08/2026 (Roadmap Fotovoltaico Completo)"
 Cohesion: 0.40
 Nodes (5): ⚡ 02/08/2026 - Correção de Oscilação de Luzes (Fuso Horário de Fallback MQTT BRT), 🧪 2. Validação & Deploy em Produção, 🛠️ Correções e Ajustes, 🐛 Diagnóstico do Problema (Luzes Piscando a Cada Minuto), Diário de Alterações (Changelog) - 01/08/2026 (Roadmap Fotovoltaico Completo)
 
-### Community 85 - "ko"
-Cohesion: 0.17
-Nodes (3): getValueForPixel(), ko, xo
+### Community 85 - ".getUserBounds"
+Cohesion: 0.11
+Nodes (6): determineDataLimits(), getValueForPixel(), is(), ko, pt(), xo
 
 ### Community 86 - "Skill: NVR XiongMai `NBD88X09S-KL` (`nvr_xiongmai`)"
 Cohesion: 0.10
@@ -362,21 +362,29 @@ Nodes (19): 📹 1. Catálogo Mestre das 6 Câmeras (`D01` a `D06`), 2.1 Dois Po
 Cohesion: 0.22
 Nodes (8): graphify reference: extra exports and benchmark, Step 6b - Wiki (only if --wiki flag), Step 7 - Neo4j export (only if --neo4j or --neo4j-push flag), Step 7a - FalkorDB export (only if --falkordb or --falkordb-push flag), Step 7b - SVG export (only if --svg flag), Step 7c - GraphML export (only if --graphml flag), Step 7d - MCP server (only if --mcp flag), Step 8 - Token reduction benchmark (only if total_words > 5000)
 
-### Community 88 - "⚡ 6. Implementações do Dia 25/06/2026 (Persistência de Override Manual e Correção de Oscilação de Fallback)"
-Cohesion: 0.67
-Nodes (3): ⚡ 6. Implementações do Dia 25/06/2026 (Persistência de Override Manual e Correção de Oscilação de Fallback), 🔄 Correção de Oscilação ao Ligar (Conflito de Fallback e Trigger Solar), 💾 Persistência de Decisão (Override Manual)
+### Community 88 - ".getContext"
+Cohesion: 0.21
+Nodes (5): beforeUpdate(), Bi(), Ci(), Fi(), initialize()
 
 ### Community 90 - "graphify reference: query, path, explain"
 Cohesion: 0.33
 Nodes (5): For /graphify explain, For /graphify path, graphify reference: query, path, explain, Step 0 — Constrained query expansion (REQUIRED before traversal), Step 1 — Traversal
 
-### Community 91 - "da"
-Cohesion: 0.15
-Nodes (13): beforeDatasetDraw(), beforeDatasetsDraw(), da(), ea(), fa(), ga(), ha, la() (+5 more)
+### Community 91 - "e"
+Cohesion: 0.10
+Nodes (21): beforeDatasetDraw(), beforeDatasetsDraw(), da(), e(), ea(), fa(), ga(), ha (+13 more)
+
+### Community 92 - ".buildOrUpdateControllers"
+Cohesion: 0.21
+Nodes (3): addElements(), removeBox(), stop()
 
 ### Community 93 - "parse"
-Cohesion: 0.14
-Nodes (10): buildTicks(), determineDataLimits(), Fn(), go(), ii(), parse(), parsePrimitiveData(), po() (+2 more)
+Cohesion: 0.16
+Nodes (5): buildTicks(), go(), ii(), parse(), po()
+
+### Community 94 - "En"
+Cohesion: 0.17
+Nodes (3): En, Fo(), init()
 
 ### Community 96 - "graphify reference: add a URL and watch a folder"
 Cohesion: 0.50
@@ -394,9 +402,9 @@ Nodes (3): For --cluster-only, For --update (incremental re-extraction), graphif
 Cohesion: 0.25
 Nodes (8): ☀️ 1. Resumo das Etapas Implementadas (Roadmap Solar), 📈 Etapa 1: Relatório Pós-Pôr do Sol com Gráfico Matplotlib Headless, 🔮 Etapa 2: Previsão Solar via Open-Meteo & Calibração Dinâmica, 📊 Etapa 3: Curva Sino de Potência no Dashboard Frontend Web, 🚨 Etapa 4: Alertas de Anomalia + Agente IA Especialista em Elétrica Solar (Gemini API), 🌧️ Etapa 5: Alerta Preventivo de Chuva (Drop Solar + Open-Meteo), 📊 Etapa 6: Relatório Mensal Consolidado + Agente Consultor IA (Cron Dia 01 às 06:30h), 🚀 Resiliência de Scraping por Endereço MAC (Inversor Solar)
 
-### Community 109 - "🔍 1. Problemas e Solicitações"
-Cohesion: 0.29
-Nodes (6): 🔍 1. Problemas e Solicitações, 🛠️ 2. Resumo de Execução em Produção, 🛡️ Definição de Guardrails do Agente, Diário de Alterações (Changelog) - 19/07/2026, 💾 Mosquitto persistence & Desgaste de Cartão SD (Overhead de I/O), 🧹 Prunagem de Banco de Dados e Logs (Housekeeping)
+### Community 109 - "DIARIO_ALTERACOES.md"
+Cohesion: 0.18
+Nodes (10): 🛡️ 08/11/2026 - Confiabilidade da Iluminação & Mitigações Pós-Incidente (Flapping Noturno), 🔍 1. Problemas e Solicitações, 🛠️ 2. Resumo de Execução em Produção, 🛡️ Definição de Guardrails do Agente, 🐛 Diagnóstico do Incidente (Madrugada de 07 e 08/11/2026), Diário de Alterações (Changelog), Diário de Alterações (Changelog) - 19/07/2026, 🛠️ Implementações e Mitigações Executadas (+2 more)
 
 ### Community 112 - "⚡ 5. Implementações do Dia 24/06/2026 (Time Sync Híbrido, Rollover e Tarifas ANEEL)"
 Cohesion: 0.40
@@ -419,18 +427,18 @@ Cohesion: 0.50
 Nodes (4): 💡 4. Implementações do Dia 23/06/2026 (Consumo e Resiliência), 🔌 Correção do Desligamento Precoce da Luz (Bug de Limite NTP), 🛡️ Fallback Local de Cronograma no Firmware (Wemos Offline), 📊 Registro de Duração e Consumo de Energia em kWh
 
 ## Knowledge Gaps
-- **194 isolated node(s):** `generate_daily.sh script`, `run_tests.sh script`, `PYTHONPATH`, `00_setup_python.sh script`, `01_setup_env.sh script` (+189 more)
-  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 441 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
-- **33 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **196 isolated node(s):** `generate_daily.sh script`, `run_tests.sh script`, `PYTHONPATH`, `00_setup_python.sh script`, `01_setup_env.sh script` (+191 more)
+  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 443 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+- **41 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `an()` connect `an` to `inRange`, `tn`, `s`, `.add`, `chart.min.js`, `o`, `va`?**
-  _High betweenness centrality (0.026) - this node is a cross-community bridge._
+- **Why does `an()` connect `an` to `inRange`, `generateLabels`, `.notifyPlugins`, `n`, `rs`, `bn`, `s`, `chart.min.js`, `.getContext`, `o`, `.buildOrUpdateControllers`, `u`, `.getDatasetMeta`?**
+  _High betweenness centrality (0.025) - this node is a cross-community bridge._
 - **Why does `fetch_solar_forecast()` connect `fetch_solar_forecast` to `main.py`, `solar_worker.py`?**
   _High betweenness centrality (0.016) - this node is a cross-community bridge._
-- **Why does `ns()` connect `ns` to `.getParsed`, `o`, `an`, `getPixelForValue`, `chart.min.js`, `updateElements`, `bt`, `parse`, `va`?**
+- **Why does `ns()` connect `ns` to `._resolveElementOptions`, `._dataCheck`, `.getParsed`, `o`, `._update`, `bn`, `chart.min.js`, `.getContext`, `._generate`, `updateElements`, `.buildOrUpdateControllers`, `parse`, `va`?**
   _High betweenness centrality (0.013) - this node is a cross-community bridge._
 - **Are the 12 inferred relationships involving `s()` (e.g. with `beforeUpdate()` and `da()`) actually correct?**
   _`s()` has 12 INFERRED edges - model-reasoned connections that need verification._
@@ -439,4 +447,4 @@ _Questions this graph is uniquely positioned to answer:_
 - **Are the 15 inferred relationships involving `a()` (e.g. with `ai()` and `cn()`) actually correct?**
   _`a()` has 15 INFERRED edges - model-reasoned connections that need verification._
 - **What connects `generate_daily.sh script`, `run_tests.sh script`, `PYTHONPATH` to the rest of the system?**
-  _194 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _196 weakly-connected nodes found - possible documentation gaps or missing edges._

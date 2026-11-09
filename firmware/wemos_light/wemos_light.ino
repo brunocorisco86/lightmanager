@@ -24,7 +24,7 @@ const char* mqtt_password = "blurbang";
 #define RELAY_ON LOW
 #define RELAY_OFF HIGH
 
-#define FW_VERSION "2026.11.1"
+#define FW_VERSION "2026.11.2"
 
 // Definições de Tópicos e Pinos
 const char* set_frente = "home/outdoor/frente/set";
@@ -34,6 +34,15 @@ const int pinFrente = D1;
 const char* set_fundos = "home/outdoor/fundos/set";
 const char* state_fundos = "home/outdoor/fundos/state";
 const int pinFundos = D2;
+
+// Canal 3 e 4 (Módulo de Relé Adicional de 2 Canais)
+const char* set_muro = "home/outdoor/muro/set";
+const char* state_muro = "home/outdoor/muro/state";
+const int pinMuro = D5; // GPIO14 (Muro / Câmeras)
+
+const char* set_aux = "home/outdoor/aux/set";
+const char* state_aux = "home/outdoor/aux/state";
+const int pinAux = D6;  // GPIO12 (Canal Reserva)
 
 const char* system_reboot = "home/outdoor/system/reboot";
 const char* status_topic = "home/outdoor/status";
@@ -134,6 +143,22 @@ void callback(char* topic, byte* payload, unsigned int length) {
       digitalWrite(pinFundos, RELAY_OFF);
       client.publish(state_fundos, "OFF", true);
     }
+  } else if (String(topic) == set_muro) {
+    if (messageTemp == "ON") {
+      digitalWrite(pinMuro, RELAY_ON);
+      client.publish(state_muro, "ON", true);
+    } else if (messageTemp == "OFF") {
+      digitalWrite(pinMuro, RELAY_OFF);
+      client.publish(state_muro, "OFF", true);
+    }
+  } else if (String(topic) == set_aux) {
+    if (messageTemp == "ON") {
+      digitalWrite(pinAux, RELAY_ON);
+      client.publish(state_aux, "ON", true);
+    } else if (messageTemp == "OFF") {
+      digitalWrite(pinAux, RELAY_OFF);
+      client.publish(state_aux, "OFF", true);
+    }
   } else if (String(topic) == system_reboot) {
     if (messageTemp == "REBOOT") {
       Serial.println("Comando REBOOT recebido via MQTT!");
@@ -189,6 +214,8 @@ boolean reconnect() {
     Serial.println("CONECTADO!");
     client.subscribe(set_frente);
     client.subscribe(set_fundos);
+    client.subscribe(set_muro);
+    client.subscribe(set_aux);
     client.subscribe(system_reboot);
     client.subscribe(fallback_on_topic);
     client.subscribe(fallback_off_topic);
@@ -196,6 +223,8 @@ boolean reconnect() {
     // Publica estado atual ao reconectar para sincronizar site
     client.publish(state_frente, (digitalRead(pinFrente) == RELAY_ON ? "ON" : "OFF"), true);
     client.publish(state_fundos, (digitalRead(pinFundos) == RELAY_ON ? "ON" : "OFF"), true);
+    client.publish(state_muro, (digitalRead(pinMuro) == RELAY_ON ? "ON" : "OFF"), true);
+    client.publish(state_aux, (digitalRead(pinAux) == RELAY_ON ? "ON" : "OFF"), true);
   } else {
     Serial.print("Falhou, rc=");
     Serial.println(client.state());
@@ -208,8 +237,12 @@ void setup() {
 
   digitalWrite(pinFrente, RELAY_OFF);
   digitalWrite(pinFundos, RELAY_OFF);
+  digitalWrite(pinMuro, RELAY_OFF);
+  digitalWrite(pinAux, RELAY_OFF);
   pinMode(pinFrente, OUTPUT);
   pinMode(pinFundos, OUTPUT);
+  pinMode(pinMuro, OUTPUT);
+  pinMode(pinAux, OUTPUT);
 
   setup_wifi();
 
@@ -298,6 +331,12 @@ void loop() {
       if (digitalRead(pinFundos) == RELAY_ON) {
         digitalWrite(pinFundos, RELAY_OFF);
       }
+      if (digitalRead(pinMuro) == RELAY_ON) {
+        digitalWrite(pinMuro, RELAY_OFF);
+      }
+      if (digitalRead(pinAux) == RELAY_ON) {
+        digitalWrite(pinAux, RELAY_OFF);
+      }
     }
 
     // Fallback Local por Horário (Caso perca conexão com o Broker MQTT de forma sustentada e relógio confiável)
@@ -341,6 +380,8 @@ void loop() {
       payload += q + "status" + q + ":" + q + "online" + q + ",";
       payload += q + "frente" + q + ":" + q + (digitalRead(pinFrente) == RELAY_ON ? "ON" : "OFF") + q + ",";
       payload += q + "fundos" + q + ":" + q + (digitalRead(pinFundos) == RELAY_ON ? "ON" : "OFF") + q + ",";
+      payload += q + "muro" + q + ":" + q + (digitalRead(pinMuro) == RELAY_ON ? "ON" : "OFF") + q + ",";
+      payload += q + "aux" + q + ":" + q + (digitalRead(pinAux) == RELAY_ON ? "ON" : "OFF") + q + ",";
       payload += q + "rssi" + q + ":" + String(WiFi.RSSI()) + ",";
       payload += q + "ip" + q + ":" + q + WiFi.localIP().toString() + q + ",";
       payload += q + "uptime_s" + q + ":" + String(uptime_sec) + ",";

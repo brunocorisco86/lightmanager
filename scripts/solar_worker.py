@@ -401,7 +401,7 @@ def on_message(client, userdata, msg):
         logging.info(f"💓 Heartbeat recebido do embarcado: {payload_str}")
         try:
             status_data = json.loads(payload_str)
-            for key in ["frente", "fundos"]:
+            for key in ["frente", "fundos", "muro", "aux"]:
                 if key in status_data:
                     sensor_topic = f"home/outdoor/{key}"
                     sensor_state = status_data[key]

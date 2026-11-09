@@ -2,6 +2,29 @@
 
 ---
 
+## ⚡ 09/11/2026 - Suporte a 4 Canais no Firmware Wemos D1 (Canais /muro e /aux)
+
+### 🚀 Demanda
+* Adicionar controle direto por hardware para o ponto **Muro** (`home/outdoor/muro`) e preparar um quarto canal **Auxiliar** (`home/outdoor/aux`) no Wemos D1 R1 para a instalação de um segundo módulo de relé duplo (2 canais adicionais).
+
+### 🛠️ Implementações Realizadas
+1. **Mapeamento de GPIOs e Tópicos no Firmware (`firmware/wemos_light/wemos_light.ino`)**:
+   - Atualizado para versão **`#define FW_VERSION "2026.11.2"`**.
+   - Mapeados os novos canais com segurança de boot (sem conflito com bootloader):
+     - **Canal 1:** Frente em `pinFrente = D1` (GPIO5)
+     - **Canal 2:** Fundos em `pinFundos = D2` (GPIO4)
+     - **Canal 3 (Novo):** Muro em `pinMuro = D5` (GPIO14) -> Tópicos: `home/outdoor/muro/set` e `home/outdoor/muro/state`
+     - **Canal 4 (Novo/Reserva):** Auxiliar em `pinAux = D6` (GPIO12) -> Tópicos: `home/outdoor/aux/set` e `home/outdoor/aux/state`
+   - Configurados como `OUTPUT` e inicializados com `RELAY_OFF` (Active Low) no `setup()` para prevenir acionamentos indesejados durante o boot.
+   - Adicionada subscrição MQTT e publicação de estado retido na reconexão.
+   - Adicionada telemetria de status de `muro` e `aux` no payload JSON de Heartbeat.
+2. **Atualização do Worker no Servidor (`scripts/solar_worker.py`)**:
+   - Sincronização automática de estados em memória para os tópicos `muro` e `aux` via leitura de heartbeat.
+3. **Binário Compilado**:
+   - Gerado novo [firmware/wemos_light/wemos_light.bin](file:///home/bruno/Documentos/4_HOMELAB/9_LIGHT_MANAGER/firmware/wemos_light/wemos_light.bin) via `arduino-cli` pronto para gravação física.
+
+---
+
 ## 🛡️ 08/11/2026 - Confiabilidade da Iluminação & Mitigações Pós-Incidente (Flapping Noturno)
 
 ### 🐛 Diagnóstico do Incidente (Madrugada de 07 e 08/11/2026)
