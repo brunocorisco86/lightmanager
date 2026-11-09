@@ -1,3 +1,35 @@
+# Diário de Alterações (Changelog)
+
+---
+
+## 🛡️ 08/11/2026 - Confiabilidade da Iluminação & Mitigações Pós-Incidente (Flapping Noturno)
+
+### 🐛 Diagnóstico do Incidente (Madrugada de 07 e 08/11/2026)
+* **Causa Raiz:** O firmware do ESP8266 Wemos D1 em execução apresentava divergência de relógio/timezone comportando-se com horário UTC adiantado em 3 horas. Exatamente às 02:55 BRT (correspondente a 05:55 UTC), ao atingir o horário de fallback de desligamento (`fallback_off = 05:55`), o Wemos determinava localmente que "já era dia" e abria os relés a cada minuto. O `solar_worker.py` detectava o desvio e religava, gerando um ciclo repetitivo de oscilação (flapping) por 3 horas seguidas até as 05:55 BRT.
+* **Impacto:** ~175 ciclos por noite, fragmentação de ~656 registros de micro-consumo elétrico no PostgreSQL.
+
+### 🛠️ Implementações e Mitigações Executadas
+1. **Compilação e Atualização do Firmware Wemos (`firmware/wemos_light/`)**:
+   - Atualizado para versão formal `#define FW_VERSION "2026.11.1"`.
+   - Adicionado no Heartbeat MQTT: `uptime_s`, `hhmm` (hora local segundo o ESP), `synced` (booleano de sincronização) e `fw`.
+   - Implementado sanity check de relógio (B-08): fallback por horário só atua se houver sincronização MQTT recente (`< 15 min`).
+   - Binário `wemos_light.bin` devidamente compilado e pronto para regravação física no sótão.
+2. **Detector de Flapping & Alertas no Servidor (`scripts/solar_worker.py`) [B-05]**:
+   - Implementado monitoramento de taxa de transições por deque em janela deslizante de 10 min.
+   - Detecção automática de flapping ($\ge 6$ transições em 10 min) com emissão de alerta estruturado no Telegram e ntfy (rate-limit de 1h).
+3. **Backoff Inteligente no Reforço de Estado (`scripts/solar_worker.py`) [B-07]**:
+   - Implementado throttle no envio de comandos forçados `/set`: a partir de 3 desvios consecutivos, espaça novos reforços para intervalos seguros de 5 minutos, protegendo os relés e o banco de dados contra loop infinito.
+4. **Telemetria de Clock Skew (`scripts/solar_worker.py`) [B-02]**:
+   - Detecção em tempo real de divergência entre o relógio informado pelo Wemos (`hhmm`) e o relógio local do Raspberry Pi (`BR_TZ`). Alerta preventivo automático no Telegram se $\Delta > 2\text{ min}$.
+5. **Auditoria e Script de Consolidação de Consumo (`scripts/fix_flapping_data.py`) [B-03]**:
+   - Script seguro para identificar e consolidar os micro-fragmentos de consumo com backup preventivo na tabela `light_consumption_backup_flapping` (modo padrão `--dry-run`).
+6. **Ferramenta de Auditoria Pós-Madrugada (`scripts/check_night_behavior.py`) [B-04]**:
+   - Utilitário rápido para verificar se a madrugada transcorreu de forma estável antes de realizar o flash.
+7. **Suíte de Testes Automatizados**:
+   - Criado [tests/test_flapping_regression.py](file:///home/bruno/Documentos/4_HOMELAB/9_LIGHT_MANAGER/tests/test_flapping_regression.py) cobrindo detector de flapping e skew de relógio. Suíte completa aprovada com 47 testes.
+
+---
+
 # Diário de Alterações (Changelog) - 01/08/2026 (Roadmap Fotovoltaico Completo)
 
 Este documento registra a implementação, testes e deploy em produção do **Roadmap de Inteligência Fotovoltaica** (Etapas 1 a 6) no Light Manager.

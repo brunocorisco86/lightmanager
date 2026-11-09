@@ -30,8 +30,11 @@ LOG_FILES = {
     "broker": "/var/log/mosquitto/mosquitto.log"
 }
 
-# Palavras-chave de erro
-ERROR_KEYWORDS = ["error", "fail", "erro", "exception", "traceback", "failed", "operationalerror", "dnserror"]
+# Palavras-chave de erro e anomalias de hardware
+ERROR_KEYWORDS = [
+    "error", "fail", "erro", "exception", "traceback", "failed", 
+    "operationalerror", "dnserror", "flapping", "desvio detectado"
+]
 
 # Expressões regulares para remover timestamps comuns na normalização
 TIMESTAMP_REGEXES = [
@@ -246,6 +249,10 @@ def main():
         # Ignora avisos leves, por exemplo, conexões do uvicorn normais que foram marcadas com erros secundários
         # ou problemas triviais de download de sol
         if "sun data unavailable" in norm_lower or "ping statistics" in norm_lower:
+            continue
+
+        # Desvios isolados (< 5 ocorrências) em viradas de horário são aceitáveis; >= 5 indica anomalia
+        if "desvio detectado" in norm_lower and data["count"] < 5:
             continue
 
         # GUARDRAIL SOLAR & METEOROLÓGICO:

@@ -108,9 +108,9 @@
     "semantic_hash": ""
   },
   "scripts/log_analyzer.py": {
-    "mtime": 1789525312.551428,
-    "seen": 1794096118.3416696,
-    "ast_hash": "4ddf59d0cb05ef48b79bcc1bff510832",
+    "mtime": 1794184542.2846372,
+    "seen": 1794184698.2240884,
+    "ast_hash": "21d13dc0d73d8f573c77c90d8ea471ee",
     "semantic_hash": ""
   },
   "scripts/manage_users.py": {
@@ -174,9 +174,9 @@
     "semantic_hash": ""
   },
   "scripts/solar_worker.py": {
-    "mtime": 1793925711.754783,
-    "seen": 1794096118.3417158,
-    "ast_hash": "729fe9cb8ec3960694563d754dbdd244",
+    "mtime": 1794184467.6612208,
+    "seen": 1794184698.2241116,
+    "ast_hash": "832bf2d8dd6cb180f8520a626b858a45",
     "semantic_hash": ""
   },
   "scripts/tariff_sync.py": {
@@ -633,6 +633,42 @@
     "mtime": 1794019599.8619661,
     "seen": 1794096118.3418267,
     "ast_hash": "5f9e63e542a7768f33543cb3af920269",
+    "semantic_hash": ""
+  },
+  "scripts/check_night_behavior.py": {
+    "mtime": 1794184648.174278,
+    "seen": 1794184698.2240806,
+    "ast_hash": "a27755f6b6e62131eb0a45a0dd27209f",
+    "semantic_hash": ""
+  },
+  "scripts/fix_flapping_data.py": {
+    "mtime": 1794184615.0887728,
+    "seen": 1794184698.224084,
+    "ast_hash": "b438fc18f035dfe169ba23cfc1836e46",
+    "semantic_hash": ""
+  },
+  "tests/test_flapping_regression.py": {
+    "mtime": 1794184492.5878463,
+    "seen": 1794184698.2241302,
+    "ast_hash": "af1e3a0b62d6b7c3b76f2dfd0d29a41d",
+    "semantic_hash": ""
+  },
+  "docs/BACKLOG.md": {
+    "mtime": 1794183783.745338,
+    "seen": 1794184698.224187,
+    "ast_hash": "323dd89c7d42523a619a6c67a62c6388",
+    "semantic_hash": ""
+  },
+  "docs/RELATORIO_INCIDENTE_2026-11-08.md": {
+    "mtime": 1794183802.4609818,
+    "seen": 1794184698.224189,
+    "ast_hash": "30599086d1bfe6027c0590d56ab2f7f3",
+    "semantic_hash": ""
+  },
+  "docs/ROADMAP_CONFIABILIDADE.md": {
+    "mtime": 1794183798.4758437,
+    "seen": 1794184698.2241912,
+    "ast_hash": "4f324302ee85f45314d66a4df30053d2",
     "semantic_hash": ""
   }
 }

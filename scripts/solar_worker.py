@@ -8,6 +8,7 @@ import logging
 import threading
 import paho.mqtt.client as mqtt
 from datetime import datetime, timedelta, date, timezone
+from collections import deque
 from dotenv import load_dotenv
 
 # Carrega configurações
@@ -66,6 +67,46 @@ camera_timers_lock = threading.Lock()
 last_nvr_detection_ts = {}
 NVR_DEBOUNCE_SECONDS = int(os.getenv("NVR_DEBOUNCE_SECONDS", "15"))
 NVR_LOG_FILE = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "logs", "nvr.log"))
+
+# Monitoramento de Oscilação (Flapping) e Proteção de Backoff (B-05 e B-07)
+transition_history = {}       # topic -> deque([timestamp, ...])
+last_flapping_alert_ts = {}   # topic -> timestamp do último alerta
+deviation_counts = {}         # topic -> contagem de desvios consecutivos
+last_enforcement_ts = {}      # topic -> timestamp da última publicação forçada
+last_clock_skew_alert_ts = 0  # timestamp do último alerta de skew de relógio
+clock_skew_alert_lock = threading.Lock()
+
+def check_and_record_transition(topic):
+    """Registra transições e detecta oscilações anômalas (flapping) em tópicos críticos."""
+    now_ts = time.time()
+    if topic not in transition_history:
+        transition_history[topic] = deque()
+    dq = transition_history[topic]
+    dq.append(now_ts)
+    # Remove transições ocorridas há mais de 10 minutos (600s)
+    while dq and (now_ts - dq[0] > 600):
+        dq.popleft()
+    
+    # Se for ponto principal de iluminação e tiver >= 6 transições em 10 min
+    if len(dq) >= 6 and topic in ("home/outdoor/frente", "home/outdoor/fundos"):
+        last_alert = last_flapping_alert_ts.get(topic, 0)
+        if now_ts - last_alert > 3600:  # Limita a 1 alerta por hora por tópico
+            last_flapping_alert_ts[topic] = now_ts
+            count = len(dq)
+            msg = (
+                f"🚨 *Alerta de Oscilação (Flapping)*\n"
+                f"Luz: `{topic}`\n"
+                f"Detectadas *{count} transições* nos últimos 10 minutos!\n"
+                f"Proteção de backoff ativada pelo Solar Worker."
+            )
+            logging.error(f"🚨 Flapping severo detectado em {topic}: {count} transições em 10 min!")
+            send_telegram_message(msg)
+            send_ntfy_message(
+                f"Oscilação excessiva em {topic}: {count} alternâncias em 10 min",
+                title="🚨 Alerta de Flapping",
+                priority="4",
+                tags="warning,repeat"
+            )
 
 def send_telegram_message(text):
     """Envia uma notificação para o Telegram com tratamento de Rate-Limiting e retentativas."""
@@ -368,7 +409,44 @@ def on_message(client, userdata, msg):
                         old_state = current_states.get(sensor_topic, "DESCONHECIDO")
                         current_states[sensor_topic] = sensor_state
                         logging.info(f"🔄 Sincronizado via Heartbeat em {sensor_topic}: {old_state} -> {sensor_state}")
+                        check_and_record_transition(sensor_topic)
                         log_event_to_db(sensor_topic, sensor_state, source="heartbeat_sync")
+            
+            # Telemetria expandida e diagnóstico de horário (B-02)
+            wemos_hhmm = status_data.get("hhmm")
+            wemos_fw = status_data.get("fw", "antigo/desconhecido")
+            wemos_uptime = status_data.get("uptime_s")
+            wemos_synced = status_data.get("synced")
+
+            if wemos_hhmm and wemos_hhmm != "??:??":
+                server_now = datetime.now(BR_TZ)
+                server_hhmm = server_now.strftime("%H:%M")
+                try:
+                    w_h, w_m = map(int, wemos_hhmm.split(":"))
+                    s_h, s_m = server_now.hour, server_now.minute
+                    diff_minutes = abs((s_h * 60 + s_m) - (w_h * 60 + w_m))
+                    if diff_minutes > 720:
+                        diff_minutes = 1440 - diff_minutes
+                    
+                    if diff_minutes > 2:
+                        logging.warning(
+                            f"⏱️ Skew de relógio detectado no Wemos: Wemos={wemos_hhmm}, Servidor={server_hhmm} "
+                            f"(Divergência: {diff_minutes} min, FW: {wemos_fw})"
+                        )
+                        global last_clock_skew_alert_ts
+                        with clock_skew_alert_lock:
+                            if time.time() - last_clock_skew_alert_ts > 7200:  # Limita alerta a cada 2h
+                                last_clock_skew_alert_ts = time.time()
+                                send_telegram_message(
+                                    f"⏱️ *Divergência de Horário no Embarcado*\n"
+                                    f"Horário Wemos: `{wemos_hhmm}`\n"
+                                    f"Horário Servidor: `{server_hhmm}`\n"
+                                    f"Divergência: `{diff_minutes} min`\n"
+                                    f"Firmware: `{wemos_fw}`"
+                                )
+                except Exception as e_time:
+                    logging.debug(f"Erro ao validar skew de relógio: {e_time}")
+
         except Exception as e:
             logging.error(f"Erro ao processar heartbeat JSON: {e}")
         return
@@ -382,6 +460,7 @@ def on_message(client, userdata, msg):
         old_state = current_states.get(topic, "DESCONHECIDO")
         current_states[topic] = state
         logging.info(f"🔄 Transição de estado em {topic}: {old_state} -> {state}")
+        check_and_record_transition(topic)
         log_event_to_db(topic, state, source="mqtt_capture")
 
 def fetch_sun_data_with_retry(max_retries=5):
@@ -540,16 +619,41 @@ def run_automation_cycle(client):
                 
             current_state = current_states.get(topic)
 
-            # 2. Reforço de Estado (Fallback para queda de energia ou hardware offline)
+            # 2. Reforço de Estado com Backoff Inteligente (B-07)
             # Se o estado atual conhecido é diferente do desejado, ou se for virada de hora, reforçamos o comando
+            now_ts = time.time()
             if current_state is None or current_state != desired_state or is_hourly_check:
+                should_publish = True
                 if current_state is None:
                     logging.warning(f"❓ Estado desconhecido em {topic}. Forçando estado desejado={desired_state}")
                 elif is_hourly_check:
                     logging.info(f"⏰ Reforço Horário em {topic}: Forçando estado desejado={desired_state}")
                 else:
-                    logging.warning(f"⚠️ Desvio detectado em {topic}: Atual={current_state}, Desejado={desired_state}. Reforçando...")
-                client.publish(f"{topic}/set", desired_state, qos=1, retain=True)
+                    dev_count = deviation_counts.get(topic, 0) + 1
+                    deviation_counts[topic] = dev_count
+                    last_enforce = last_enforcement_ts.get(topic, 0)
+                    
+                    if dev_count >= 3:
+                        elapsed = now_ts - last_enforce
+                        if elapsed < 300:  # 5 minutos
+                            should_publish = False
+                            logging.warning(
+                                f"⏳ Backoff ativo em {topic}: {dev_count}º desvio consecutivo (Atual={current_state}, Desejado={desired_state}). "
+                                f"Próximo reforço liberado em {int(300 - elapsed)}s para proteger o hardware."
+                            )
+                        else:
+                            logging.warning(
+                                f"⚠️ Reforço pós-backoff em {topic}: {dev_count}º desvio consecutivo. Republicando {desired_state}..."
+                            )
+                    else:
+                        logging.warning(f"⚠️ Desvio detectado em {topic}: Atual={current_state}, Desejado={desired_state}. Reforçando...")
+
+                if should_publish:
+                    client.publish(f"{topic}/set", desired_state, qos=1, retain=True)
+                    last_enforcement_ts[topic] = now_ts
+            else:
+                if topic in deviation_counts and deviation_counts[topic] > 0:
+                    deviation_counts[topic] = 0
 
             # 3. Verificação Preventiva de Saúde (5 minutos antes do offset)
             check_time_on = (on_dt - timedelta(minutes=5)).strftime("%H:%M")

@@ -24,6 +24,8 @@ const char* mqtt_password = "blurbang";
 #define RELAY_ON LOW
 #define RELAY_OFF HIGH
 
+#define FW_VERSION "2026.11.1"
+
 // Definições de Tópicos e Pinos
 const char* set_frente = "home/outdoor/frente/set";
 const char* state_frente = "home/outdoor/frente/state";
@@ -47,6 +49,8 @@ unsigned long lastReconnectAttempt = 0;
 unsigned long lastHealthCheck = 0;
 unsigned long lastMqttConnected = 0;
 unsigned long lastWiFiConnected = 0;
+unsigned long lastTimeSyncMillis = 0;
+bool isClockSynced = false;
 
 int fallback_on_hour = 18;
 int fallback_on_minute = 15;
@@ -169,6 +173,8 @@ void callback(char* topic, byte* payload, unsigned int length) {
       settimeofday(&tv, nullptr);
       setenv("TZ", "BRT3", 1);
       tzset();
+      lastTimeSyncMillis = millis();
+      isClockSynced = true;
       Serial.print("Relogio local ajustado via MQTT para: ");
       Serial.println(epoch);
     }
@@ -279,12 +285,13 @@ void loop() {
     lastMsg = now;
 
     // Apenas ativa a rotina de fallback local se estiver sem conexão com o broker MQTT há mais de 2 minutos (120000ms)
-    // Isso evita acionamento precoce durante pequenas oscilações de keep-alive de rede.
+    // E apenas se o relógio local tiver sincronização MQTT recente e confiável (< 15 minutos).
     unsigned long mqtt_offline_duration = (lastMqttConnected > 0 && now > lastMqttConnected) ? (now - lastMqttConnected) : 0;
     bool is_mqtt_offline_sustained = (!client.connected() && mqtt_offline_duration > 120000);
+    bool is_clock_fresh = (isClockSynced && (now - lastTimeSyncMillis < 900000));
 
-    // Fallback de Segurança: Se virou dia, garante desligamento (apenas se desconectado do Broker de forma sustentada)
-    if (WiFi.status() == WL_CONNECTED && is_mqtt_offline_sustained && !isNightTime() && time(nullptr) > 1000000) {
+    // Fallback de Segurança: Se virou dia, garante desligamento (apenas se desconectado do Broker de forma sustentada e relógio confiável)
+    if (WiFi.status() == WL_CONNECTED && is_mqtt_offline_sustained && is_clock_fresh && !isNightTime() && time(nullptr) > 1000000) {
       if (digitalRead(pinFrente) == RELAY_ON) {
         digitalWrite(pinFrente, RELAY_OFF);
       }
@@ -293,8 +300,8 @@ void loop() {
       }
     }
 
-    // Fallback Local por Horário (Caso perca conexão com o Broker MQTT de forma sustentada)
-    if (WiFi.status() == WL_CONNECTED && is_mqtt_offline_sustained && has_fallback_times && time(nullptr) > 1000000) {
+    // Fallback Local por Horário (Caso perca conexão com o Broker MQTT de forma sustentada e relógio confiável)
+    if (WiFi.status() == WL_CONNECTED && is_mqtt_offline_sustained && is_clock_fresh && has_fallback_times && time(nullptr) > 1000000) {
       time_t now_unix = time(nullptr);
       struct tm* timeinfo = localtime(&now_unix);
       bool should_be_on = isFallbackNightTime(timeinfo->tm_hour, timeinfo->tm_min);
@@ -321,13 +328,25 @@ void loop() {
     }
 
     if (client.connected()) {
+      time_t now_sec = time(nullptr);
+      struct tm* timeinfo = localtime(&now_sec);
+      char hhmm_buf[6] = "??:??";
+      if (now_sec > 1000000 && timeinfo != nullptr) {
+        snprintf(hhmm_buf, sizeof(hhmm_buf), "%02d:%02d", timeinfo->tm_hour, timeinfo->tm_min);
+      }
+      unsigned long uptime_sec = millis() / 1000;
+
       String q = String((char)34);
       String payload = "{";
       payload += q + "status" + q + ":" + q + "online" + q + ",";
       payload += q + "frente" + q + ":" + q + (digitalRead(pinFrente) == RELAY_ON ? "ON" : "OFF") + q + ",";
       payload += q + "fundos" + q + ":" + q + (digitalRead(pinFundos) == RELAY_ON ? "ON" : "OFF") + q + ",";
       payload += q + "rssi" + q + ":" + String(WiFi.RSSI()) + ",";
-      payload += q + "ip" + q + ":" + q + WiFi.localIP().toString() + q;
+      payload += q + "ip" + q + ":" + q + WiFi.localIP().toString() + q + ",";
+      payload += q + "uptime_s" + q + ":" + String(uptime_sec) + ",";
+      payload += q + "hhmm" + q + ":" + q + String(hhmm_buf) + q + ",";
+      payload += q + "synced" + q + ":" + (isClockSynced ? "true" : "false") + ",";
+      payload += q + "fw" + q + ":" + q + FW_VERSION + q;
       payload += "}";
       client.publish(status_topic, payload.c_str());
     }
