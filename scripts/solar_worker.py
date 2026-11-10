@@ -57,6 +57,8 @@ TG_USER_ID = os.getenv("TELEGRAM_ALLOWED_USER_ID")
 BR_TZ = timezone(timedelta(hours=-3))
 
 LAST_SEEN_FILE = "/tmp/wemos_last_seen"
+ESP32_LAST_SEEN_FILE = "/tmp/esp32_muro_last_seen"
+ESP32_TOPICS = ("home/outdoor/muro", "home/outdoor/aux")
 
 # Estado global em memória
 current_states = {} 
@@ -88,7 +90,10 @@ def check_and_record_transition(topic):
         dq.popleft()
     
     # Se for ponto principal de iluminação e tiver >= 6 transições em 10 min
-    if len(dq) >= 6 and topic in ("home/outdoor/frente", "home/outdoor/fundos"):
+    # frente/fundos: >= 6 transições/10min; muro/aux são acionados por câmeras (NVR), então limiar maior.
+    flap_threshold = {"home/outdoor/frente": 6, "home/outdoor/fundos": 6,
+                      "home/outdoor/muro": 20, "home/outdoor/aux": 20}.get(topic)
+    if flap_threshold and len(dq) >= flap_threshold:
         last_alert = last_flapping_alert_ts.get(topic, 0)
         if now_ts - last_alert > 3600:  # Limita a 1 alerta por hora por tópico
             last_flapping_alert_ts[topic] = now_ts
@@ -155,10 +160,16 @@ def send_ntfy_message(text, title="LightManager 💡", priority="3", tags="bulb"
     except Exception as e:
         logging.warning(f"ntfy aviso: {e}")
 
-def touch_last_seen():
-    """Atualiza o timestamp local de última atividade do Wemos."""
+def last_seen_file_for(topic_or_device):
+    """Retorna o arquivo de last_seen do embarcado dono do tópico (muro/aux -> ESP32-C3; demais -> Wemos)."""
+    if topic_or_device == "esp32" or topic_or_device in ESP32_TOPICS:
+        return ESP32_LAST_SEEN_FILE
+    return LAST_SEEN_FILE
+
+def touch_last_seen(device="wemos"):
+    """Atualiza o timestamp local de última atividade de um embarcado (wemos ou esp32)."""
     try:
-        with open(LAST_SEEN_FILE, 'w') as f:
+        with open(last_seen_file_for(device), 'w') as f:
             f.write(str(time.time()))
     except Exception as e:
         logging.error(f"Erro ao atualizar last_seen: {e}")
@@ -394,13 +405,21 @@ def on_connect(client, userdata, flags, rc, properties):
 def on_message(client, userdata, msg):
     # Ignora mensagens retidas (historicas) para evitar falsos positivos no watchdog
     if not msg.retain:
-        touch_last_seen()
+        if msg.topic.startswith("home/outdoor/") and msg.topic.endswith("/state"):
+            touch_last_seen("esp32" if msg.topic.rsplit("/", 1)[0] in ESP32_TOPICS else "wemos")
+        elif "/status" not in msg.topic:
+            touch_last_seen()
     
     payload_str = msg.payload.decode()
     if "/status" in msg.topic:
         logging.info(f"💓 Heartbeat recebido do embarcado: {payload_str}")
         try:
             status_data = json.loads(payload_str)
+            device_name = status_data.get("device")
+            if not device_name:
+                device_name = "esp32_muro" if ("muro" in status_data or "aux" in status_data) else "wemos_principal"
+            if not msg.retain:
+                touch_last_seen("esp32" if device_name.startswith("esp32") else "wemos")
             for key in ["frente", "fundos", "muro", "aux"]:
                 if key in status_data:
                     sensor_topic = f"home/outdoor/{key}"
@@ -430,7 +449,7 @@ def on_message(client, userdata, msg):
                     
                     if diff_minutes > 2:
                         logging.warning(
-                            f"⏱️ Skew de relógio detectado no Wemos: Wemos={wemos_hhmm}, Servidor={server_hhmm} "
+                            f"⏱️ Skew de relógio detectado em {device_name}: Embarcado={wemos_hhmm}, Servidor={server_hhmm} "
                             f"(Divergência: {diff_minutes} min, FW: {wemos_fw})"
                         )
                         global last_clock_skew_alert_ts
@@ -574,8 +593,10 @@ def run_automation_cycle(client):
         
         for point_id, topic, off_on, off_off, manual_override in points:
             # Calcula horários exatos de hoje para este ponto
-            on_dt = sunset_br + timedelta(minutes=off_on)
-            off_dt = sunrise_br + timedelta(minutes=off_off)
+            # Trunca ao minuto: o gatilho compara HH:MM, então o estado desejado não pode usar os segundos
+            # do pôr/nascer do sol (evita desligar logo após o gatilho ON dentro do mesmo minuto).
+            on_dt = (sunset_br + timedelta(minutes=off_on)).replace(second=0, microsecond=0)
+            off_dt = (sunrise_br + timedelta(minutes=off_off)).replace(second=0, microsecond=0)
             
             # Formatação para comparação de minuto exato (gatilho de log/notificação)
             target_on_str = on_dt.strftime("%H:%M")
@@ -665,9 +686,10 @@ def run_automation_cycle(client):
                 
                 # Verifica há quanto tempo o embarcado não envia dados
                 last_seen = 0
-                if os.path.exists(LAST_SEEN_FILE):
+                seen_file = last_seen_file_for(topic)
+                if os.path.exists(seen_file):
                     try:
-                        with open(LAST_SEEN_FILE, 'r') as f:
+                        with open(seen_file, 'r') as f:
                             last_seen = float(f.read().strip())
                     except Exception as e:
                         logging.error(f"Erro ao ler last_seen: {e}")

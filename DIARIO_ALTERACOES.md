@@ -2,6 +2,38 @@
 
 ---
 
+## ⚡ 10/11/2026 - Arquitetura Dual-Firmware (Wemos D1 R1 + ESP32-C3 Supermini) e Gravador Unificado
+
+### 🚀 Demanda
+* Desacoplar os canais da infraestrutura: manter o **Wemos D1 R1** exclusivamente para as cargas principais de **Fachada e Fundos**, e criar um firmware dedicado no **ESP32-C3 Supermini** para gerenciar **Muro e Canal Auxiliar**.
+* Desenvolver um script unificado e interativo de compilação, gravação e validação pós-flash com suporte a seleção de embarcados.
+
+### 🛠️ Implementações Realizadas
+1. **Refatoração do Firmware Original Wemos (`firmware/wemos_light/wemos_light.ino`)**:
+   - Revertida a alocação de `muro` (D5) e `aux` (D6), mantendo foco total em `frente` (D1) e `fundos` (D2).
+   - Atualizado para versão **`#define FW_VERSION "2026.11.3-wemos"`** com identificador `"device": "wemos_principal"` na telemetria de heartbeat.
+   - Recompilado binário [firmware/wemos_light/wemos_light.bin](file:///home/bruno/Documentos/4_HOMELAB/9_LIGHT_MANAGER/firmware/wemos_light/wemos_light.bin).
+2. **Novo Firmware Dedicado ESP32-C3 Supermini (`firmware/esp32_c3_muro/esp32_c3_muro.ino`)**:
+   - Desenvolvido especificamente para a arquitetura RISC-V do ESP32-C3 usando `#include <WiFi.h>`.
+   - Mapeamento de GPIOs: `pinMuro = 4` (GPIO4), `pinAux = 5` (GPIO5) e LED de status em `pinLed = 8` (GPIO8, Active Low).
+   - IP Estático dedicado `192.168.1.112`, DNS local `192.168.1.7` e Cloudflare `1.1.1.1`.
+   - Subscrição em `home/outdoor/muro/set`, `home/outdoor/aux/set`, `home/outdoor/system/reboot` e `home/outdoor/muro/reboot`.
+   - Heartbeat JSON periódico para o broker Mosquitto identificando `"device": "esp32_muro"`.
+   - Compilação realizada com sucesso gerando binários e imagem consolidada (`esp32_c3_muro.ino.merged.bin`).
+3. **Novo Script Unificado de Gravação Multi-Placa (`scripts/08_flash_firmware.sh`)**:
+   - Menu interativo com seleção de alvos (`1` Wemos D1 R1 ou `2` ESP32-C3 Supermini).
+   - Autodetecção de portas seriais (`/dev/ttyACM*` e `/dev/ttyUSB*`) com teste de permissões.
+   - Compilação sob demanda via `arduino-cli`.
+   - Orientações de bootloader em tela e gravação via `esptool`.
+   - Validação completa pós-flash com Ping e teste MQTT bidirecional com verificação de ACK.
+   - [scripts/08_flash_wemos.sh](file:///home/bruno/Documentos/4_HOMELAB/9_LIGHT_MANAGER/scripts/08_flash_wemos.sh) mantido como wrapper para retrocompatibilidade.
+4. **Governança de Rede e Configuração**:
+   - Atualizado [scripts/network_watchdog.sh](file:///home/bruno/Documentos/4_HOMELAB/9_LIGHT_MANAGER/scripts/network_watchdog.sh) para monitorar a conectividade de ambos os IPs (`192.168.1.111` e `192.168.1.112`).
+   - Variável `ESP32_MURO_IP=192.168.1.112` adicionada ao [.env](file:///home/bruno/Documentos/4_HOMELAB/9_LIGHT_MANAGER/.env) e [.env.example](file:///home/bruno/Documentos/4_HOMELAB/9_LIGHT_MANAGER/.env.example).
+   - Documentação de skill atualizada em [.agents/skills/embedded_flasher/SKILL.md](file:///home/bruno/Documentos/4_HOMELAB/9_LIGHT_MANAGER/.agents/skills/embedded_flasher/SKILL.md).
+
+---
+
 ## ⚡ 09/11/2026 - Suporte a 4 Canais no Firmware Wemos D1 (Canais /muro e /aux)
 
 ### 🚀 Demanda

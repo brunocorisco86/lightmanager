@@ -38,3 +38,7 @@ firmware/**/*.elf
 firmware/**/*.map
 firmware/**/*.hex
 firmware/**/wemos_light.ino.bin
+
+# ESP32-C3 build artifacts
+firmware/esp32_c3_muro/build/
+firmware/esp32_c3_muro/*.bin

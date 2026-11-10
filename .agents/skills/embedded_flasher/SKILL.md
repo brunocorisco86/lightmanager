@@ -1,11 +1,13 @@
 ---
 name: embedded_flasher
-description: Compile, flash, and test ESP8266/Wemos D1 R1 microcontrollers using esptool and MQTT connection validation.
+description: Compile, flash, and test ESP8266 (Wemos D1 R1) and ESP32-C3 Supermini microcontrollers using arduino-cli, esptool, and MQTT connection validation.
 ---
 
 # Skill: Gravador de Firmware Embarcado (embedded_flasher)
 
-Esta skill permite ao assistente gerenciar o processo de compilação, gravação e testes pós-flash do firmware do Wemos D1 R1 (ESP8266) deste repositório.
+Esta skill permite ao assistente gerenciar o processo de compilação, gravação e testes pós-flash dos microcontroladores do Light Manager:
+1. **Wemos D1 R1 (ESP8266)**: Fachada (`pinFrente = D1`) e Fundos (`pinFundos = D2`) - IP: `192.168.1.111`.
+2. **ESP32-C3 Supermini**: Muro (`pinMuro = GPIO4`), Auxiliar (`pinAux = GPIO5`) e LED (`GPIO8`) - IP: `192.168.1.112`.
 
 ---
 
@@ -15,37 +17,46 @@ Quando o usuário solicitar a gravação do firmware, siga este roteiro estrutur
 
 ### 1. Verificação Prévia de Hardware
 Antes de iniciar a gravação, certifique-se de que a porta serial USB está ativa e acessível:
-* Porta Padrão: `/dev/ttyUSB0`
+* **ESP32-C3 Supermini:** Usa USB CDC/JTAG nativo, geralmente alocado em `/dev/ttyACM0` ou `/dev/ttyACM1`.
+* **Wemos D1 R1 (ESP8266):** Usa chip CH340 USB-Serial, geralmente em `/dev/ttyUSB0` ou `/dev/ttyUSB1`.
 * Verifique a presença do dispositivo USB executando:
   ```bash
-  ls -l /dev/ttyUSB0
+  ls -l /dev/ttyACM* /dev/ttyUSB* 2>/dev/null
+  esptool chip-id
   ```
 * Se o dispositivo não for encontrado, liste os barramentos USB com:
   ```bash
   lsusb
-  dmesg | grep tty
+  dmesg | tail -n 20
   ```
-* **Problema de Permissão:** Caso ocorra erro de permissão (ex: *Permission Denied*), instrua o usuário a ajustar o acesso ou adicione o usuário ao grupo correto:
+* **Permissão Serial:** Se ocorrer *Permission Denied*:
   ```bash
-  sudo chmod a+rw /dev/ttyUSB0
-  # Ou adicionar ao grupo dialout (requer logout para surtir efeito)
-  sudo usermod -a -G dialout $USER
+  sudo chmod a+rw /dev/ttyACM0 # ou /dev/ttyUSB0
   ```
 
-### 2. Executar o Script de Flash
-Uma vez confirmada a porta USB, execute a gravação utilizando o script utilitário localizado na pasta de scripts:
+### 2. Executar o Script Unificado de Flash
+Execute a gravação passando o identificador da placa desejada:
 ```bash
-bash scripts/08_flash_wemos.sh
+# Para gravar o ESP32-C3 Supermini (Muro & Auxiliar):
+bash scripts/08_flash_firmware.sh 2
+
+# Para gravar o Wemos D1 R1 (Fachada & Fundos):
+bash scripts/08_flash_firmware.sh 1
 ```
 
-Monitore a saída do console para garantir que o `esptool` conclua com sucesso:
-* Conexão estabelecida com o ESP8266.
-* Limpeza e gravação do bloco de memória concluídas com `100%`.
+O script utilitário realiza automaticamente:
+1. Detecção automática da porta serial.
+2. Identificação do chip conectado (`ESP32-C3` ou `ESP8266`).
+3. Compilação automática sob demanda com `arduino-cli`.
+4. Gravação física em alta velocidade (`460800` baud).
+5. Testes automatizados pós-flash:
+   - Ping no IP estático (`192.168.1.112` ou `192.168.1.111`).
+   - Disparo de comandos MQTT (`ON`/`OFF`) e confirmação de resposta ACK em tempo real.
 
-### 3. Validação de Rede e Comunicação MQTT
-O script de flash realiza testes automáticos pós-gravação. No entanto, valide manualmente se necessário:
-* **Ping Test:** `ping -c 3 192.168.1.111` (IP estático configurado no firmware).
-* **MQTT Test:** Verifique se as mensagens de transição e o Heartbeat estão chegando ao Broker rodando:
-  ```bash
-  mosquitto_sub -h 192.168.1.7 -u bruno -P blurbang -t "home/outdoor/status" -v
-  ```
+### 3. Dicas de Bootloader no ESP32-C3 Supermini
+- Geralmente o CDC nativo entra em modo de download automaticamente via DTR/RTS.
+- Caso o `esptool` trave aguardando conexão (*Connecting...*):
+  1. Pressione e mantenha o botão **BOOT** (GPIO9).
+  2. Pressione e solte o botão **RST** (Reset).
+  3. Solte o botão **BOOT**.
+  4. A placa estará em modo ROM Bootloader e aceitará o flash imediatamente.

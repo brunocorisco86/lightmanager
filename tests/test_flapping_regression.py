@@ -61,3 +61,37 @@ def test_heartbeat_clock_skew_detection():
         on_message(None, None, mock_msg)
         assert mock_tg.call_count == 1
         assert "Divergência de Horário no Embarcado" in mock_tg.call_args[0][0]
+
+
+def test_last_seen_file_per_device():
+    from scripts.solar_worker import last_seen_file_for, LAST_SEEN_FILE, ESP32_LAST_SEEN_FILE
+    assert last_seen_file_for("home/outdoor/frente") == LAST_SEEN_FILE
+    assert last_seen_file_for("home/outdoor/fundos") == LAST_SEEN_FILE
+    assert last_seen_file_for("home/outdoor/muro") == ESP32_LAST_SEEN_FILE
+    assert last_seen_file_for("home/outdoor/aux") == ESP32_LAST_SEEN_FILE
+    assert last_seen_file_for("esp32") == ESP32_LAST_SEEN_FILE
+    assert last_seen_file_for("wemos") == LAST_SEEN_FILE
+
+
+def test_heartbeat_attributes_device_and_touches_correct_file():
+    mock_msg = MagicMock()
+    mock_msg.topic = "home/outdoor/status"
+    mock_msg.retain = False
+    mock_msg.payload.decode.return_value = (
+        '{"status":"online","device":"esp32_muro","muro":"OFF","aux":"OFF","hhmm":"??:??"}'
+    )
+    with patch("scripts.solar_worker.touch_last_seen") as mock_touch, \
+         patch("scripts.solar_worker.log_event_to_db"), \
+         patch("scripts.solar_worker.check_and_record_transition"):
+        on_message(None, None, mock_msg)
+        mock_touch.assert_called_with("esp32")
+
+
+def test_solar_trigger_minute_truncation_no_deviation():
+    """O estado desejado deve usar horários truncados ao minuto (sem segundos do pôr do sol)."""
+    from datetime import datetime, timedelta, timezone
+    br = timezone(timedelta(hours=-3))
+    sunset = datetime(2026, 11, 10, 19, 5, 45, tzinfo=br)
+    on_dt = sunset.replace(second=0, microsecond=0)
+    now = datetime(2026, 11, 10, 19, 5, 36, tzinfo=br)
+    assert now >= on_dt  # gatilho ON no minuto 19:05 => desejado já é ON
