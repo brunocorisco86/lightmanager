@@ -113,6 +113,10 @@ class DVRIPClient:
         _, res = self.request(1042, {"Name": name, "SessionID": self.session_hex})
         return res
 
+    def set_config(self, name: str, config_dict: dict) -> dict:
+        _, res = self.request(1040, {"Name": name, "SessionID": self.session_hex, name: config_dict})
+        return res
+
 
 def get_nvr_channels_summary(host=DEFAULT_NVR_HOST, port=DEFAULT_NVR_PORT, user=DEFAULT_NVR_USER, password=DEFAULT_NVR_PASS, timeout=3.0) -> list[dict]:
     """Retorna lista estruturada dos 9 canais do NVR (somente-leitura)."""
@@ -193,6 +197,28 @@ def cmd_human_config(args):
         client.close()
 
 
+def cmd_motion_config(args):
+    client = DVRIPClient(args.host, args.port, args.user, args.password, timeout=5.0)
+    try:
+        client.connect_and_login()
+        ch_idx = args.channel - 1
+        name = f"Detect.MotionDetect.[{ch_idx}]"
+        cfg = client.get_config(name)
+        data = cfg.get(name, {})
+        level = data.get("Level")
+        region = data.get("Region", [])
+        print(f"📹 Detecção de Movimento Canal D{args.channel:02d}:")
+        print(f"  • Ativo (Enable): {data.get('Enable')}")
+        print(f"  • Nível de Sensibilidade (Level): {level} (1=Baixo, 6=Alto)")
+        print(f"  • Linhas de Máscara (Region): {len(region)} linhas configuradas")
+        if args.set_level is not None:
+            data["Level"] = int(args.set_level)
+            set_res = client.set_config(name, data)
+            print(f"  ➔ Sensibilidade atualizada para Level {args.set_level} (Ret={set_res.get('Ret')})")
+    finally:
+        client.close()
+
+
 def cmd_listen(args):
     client = DVRIPClient(args.host, args.port, args.user, args.password, timeout=10.0)
     try:
@@ -232,6 +258,9 @@ def main():
     sub = parser.add_subparsers(dest="cmd", required=True)
     sub.add_parser("status", help="Exibe informações do NVR e status dos 9 canais")
     sub.add_parser("human-config", help="Exibe configurações de Detecção Humana por IA nos canais ativos")
+    p_mot = sub.add_parser("motion-config", help="Exibe ou ajusta configurações de Detecção de Movimento")
+    p_mot.add_argument("--channel", type=int, default=2, help="Número do canal (1 a 9, padrão: 2 para D02)")
+    p_mot.add_argument("--set-level", type=int, choices=[1, 2, 3, 4, 5, 6], default=None, help="Ajusta o nível de sensibilidade")
     sub.add_parser("listen", help="Escuta eventos de alarme/detecção humana em tempo real (Guard 1500)")
 
     args = parser.parse_args()
@@ -239,6 +268,8 @@ def main():
         cmd_status(args)
     elif args.cmd == "human-config":
         cmd_human_config(args)
+    elif args.cmd == "motion-config":
+        cmd_motion_config(args)
     elif args.cmd == "listen":
         cmd_listen(args)
 

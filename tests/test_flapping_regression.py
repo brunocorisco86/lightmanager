@@ -248,3 +248,153 @@ def test_presence_continuous_ceiling_stops_renewal():
             sw.process_nvr_alarm_packet(client, alarm_pkt)
             # O timer NÃO deve ser renovado (permanece 5120.0)
             assert sw.active_camera_timers["home/outdoor/muro"] == 5120.0
+
+
+def test_hybrid_d02_alone_car_transient_ignored():
+    """D02 isolada (canal 2, movimento puro): 1 ou 2 pulsos rápidos de veículo não ligam o Muro."""
+    import scripts.solar_worker as sw
+    sw.current_states["home/outdoor/muro"] = "OFF"
+    sw.active_camera_timers.clear()
+    sw.pending_presence.clear()
+    sw.camera_cooldowns.clear()
+    sw.continuous_on_tracker.clear()
+    sw.active_motion_renew_pulses.clear()
+
+    client = MagicMock()
+    # Channel index 1 => D02 (canal 2)
+    pkt_d02 = {"AlarmInfo": {"Channel": 1, "Status": "Start"}}
+
+    with patch("scripts.solar_worker.get_db_conn") as mock_conn, \
+         patch("scripts.solar_worker.release_db_conn"), \
+         patch("scripts.solar_worker.is_currently_night", return_value=True):
+        _setup_nvr_mock_db(mock_conn, channels="1,2,3")
+
+        # 1º pulso de carro em t=6000.0s
+        with patch("time.time", return_value=6000.0):
+            sw.process_nvr_alarm_packet(client, pkt_d02)
+            client.publish.assert_not_called()
+            assert sw.current_states["home/outdoor/muro"] == "OFF"
+
+        # 2º pulso de reflexo de farol em t=6001.0s (apenas 2 pulsos totais)
+        with patch("time.time", return_value=6001.0):
+            sw.process_nvr_alarm_packet(client, pkt_d02)
+            client.publish.assert_not_called()
+            assert sw.current_states["home/outdoor/muro"] == "OFF"
+
+
+def test_hybrid_d02_alone_sustained_pedestrian_triggers():
+    """D02 isolada: pedestre caminhando emite >= 3 pulsos entre 3.0s e 8.0s -> presença emulada CONFIRMADA!"""
+    import scripts.solar_worker as sw
+    sw.current_states["home/outdoor/muro"] = "OFF"
+    sw.active_camera_timers.clear()
+    sw.pending_presence.clear()
+    sw.camera_cooldowns.clear()
+    sw.continuous_on_tracker.clear()
+    sw.active_motion_renew_pulses.clear()
+
+    client = MagicMock()
+    pkt_d02 = {"AlarmInfo": {"Channel": 1, "Status": "Start"}}  # D02
+
+    with patch("scripts.solar_worker.get_db_conn") as mock_conn, \
+         patch("scripts.solar_worker.release_db_conn"), \
+         patch("scripts.solar_worker.is_currently_night", return_value=True), \
+         patch("scripts.solar_worker.log_event_to_db"):
+        _setup_nvr_mock_db(mock_conn, channels="1,2,3")
+
+        # Pulso 1 em t=7000.0s
+        with patch("time.time", return_value=7000.0):
+            sw.process_nvr_alarm_packet(client, pkt_d02)
+            client.publish.assert_not_called()
+
+        # Pulso 2 em t=7002.0s
+        with patch("time.time", return_value=7002.0):
+            sw.process_nvr_alarm_packet(client, pkt_d02)
+            client.publish.assert_not_called()
+
+        # Pulso 3 em t=7004.2s (3 pulsos, elapsed=4.2s >= 3.0s e <= 8.0s) -> PRESENÇA EMULADA CONFIRMADA!
+        with patch("time.time", return_value=7004.2):
+            sw.process_nvr_alarm_packet(client, pkt_d02)
+            client.publish.assert_called_with("home/outdoor/muro/set", "ON", qos=1, retain=True)
+            assert sw.current_states["home/outdoor/muro"] == "ON"
+            assert "home/outdoor/muro" in sw.active_camera_timers
+
+
+def test_hybrid_d02_precursor_to_d01_or_d03():
+    """D02 (rua) detecta movimento e D03 (IA no portão) confirma em até 5s -> liga imediatamente (fusão precursora)!"""
+    import scripts.solar_worker as sw
+    sw.current_states["home/outdoor/muro"] = "OFF"
+    sw.active_camera_timers.clear()
+    sw.pending_presence.clear()
+    sw.camera_cooldowns.clear()
+    sw.continuous_on_tracker.clear()
+    sw.active_motion_renew_pulses.clear()
+
+    client = MagicMock()
+    pkt_d02 = {"AlarmInfo": {"Channel": 1, "Status": "Start"}}  # D02 (idx 1)
+    pkt_d03 = {"AlarmInfo": {"Channel": 2, "Status": "Start"}}  # D03 (idx 2)
+
+    with patch("scripts.solar_worker.get_db_conn") as mock_conn, \
+         patch("scripts.solar_worker.release_db_conn"), \
+         patch("scripts.solar_worker.is_currently_night", return_value=True), \
+         patch("scripts.solar_worker.log_event_to_db"):
+        _setup_nvr_mock_db(mock_conn, channels="1,2,3")
+
+        # D02 detecta aproximação na rua em t=8000.0s
+        with patch("time.time", return_value=8000.0):
+            sw.process_nvr_alarm_packet(client, pkt_d02)
+            client.publish.assert_not_called()
+
+        # D03 (IA portão) detecta pedestre em t=8002.1s (2.1s depois) -> fusão precursora confirma imediatamente!
+        with patch("time.time", return_value=8002.1):
+            sw.process_nvr_alarm_packet(client, pkt_d03)
+            client.publish.assert_called_with("home/outdoor/muro/set", "ON", qos=1, retain=True)
+            assert sw.current_states["home/outdoor/muro"] == "ON"
+
+
+def test_hybrid_d02_while_on_single_pulse_does_not_starve_timer():
+    """Com Muro já ON, pulso único em D02 (carro passando na rua) NÃO renova o timer para evitar inanição."""
+    import scripts.solar_worker as sw
+    sw.current_states["home/outdoor/muro"] = "ON"
+    sw.active_camera_timers["home/outdoor/muro"] = 9120.0  # Expira em 9120.0
+    sw.continuous_on_tracker["home/outdoor/muro"] = 9000.0
+    sw.active_motion_renew_pulses.clear()
+
+    client = MagicMock()
+    pkt_d02 = {"AlarmInfo": {"Channel": 1, "Status": "Start"}}  # D02
+
+    with patch("scripts.solar_worker.get_db_conn") as mock_conn, \
+         patch("scripts.solar_worker.release_db_conn"), \
+         patch("scripts.solar_worker.is_currently_night", return_value=True):
+        _setup_nvr_mock_db(mock_conn, channels="1,2,3")
+
+        # Carro passa aos 9030.0s -> pulso único não deve estender o timer
+        with patch("time.time", return_value=9030.0):
+            sw.process_nvr_alarm_packet(client, pkt_d02)
+            assert sw.active_camera_timers["home/outdoor/muro"] == 9120.0  # Permanece inalterado!
+
+
+def test_hybrid_d02_while_on_sustained_motion_renews_timer():
+    """Com Muro já ON, movimento sustentado em D02 (2 pulsos com dt >= 2.0s) renova o timer legitimamente."""
+    import scripts.solar_worker as sw
+    sw.current_states["home/outdoor/muro"] = "ON"
+    sw.active_camera_timers["home/outdoor/muro"] = 9120.0  # Expira em 9120.0
+    sw.continuous_on_tracker["home/outdoor/muro"] = 9000.0
+    sw.active_motion_renew_pulses.clear()
+
+    client = MagicMock()
+    pkt_d02 = {"AlarmInfo": {"Channel": 1, "Status": "Start"}}  # D02
+
+    with patch("scripts.solar_worker.get_db_conn") as mock_conn, \
+         patch("scripts.solar_worker.release_db_conn"), \
+         patch("scripts.solar_worker.is_currently_night", return_value=True):
+        _setup_nvr_mock_db(mock_conn, channels="1,2,3")
+
+        # 1º pulso aos 9030.0s
+        with patch("time.time", return_value=9030.0):
+            sw.process_nvr_alarm_packet(client, pkt_d02)
+            assert sw.active_camera_timers["home/outdoor/muro"] == 9120.0
+
+        # 2º pulso aos 9032.5s (2.5s depois -> movimento sustentado) -> renova para 9032.5 + 120 = 9152.5
+        with patch("time.time", return_value=9032.5):
+            sw.process_nvr_alarm_packet(client, pkt_d02)
+            assert sw.active_camera_timers["home/outdoor/muro"] == 9152.5

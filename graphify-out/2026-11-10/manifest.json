@@ -174,9 +174,9 @@
     "semantic_hash": ""
   },
   "scripts/solar_worker.py": {
-    "mtime": 1794353870.7732618,
-    "seen": 1794354769.225531,
-    "ast_hash": "610f89343ca7b2ea731968d77f6fd521",
+    "mtime": 1794356922.3246458,
+    "seen": 1794357075.0533283,
+    "ast_hash": "0aabc6f44b656fc75a7bb4f0c228f3c3",
     "semantic_hash": ""
   },
   "scripts/tariff_sync.py": {
@@ -216,9 +216,9 @@
     "semantic_hash": ""
   },
   "tests/benchmark_solar_worker.py": {
-    "mtime": 1793926018.3082166,
-    "seen": 1794096118.3417366,
-    "ast_hash": "7a00003a476ef1028e930a506fe3f344",
+    "mtime": 1794356939.509771,
+    "seen": 1794357075.0533383,
+    "ast_hash": "43bb7cf028fedf908862df436a3a39f3",
     "semantic_hash": ""
   },
   "tests/test_api.py": {
@@ -648,9 +648,9 @@
     "semantic_hash": ""
   },
   "tests/test_flapping_regression.py": {
-    "mtime": 1794353870.777525,
-    "seen": 1794354769.225549,
-    "ast_hash": "55cc6d5aa8bff1c7070574bd204dfbe2",
+    "mtime": 1794357022.592454,
+    "seen": 1794357075.053349,
+    "ast_hash": "70c3db24135a92891a5cc8441106a1d7",
     "semantic_hash": ""
   },
   "docs/BACKLOG.md": {
