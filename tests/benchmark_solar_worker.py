@@ -277,6 +277,9 @@ class TestSolarWorkerPerformance(unittest.TestCase):
 
         solar_worker.current_states = {"home/outdoor/muro": "OFF"}
         solar_worker.active_camera_timers.clear()
+        solar_worker.pending_presence.clear()
+        solar_worker.camera_cooldowns.clear()
+        solar_worker.continuous_on_tracker.clear()
         solar_worker.last_nvr_detection_ts.clear()
         mock_time.time.return_value = 1000.0
 
@@ -291,18 +294,20 @@ class TestSolarWorkerPerformance(unittest.TestCase):
             "Name": "AlarmInfo"
         }
 
+        # 1st pulse at t=1000.0: Probation (must NOT turn relay ON yet to ignore vehicle transients)
         solar_worker.process_nvr_alarm_packet(client, alarm_pkt)
+        client.publish.assert_not_called()
+        self.assertEqual(solar_worker.current_states.get("home/outdoor/muro"), "OFF")
+        self.assertNotIn("home/outdoor/muro", solar_worker.active_camera_timers)
+        self.assertIn("home/outdoor/muro", solar_worker.pending_presence)
 
-        # Must have published ON to Broker MQTT
+        # 2nd pulse 3 seconds later (t=1003.0) from sustained walk-by:
+        # Confirms presence (2.0s <= dt <= 7.0s), turns relay ON and sets hold timer to 1123.0
+        mock_time.time.return_value = 1003.0
+        solar_worker.process_nvr_alarm_packet(client, alarm_pkt)
         client.publish.assert_called_with("home/outdoor/muro/set", "ON", qos=1, retain=True)
         self.assertEqual(solar_worker.current_states.get("home/outdoor/muro"), "ON")
         self.assertIn("home/outdoor/muro", solar_worker.active_camera_timers)
-        self.assertEqual(solar_worker.active_camera_timers["home/outdoor/muro"], 1120.0)
-
-        # Burst packet 3 seconds later (t=1003.0) from same walk-by:
-        # Must renew timer to 1123.0, but debounce must prevent duplicate INSERT INTO nvr_detections
-        mock_time.time.return_value = 1003.0
-        solar_worker.process_nvr_alarm_packet(client, alarm_pkt)
         self.assertEqual(solar_worker.active_camera_timers["home/outdoor/muro"], 1123.0)
 
         nvr_det_inserts = [

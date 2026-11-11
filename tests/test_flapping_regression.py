@@ -95,3 +95,156 @@ def test_solar_trigger_minute_truncation_no_deviation():
     on_dt = sunset.replace(second=0, microsecond=0)
     now = datetime(2026, 11, 10, 19, 5, 36, tzinfo=br)
     assert now >= on_dt  # gatilho ON no minuto 19:05 => desejado já é ON
+
+
+def _setup_nvr_mock_db(mock_get_conn, channels="3,4"):
+    mock_conn = MagicMock()
+    mock_cur = MagicMock()
+    mock_get_conn.return_value = mock_conn
+    mock_conn.cursor.return_value = mock_cur
+    mock_cur.fetchall.return_value = [
+        (32, "Muro", "home/outdoor/muro", channels, 120, True)
+    ]
+    return mock_conn, mock_cur
+
+
+def test_presence_transient_vehicle_pulse_ignored():
+    """Um carro ou moto veloz dispara apenas 1 pulso rápido (< 2s) -> relé NÃO liga."""
+    import scripts.solar_worker as sw
+    sw.current_states["home/outdoor/muro"] = "OFF"
+    sw.active_camera_timers.clear()
+    sw.pending_presence.clear()
+    sw.camera_cooldowns.clear()
+    sw.continuous_on_tracker.clear()
+
+    client = MagicMock()
+    alarm_pkt = {"AlarmInfo": {"Channel": 2, "Status": "Start"}}  # D03
+
+    with patch("scripts.solar_worker.get_db_conn") as mock_conn, \
+         patch("scripts.solar_worker.release_db_conn"), \
+         patch("scripts.solar_worker.is_currently_night", return_value=True), \
+         patch("time.time", return_value=2000.0):
+        _setup_nvr_mock_db(mock_conn)
+        sw.process_nvr_alarm_packet(client, alarm_pkt)
+
+        # Relé não deve ser acionado
+        client.publish.assert_not_called()
+        assert sw.current_states["home/outdoor/muro"] == "OFF"
+        assert "home/outdoor/muro" in sw.pending_presence
+        assert sw.pending_presence["home/outdoor/muro"]["first_ts"] == 2000.0
+
+
+def test_presence_sustained_human_walkby_confirms_and_activates():
+    """Dois pulsos espaçados entre 2.0s e 7.0s (pedestre caminhando) -> confirma e liga relé."""
+    import scripts.solar_worker as sw
+    sw.current_states["home/outdoor/muro"] = "OFF"
+    sw.active_camera_timers.clear()
+    sw.pending_presence.clear()
+    sw.camera_cooldowns.clear()
+    sw.continuous_on_tracker.clear()
+
+    client = MagicMock()
+    alarm_pkt = {"AlarmInfo": {"Channel": 2, "Status": "Start"}}  # D03
+
+    with patch("scripts.solar_worker.get_db_conn") as mock_conn, \
+         patch("scripts.solar_worker.release_db_conn"), \
+         patch("scripts.solar_worker.is_currently_night", return_value=True), \
+         patch("scripts.solar_worker.log_event_to_db"):
+        _setup_nvr_mock_db(mock_conn)
+
+        # 1º pulso (t=2000.0) -> probation
+        with patch("time.time", return_value=2000.0):
+            sw.process_nvr_alarm_packet(client, alarm_pkt)
+            client.publish.assert_not_called()
+
+        # 2º pulso (t=2002.5 -> dt=2.5s) -> confirmação de presença!
+        with patch("time.time", return_value=2002.5):
+            sw.process_nvr_alarm_packet(client, alarm_pkt)
+            client.publish.assert_called_with("home/outdoor/muro/set", "ON", qos=1, retain=True)
+            assert sw.current_states["home/outdoor/muro"] == "ON"
+            assert "home/outdoor/muro" not in sw.pending_presence
+            assert sw.active_camera_timers["home/outdoor/muro"] == 2002.5 + 120
+
+
+def test_presence_cross_camera_correlation_confirms_immediately():
+    """Câmeras diferentes vinculadas (D03 e D04) detectando dentro da janela confirmam imediatamente."""
+    import scripts.solar_worker as sw
+    sw.current_states["home/outdoor/muro"] = "OFF"
+    sw.active_camera_timers.clear()
+    sw.pending_presence.clear()
+    sw.camera_cooldowns.clear()
+    sw.continuous_on_tracker.clear()
+
+    client = MagicMock()
+    pkt_d03 = {"AlarmInfo": {"Channel": 2, "Status": "Start"}}  # D03 (idx 2)
+    pkt_d04 = {"AlarmInfo": {"Channel": 3, "Status": "Start"}}  # D04 (idx 3)
+
+    with patch("scripts.solar_worker.get_db_conn") as mock_conn, \
+         patch("scripts.solar_worker.release_db_conn"), \
+         patch("scripts.solar_worker.is_currently_night", return_value=True), \
+         patch("scripts.solar_worker.log_event_to_db"):
+        _setup_nvr_mock_db(mock_conn, channels="3,4")
+
+        # 1º pulso na D03 em t=3000.0
+        with patch("time.time", return_value=3000.0):
+            sw.process_nvr_alarm_packet(client, pkt_d03)
+            client.publish.assert_not_called()
+
+        # 2º pulso na D04 logo em seguida (t=3000.8 -> dt=0.8s) -> correlação multi-câmera confirma!
+        with patch("time.time", return_value=3000.8):
+            sw.process_nvr_alarm_packet(client, pkt_d04)
+            client.publish.assert_called_with("home/outdoor/muro/set", "ON", qos=1, retain=True)
+            assert sw.current_states["home/outdoor/muro"] == "ON"
+
+
+def test_presence_cooldown_anti_flippering():
+    """Após desligamento por timeout, novo alarme durante cooldown de 15s é ignorado."""
+    import scripts.solar_worker as sw
+    sw.current_states["home/outdoor/muro"] = "ON"
+    sw.active_camera_timers["home/outdoor/muro"] = 4000.0
+    sw.camera_cooldowns.clear()
+    sw.pending_presence.clear()
+
+    client = MagicMock()
+    alarm_pkt = {"AlarmInfo": {"Channel": 2, "Status": "Start"}}
+
+    with patch("scripts.solar_worker.log_event_to_db"), \
+         patch("scripts.solar_worker.get_db_conn") as mock_conn, \
+         patch("scripts.solar_worker.release_db_conn"), \
+         patch("scripts.solar_worker.is_currently_night", return_value=True):
+        _setup_nvr_mock_db(mock_conn)
+
+        # Timeout aos 4000.0s -> desliga e entra em cooldown de 15s (até 4015.0)
+        sw.check_expired_camera_timers(client, now_ts=4000.0)
+        client.publish.assert_called_with("home/outdoor/muro/set", "OFF", qos=1, retain=True)
+        assert sw.current_states["home/outdoor/muro"] == "OFF"
+        assert sw.camera_cooldowns["home/outdoor/muro"] == 4015.0
+
+        # Alarme aos 4008.0s (durante cooldown de 15s) -> IGNORADO
+        client.publish.reset_mock()
+        with patch("time.time", return_value=4008.0):
+            sw.process_nvr_alarm_packet(client, alarm_pkt)
+            client.publish.assert_not_called()
+            assert sw.current_states["home/outdoor/muro"] == "OFF"
+
+
+def test_presence_continuous_ceiling_stops_renewal():
+    """Se a lâmpada ficar 300s ininterruptos ligada, novos alarmes não renovam o timer."""
+    import scripts.solar_worker as sw
+    sw.current_states["home/outdoor/muro"] = "ON"
+    sw.active_camera_timers["home/outdoor/muro"] = 5120.0
+    sw.continuous_on_tracker["home/outdoor/muro"] = 5000.0  # Ligou em 5000.0
+
+    client = MagicMock()
+    alarm_pkt = {"AlarmInfo": {"Channel": 2, "Status": "Start"}}
+
+    with patch("scripts.solar_worker.get_db_conn") as mock_conn, \
+         patch("scripts.solar_worker.release_db_conn"), \
+         patch("scripts.solar_worker.is_currently_night", return_value=True):
+        _setup_nvr_mock_db(mock_conn)
+
+        # Alarme em t=5305.0 (305s contínuos >= 300s teto máximo)
+        with patch("time.time", return_value=5305.0):
+            sw.process_nvr_alarm_packet(client, alarm_pkt)
+            # O timer NÃO deve ser renovado (permanece 5120.0)
+            assert sw.active_camera_timers["home/outdoor/muro"] == 5120.0

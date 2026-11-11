@@ -49,6 +49,13 @@ NVR_USER = os.getenv("NVR_USER", "brunoconter")
 NVR_PASS = os.getenv("NVR_PASS", "blurbang")
 NVR_ENABLED = os.getenv("NVR_ENABLED", "true").lower() in ("1", "true", "yes")
 
+# Configurações do Motor de Persistência de Presença e Anti-Flippering (Câmeras / NVR)
+CAMERA_PRESENCE_PERSISTENCE = os.getenv("CAMERA_PRESENCE_PERSISTENCE", "true").lower() in ("1", "true", "yes")
+CAMERA_CONFIRMATION_WINDOW_MIN = float(os.getenv("CAMERA_CONFIRMATION_WINDOW_MIN", "2.0"))   # Mínimo 2.0s de dwell time para descartar veículos em velocidade
+CAMERA_CONFIRMATION_WINDOW_MAX = float(os.getenv("CAMERA_CONFIRMATION_WINDOW_MAX", "7.0"))   # Máximo 7.0s para janela de confirmação de passagem
+CAMERA_COOLDOWN_SECONDS = float(os.getenv("CAMERA_COOLDOWN_SECONDS", "15.0"))                 # 15s de repouso pós-desligamento (elimina repique de relé)
+CAMERA_MAX_CONTINUOUS_SECONDS = float(os.getenv("CAMERA_MAX_CONTINUOUS_SECONDS", "300.0"))   # Teto máximo de 5 minutos contínuos sem pausa
+
 # Telegram
 TG_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 TG_USER_ID = os.getenv("TELEGRAM_ALLOWED_USER_ID")
@@ -66,6 +73,9 @@ last_hour_logged = -1
 last_solar_report_date = None
 active_camera_timers = {}
 camera_timers_lock = threading.Lock()
+pending_presence = {}       # topic -> {"first_ts": float, "channels": set()}
+camera_cooldowns = {}       # topic -> float (timestamp_until_cooldown_ends)
+continuous_on_tracker = {}  # topic -> float (timestamp_when_turned_on)
 last_nvr_detection_ts = {}
 NVR_DEBOUNCE_SECONDS = int(os.getenv("NVR_DEBOUNCE_SECONDS", "15"))
 NVR_LOG_FILE = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "logs", "nvr.log"))
@@ -478,6 +488,10 @@ def on_message(client, userdata, msg):
     if current_states.get(topic) != state:
         old_state = current_states.get(topic, "DESCONHECIDO")
         current_states[topic] = state
+        if state == "OFF":
+            with camera_timers_lock:
+                continuous_on_tracker.pop(topic, None)
+                pending_presence.pop(topic, None)
         logging.info(f"🔄 Transição de estado em {topic}: {old_state} -> {state}")
         check_and_record_transition(topic)
         log_event_to_db(topic, state, source="mqtt_capture")
@@ -757,6 +771,8 @@ def append_nvr_log(message: str, now_br=None):
 def process_nvr_alarm_packet(client, pkt: dict):
     """
     Processa um pacote AlarmInfo (msg_id=1504) recebido do NVR XiongMai.
+    Aplica o motor de persistência de presença (dwell time e correlação multi-câmera)
+    para filtrar disparos transitórios de veículos rápidos (carros/motos) e evitar flippering.
     Aciona via Broker MQTT (<topic>/set -> 'ON') os pontos configurados com trigger_mode='camera'
     que incluam o canal detectado em camera_channels e inicia/renova o timer de desligamento.
     Também registra a passagem humana na tabela nvr_detections com debounce de 15s por canal.
@@ -794,6 +810,7 @@ def process_nvr_alarm_packet(client, pkt: dict):
         rows = cur.fetchall()
         triggered_names = []
         max_hold_sec = 0
+        in_probation_count = 0
 
         for point_id, name, topic, cam_channels_str, hold_sec, night_only in rows:
             channels_list = [c.strip() for c in str(cam_channels_str).split(",") if c.strip()]
@@ -805,40 +822,153 @@ def process_nvr_alarm_packet(client, pkt: dict):
                 continue
 
             hold_seconds = max(5, int(hold_sec or 120))
-            max_hold_sec = max(max_hold_sec, hold_seconds)
-            triggered_names.append(name)
-            expire_ts = now_ts + hold_seconds
+            current_state = current_states.get(topic)
 
             with camera_timers_lock:
                 already_active = topic in active_camera_timers
-                active_camera_timers[topic] = expire_ts
 
-            client.publish(f"{topic}/set", "ON", qos=1, retain=True)
+            # 1. Se a lâmpada já está ligada / ativa:
+            if already_active or current_state == "ON":
+                # Verifica teto contínuo máximo (Anti-Starvation)
+                first_on = continuous_on_tracker.get(topic, now_ts)
+                continuous_duration = now_ts - first_on
+                if continuous_duration >= CAMERA_MAX_CONTINUOUS_SECONDS:
+                    logging.warning(
+                        f"🛑 Teto contínuo máximo atingido para '{name}' ({topic}) "
+                        f"({int(continuous_duration)}s >= {CAMERA_MAX_CONTINUOUS_SECONDS}s). "
+                        f"Não renovando timer para permitir descanso preventivo do circuito."
+                    )
+                    continue
 
-            if current_states.get(topic) != "ON" or not already_active:
+                # Renova o timer normalmente
+                expire_ts = now_ts + hold_seconds
+                with camera_timers_lock:
+                    active_camera_timers[topic] = expire_ts
+
+                client.publish(f"{topic}/set", "ON", qos=1, retain=True)
                 current_states[topic] = "ON"
+                triggered_names.append(name)
+                max_hold_sec = max(max_hold_sec, hold_seconds)
+                logging.info(f"📹 Gatilho Câmera {ch_code}: Renovando timer de '{name}' ({topic}) por +{hold_seconds}s")
+                continue
+
+            # 2. Se a lâmpada está desligada (OFF):
+            # 2.1 Verifica Cooldown Anti-Flippering pós-desligamento
+            cooldown_until = camera_cooldowns.get(topic, 0.0)
+            if now_ts < cooldown_until:
+                remaining_cd = cooldown_until - now_ts
+                logging.info(
+                    f"⏳ Câmera {ch_code}: Gatilho ignorado para '{name}' ({topic}) - "
+                    f"Cooldown anti-flippering ativo por mais {remaining_cd:.1f}s."
+                )
+                continue
+
+            # 2.2 Se o motor de persistência estiver desabilitado, liga imediatamente (modo legado)
+            if not CAMERA_PRESENCE_PERSISTENCE:
+                expire_ts = now_ts + hold_seconds
+                with camera_timers_lock:
+                    active_camera_timers[topic] = expire_ts
+                continuous_on_tracker[topic] = now_ts
+                client.publish(f"{topic}/set", "ON", qos=1, retain=True)
+                current_states[topic] = "ON"
+                triggered_names.append(name)
+                max_hold_sec = max(max_hold_sec, hold_seconds)
                 logging.info(f"📹 Gatilho Câmera {ch_code}: LIGANDO '{name}' ({topic}) por {hold_seconds}s via Broker MQTT")
                 log_event_to_db(topic, "ON", source=source_tag, cursor=cur)
-            else:
-                logging.info(f"📹 Gatilho Câmera {ch_code}: Renovando timer de '{name}' ({topic}) por +{hold_seconds}s")
+                continue
 
-        # Debounce por canal (padrão 15s) para agrupar rajadas da mesma passagem física em 1 registro limpo
-        last_ts = last_nvr_detection_ts.get(ch_num, 0.0)
-        if (now_ts - last_ts) >= NVR_DEBOUNCE_SECONDS:
-            last_nvr_detection_ts[ch_num] = now_ts
-            trig_str = ", ".join(triggered_names)
-            cur.execute(
-                """
-                INSERT INTO nvr_detections (channel, channel_code, is_night, triggered_lights, hold_seconds, timestamp)
-                VALUES (%s, %s, %s, %s, %s, %s)
-                """,
-                (ch_num, ch_code, night_flag, trig_str, max_hold_sec, now_br),
-            )
-            conn.commit()
-            if trig_str:
-                append_nvr_log(f"🚨 [{ch_code}] Pessoa detectada ➔ 💡 LIGOU {trig_str} ({max_hold_sec}s)", now_br)
+            # 2.3 Motor de Persistência Temporal e Multi-Câmera
+            with camera_timers_lock:
+                probation = pending_presence.get(topic)
+
+            if probation is None:
+                # Primeiro evento: entra em probation e não liga o relé ainda
+                with camera_timers_lock:
+                    pending_presence[topic] = {"first_ts": now_ts, "channels": {ch_num}}
+                in_probation_count += 1
+                logging.info(
+                    f"🚶 Câmera {ch_code}: Pré-detecção (Probation) para '{name}' ({topic}). "
+                    f"Aguardando confirmação ({CAMERA_CONFIRMATION_WINDOW_MIN}s a {CAMERA_CONFIRMATION_WINDOW_MAX}s ou 2ª câmera)..."
+                )
+                continue
+
+            # Segundo ou subsequente evento durante a probation
+            first_ts = probation["first_ts"]
+            elapsed = now_ts - first_ts
+            channels_seen = probation["channels"]
+            channels_seen.add(ch_num)
+
+            is_sustained = (CAMERA_CONFIRMATION_WINDOW_MIN <= elapsed <= CAMERA_CONFIRMATION_WINDOW_MAX)
+            is_cross_camera = (len(channels_seen) >= 2 and elapsed <= CAMERA_CONFIRMATION_WINDOW_MAX)
+
+            if is_sustained or is_cross_camera:
+                # Confirmação de presença real atingida!
+                reason_desc = (
+                    f"Multi-Câmera ({','.join(f'D{c:02d}' for c in sorted(channels_seen))})"
+                    if is_cross_camera
+                    else f"Persistência Temporal ({elapsed:.1f}s)"
+                )
+                with camera_timers_lock:
+                    pending_presence.pop(topic, None)
+                    continuous_on_tracker[topic] = now_ts
+                    expire_ts = now_ts + hold_seconds
+                    active_camera_timers[topic] = expire_ts
+
+                client.publish(f"{topic}/set", "ON", qos=1, retain=True)
+                current_states[topic] = "ON"
+                triggered_names.append(name)
+                max_hold_sec = max(max_hold_sec, hold_seconds)
+                logging.info(
+                    f"✅ Presença Humana CONFIRMADA [{reason_desc}] para '{name}' ({topic}): "
+                    f"LIGANDO por {hold_seconds}s via Broker MQTT"
+                )
+                log_event_to_db(topic, "ON", source=source_tag, cursor=cur)
+            elif elapsed > CAMERA_CONFIRMATION_WINDOW_MAX:
+                # Janela expirou (> 7.0s), inicia novo ciclo de probation
+                with camera_timers_lock:
+                    pending_presence[topic] = {"first_ts": now_ts, "channels": {ch_num}}
+                in_probation_count += 1
+                logging.info(
+                    f"🚶 Câmera {ch_code}: Janela de probation anterior expirou ({elapsed:.1f}s). "
+                    f"Reiniciando probation para '{name}' ({topic})..."
+                )
             else:
-                reason = "☀️ Dia - Luz poupada" if not night_flag else "Sem luz vinculada"
+                # elapsed < CAMERA_CONFIRMATION_WINDOW_MIN no mesmo canal (ex: rajada rápida de faróis < 2s)
+                logging.debug(
+                    f"🚶 Câmera {ch_code}: Pulso muito rápido ({elapsed:.2f}s < {CAMERA_CONFIRMATION_WINDOW_MIN}s) "
+                    f"no mesmo canal. Mantendo probation para '{name}' ({topic})."
+                )
+
+        # Registro na tabela nvr_detections e logs
+        if triggered_names:
+            last_ts = last_nvr_detection_ts.get(ch_num, 0.0)
+            if (now_ts - last_ts) >= NVR_DEBOUNCE_SECONDS or max_hold_sec > 0:
+                last_nvr_detection_ts[ch_num] = now_ts
+                trig_str = ", ".join(triggered_names)
+                cur.execute(
+                    """
+                    INSERT INTO nvr_detections (channel, channel_code, is_night, triggered_lights, hold_seconds, timestamp)
+                    VALUES (%s, %s, %s, %s, %s, %s)
+                    """,
+                    (ch_num, ch_code, night_flag, trig_str, max_hold_sec, now_br),
+                )
+                conn.commit()
+                append_nvr_log(f"🚨 [{ch_code}] Presença Confirmada ➔ 💡 LIGOU {trig_str} ({max_hold_sec}s)", now_br)
+        elif in_probation_count > 0:
+            append_nvr_log(f"👁️ [{ch_code}] Movimento detectado (Aguardando confirmação de presença)", now_br)
+        else:
+            last_ts = last_nvr_detection_ts.get(ch_num, 0.0)
+            if (now_ts - last_ts) >= NVR_DEBOUNCE_SECONDS:
+                last_nvr_detection_ts[ch_num] = now_ts
+                reason = "☀️ Dia - Luz poupada" if not night_flag else "Sem luz vinculada ou Cooldown ativo"
+                cur.execute(
+                    """
+                    INSERT INTO nvr_detections (channel, channel_code, is_night, triggered_lights, hold_seconds, timestamp)
+                    VALUES (%s, %s, %s, %s, %s, %s)
+                    """,
+                    (ch_num, ch_code, night_flag, "", 0, now_br),
+                )
+                conn.commit()
                 append_nvr_log(f"👁️ [{ch_code}] Pessoa detectada ➔ ({reason})", now_br)
     except Exception as e:
         logging.error(f"Erro ao processar alarme NVR ({ch_code}): {e}")
@@ -851,8 +981,9 @@ def process_nvr_alarm_packet(client, pkt: dict):
 
 def check_expired_camera_timers(client, now_ts: float | None = None):
     """
-    Verifica os timers ativos de pontos acionados por câmera.
-    Quando o tempo expira, publica 'OFF' no Broker MQTT (<topic>/set) e registra 'nvr_timeout'.
+    Verifica os timers ativos de pontos acionados por câmera e gerencia expiração de probation.
+    Quando o tempo expira, publica 'OFF' no Broker MQTT (<topic>/set), registra 'nvr_timeout'
+    e ativa cooldown anti-flippering de 15 segundos para descanso do relé.
     """
     if now_ts is None:
         now_ts = time.time()
@@ -869,9 +1000,21 @@ def check_expired_camera_timers(client, now_ts: float | None = None):
             logging.info(f"⏱️ Timer de câmera expirado para {topic}: DESLIGANDO ('OFF') via Broker MQTT")
             client.publish(f"{topic}/set", "OFF", qos=1, retain=True)
             current_states[topic] = "OFF"
+            with camera_timers_lock:
+                continuous_on_tracker.pop(topic, None)
+                camera_cooldowns[topic] = now_ts + CAMERA_COOLDOWN_SECONDS
             log_event_to_db(topic, "OFF", source="nvr_timeout")
         except Exception as e:
             logging.error(f"Erro ao desligar {topic} por timeout de câmera: {e}")
+
+    # Limpeza preventiva de probation expiradas (> 7.0s sem confirmação)
+    with camera_timers_lock:
+        stale_probations = [
+            t for t, p in pending_presence.items()
+            if (now_ts - p.get("first_ts", 0.0)) > CAMERA_CONFIRMATION_WINDOW_MAX
+        ]
+        for t in stale_probations:
+            pending_presence.pop(t, None)
 
 
 def nvr_guard_worker(mqtt_client):

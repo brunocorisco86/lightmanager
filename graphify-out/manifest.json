@@ -18,9 +18,9 @@
     "semantic_hash": ""
   },
   "run_tests.sh": {
-    "mtime": 1789525312.551428,
-    "seen": 1794096118.3416262,
-    "ast_hash": "057a5af3df54d39983d81ebb71de1b80",
+    "mtime": 1794354287.5177062,
+    "seen": 1794354769.22548,
+    "ast_hash": "2bc127cff5d75499bc1f20712208898a",
     "semantic_hash": ""
   },
   "scripts/00_setup_python.sh": {
@@ -72,9 +72,9 @@
     "semantic_hash": ""
   },
   "scripts/08_flash_wemos.sh": {
-    "mtime": 1782341922.7328465,
-    "seen": 1794096118.3416512,
-    "ast_hash": "9a172843892b42002a3e8ad8ee3b74fe",
+    "mtime": 1794352823.5777957,
+    "seen": 1794353230.1227248,
+    "ast_hash": "f278d3b5548bb75c4621f4c42c905f0d",
     "semantic_hash": ""
   },
   "scripts/__init__.py": {
@@ -144,9 +144,9 @@
     "semantic_hash": ""
   },
   "scripts/network_watchdog.sh": {
-    "mtime": 1780000548.0375667,
-    "seen": 1794096118.341683,
-    "ast_hash": "db29fae3f0accf1cfb632c379778b067",
+    "mtime": 1794353893.5699267,
+    "seen": 1794354769.2255151,
+    "ast_hash": "e5483dc85a5b06a1596b6d24bd81c6fe",
     "semantic_hash": ""
   },
   "scripts/restart_api.sh": {
@@ -174,9 +174,9 @@
     "semantic_hash": ""
   },
   "scripts/solar_worker.py": {
-    "mtime": 1794240038.1744635,
-    "seen": 1794240081.601202,
-    "ast_hash": "73a7ed644b4009d31f312406695af9c5",
+    "mtime": 1794356922.3246458,
+    "seen": 1794357075.0533283,
+    "ast_hash": "0aabc6f44b656fc75a7bb4f0c228f3c3",
     "semantic_hash": ""
   },
   "scripts/tariff_sync.py": {
@@ -216,9 +216,9 @@
     "semantic_hash": ""
   },
   "tests/benchmark_solar_worker.py": {
-    "mtime": 1793926018.3082166,
-    "seen": 1794096118.3417366,
-    "ast_hash": "7a00003a476ef1028e930a506fe3f344",
+    "mtime": 1794356939.509771,
+    "seen": 1794357075.0533383,
+    "ast_hash": "43bb7cf028fedf908862df436a3a39f3",
     "semantic_hash": ""
   },
   "tests/test_api.py": {
@@ -318,9 +318,9 @@
     "semantic_hash": ""
   },
   ".agents/skills/embedded_flasher/SKILL.md": {
-    "mtime": 1793921048.4409618,
-    "seen": 1794096118.3418,
-    "ast_hash": "17bfb590843247ff2a9a3332443b9299",
+    "mtime": 1794352891.8233192,
+    "seen": 1794353230.1228046,
+    "ast_hash": "342d7420bb9f69849180dea28c20b796",
     "semantic_hash": ""
   },
   ".agents/skills/git_deployer/SKILL.md": {
@@ -378,9 +378,9 @@
     "semantic_hash": ""
   },
   "DIARIO_ALTERACOES.md": {
-    "mtime": 1794184723.6684725,
-    "seen": 1794240081.6012714,
-    "ast_hash": "8a1c7c1e20be133658e93793f274fa13",
+    "mtime": 1794352909.5394945,
+    "seen": 1794353230.1228318,
+    "ast_hash": "8733450ee8088cde2d5a1d2fb010287d",
     "semantic_hash": ""
   },
   "README.md": {
@@ -648,9 +648,9 @@
     "semantic_hash": ""
   },
   "tests/test_flapping_regression.py": {
-    "mtime": 1794184492.5878463,
-    "seen": 1794184698.2241302,
-    "ast_hash": "af1e3a0b62d6b7c3b76f2dfd0d29a41d",
+    "mtime": 1794357022.592454,
+    "seen": 1794357075.053349,
+    "ast_hash": "70c3db24135a92891a5cc8441106a1d7",
     "semantic_hash": ""
   },
   "docs/BACKLOG.md": {
@@ -669,6 +669,12 @@
     "mtime": 1794183798.4758437,
     "seen": 1794184698.2241912,
     "ast_hash": "4f324302ee85f45314d66a4df30053d2",
+    "semantic_hash": ""
+  },
+  "scripts/08_flash_firmware.sh": {
+    "mtime": 1794354304.0710864,
+    "seen": 1794354769.225493,
+    "ast_hash": "1d808969b42a993183bfaf69df530dc2",
     "semantic_hash": ""
   }
 }
