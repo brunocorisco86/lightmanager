@@ -59,8 +59,8 @@ CAMERA_MAX_CONTINUOUS_SECONDS = float(os.getenv("CAMERA_MAX_CONTINUOUS_SECONDS",
 # Perfis de Canal de Câmera (IA Nativa vs Movimento Emulado)
 AI_HUMAN_CHANNELS = {1, 3, 4, 6}          # Câmeras com IA neural de corpo humano nativa
 MOTION_EMULATED_CHANNELS = {2, 5}         # Câmeras com detecção pura de pixels (requerem compensação)
-MOTION_MIN_PULSES_REQUIRED = int(os.getenv("MOTION_MIN_PULSES_REQUIRED", "3"))        # Mínimo de 3 pulsos para pedestre
-MOTION_MIN_INTERVAL_SECONDS = float(os.getenv("MOTION_MIN_INTERVAL_SECONDS", "3.0"))  # Pelo menos 3.0s de caminhada
+MOTION_MIN_PULSES_REQUIRED = int(os.getenv("MOTION_MIN_PULSES_REQUIRED", "2"))        # Mínimo de 2 pulsos para pedestre
+MOTION_MIN_INTERVAL_SECONDS = float(os.getenv("MOTION_MIN_INTERVAL_SECONDS", "2.0"))  # Pelo menos 2.0s de caminhada
 MOTION_MAX_WINDOW_SECONDS = float(os.getenv("MOTION_MAX_WINDOW_SECONDS", "8.0"))      # Janela máxima de 8.0s
 
 # Telegram
@@ -950,7 +950,7 @@ def process_nvr_alarm_packet(client, pkt: dict):
                 probation.setdefault("pulses", []).append(now_ts)
                 pulses = probation["pulses"]
 
-                # Emulação por Densidade: pelo menos 3 pulsos espaçados entre 3.0s e 8.0s (passos contínuos)
+                # Emulação por Densidade: pelo menos 2 pulsos espaçados entre 2.0s e 8.0s (passos contínuos)
                 is_density_confirmed = (
                     len(pulses) >= MOTION_MIN_PULSES_REQUIRED
                     and (MOTION_MIN_INTERVAL_SECONDS <= elapsed <= MOTION_MAX_WINDOW_SECONDS)

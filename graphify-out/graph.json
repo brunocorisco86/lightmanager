@@ -1069,7 +1069,7 @@
       "file_type": "code",
       "norm_label": "test_hybrid_d02_precursor_to_d01_or_d03()",
       "source_file": "tests/test_flapping_regression.py",
-      "source_location": "L317"
+      "source_location": "L312"
     },
     {
       "id": "tests_test_flapping_regression_test_hybrid_d02_while_on_single_pulse_does_not_starve_timer",
@@ -1081,7 +1081,7 @@
       "file_type": "code",
       "norm_label": "test_hybrid_d02_while_on_single_pulse_does_not_starve_timer()",
       "source_file": "tests/test_flapping_regression.py",
-      "source_location": "L349"
+      "source_location": "L344"
     },
     {
       "id": "tests_test_flapping_regression_test_hybrid_d02_while_on_sustained_motion_renews_timer",
@@ -1093,7 +1093,7 @@
       "file_type": "code",
       "norm_label": "test_hybrid_d02_while_on_sustained_motion_renews_timer()",
       "source_file": "tests/test_flapping_regression.py",
-      "source_location": "L371"
+      "source_location": "L366"
     },
     {
       "id": "tests_test_flapping_regression_test_presence_ai_human_detection_activates_immediately",
@@ -12769,17 +12769,17 @@
     },
     {
       "id": "tests_test_flapping_regression_rationale_281",
-      "label": "D02 isolada: pedestre caminhando emite >= 3 pulsos entre 3.0s e 8.0s ->\u2026",
+      "label": "D02 isolada: pedestre caminhando emite >= 2 pulsos entre 2.0s e 8.0s ->\u2026",
       "_origin": "ast",
       "community": 10,
       "community_name": "test_flapping_regression.py",
       "file_type": "rationale",
-      "norm_label": "d02 isolada: pedestre caminhando emite >= 3 pulsos entre 3.0s e 8.0s ->...",
+      "norm_label": "d02 isolada: pedestre caminhando emite >= 2 pulsos entre 2.0s e 8.0s ->...",
       "source_file": "tests/test_flapping_regression.py",
       "source_location": "L281"
     },
     {
-      "id": "tests_test_flapping_regression_rationale_318",
+      "id": "tests_test_flapping_regression_rationale_313",
       "label": "D02 (rua) detecta movimento e D03 (IA no port\u00e3o) confirma em at\u00e9 5s -> liga\u2026",
       "_origin": "ast",
       "community": 10,
@@ -12787,10 +12787,10 @@
       "file_type": "rationale",
       "norm_label": "d02 (rua) detecta movimento e d03 (ia no portao) confirma em ate 5s -> liga...",
       "source_file": "tests/test_flapping_regression.py",
-      "source_location": "L318"
+      "source_location": "L313"
     },
     {
-      "id": "tests_test_flapping_regression_rationale_350",
+      "id": "tests_test_flapping_regression_rationale_345",
       "label": "Com Muro j\u00e1 ON, pulso \u00fanico em D02 (carro passando na rua) N\u00c3O renova o timer\u2026",
       "_origin": "ast",
       "community": 10,
@@ -12798,10 +12798,10 @@
       "file_type": "rationale",
       "norm_label": "com muro ja on, pulso unico em d02 (carro passando na rua) nao renova o timer...",
       "source_file": "tests/test_flapping_regression.py",
-      "source_location": "L350"
+      "source_location": "L345"
     },
     {
-      "id": "tests_test_flapping_regression_rationale_372",
+      "id": "tests_test_flapping_regression_rationale_367",
       "label": "Com Muro j\u00e1 ON, movimento sustentado em D02 (2 pulsos com dt >= 2.0s) renova o\u2026",
       "_origin": "ast",
       "community": 10,
@@ -12809,7 +12809,7 @@
       "file_type": "rationale",
       "norm_label": "com muro ja on, movimento sustentado em d02 (2 pulsos com dt >= 2.0s) renova o...",
       "source_file": "tests/test_flapping_regression.py",
-      "source_location": "L372"
+      "source_location": "L367"
     },
     {
       "id": "tests_test_flapping_regression_rationale_91",
@@ -20220,7 +20220,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "tests/test_flapping_regression.py",
-      "source_location": "L335",
+      "source_location": "L330",
       "weight": 1.0
     },
     {
@@ -20232,7 +20232,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "tests/test_flapping_regression.py",
-      "source_location": "L363",
+      "source_location": "L358",
       "weight": 1.0
     },
     {
@@ -20244,7 +20244,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "tests/test_flapping_regression.py",
-      "source_location": "L385",
+      "source_location": "L380",
       "weight": 1.0
     },
     {
@@ -42423,7 +42423,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "tests/test_flapping_regression.py",
-      "source_location": "L317",
+      "source_location": "L312",
       "weight": 1.0
     },
     {
@@ -42434,7 +42434,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "tests/test_flapping_regression.py",
-      "source_location": "L349",
+      "source_location": "L344",
       "weight": 1.0
     },
     {
@@ -42445,7 +42445,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "tests/test_flapping_regression.py",
-      "source_location": "L371",
+      "source_location": "L366",
       "weight": 1.0
     },
     {
@@ -53031,36 +53031,36 @@
       "weight": 1.0
     },
     {
-      "source": "tests_test_flapping_regression_rationale_318",
+      "source": "tests_test_flapping_regression_rationale_313",
       "target": "tests_test_flapping_regression_test_hybrid_d02_precursor_to_d01_or_d03",
       "relation": "rationale_for",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "tests/test_flapping_regression.py",
-      "source_location": "L318",
+      "source_location": "L313",
       "weight": 1.0
     },
     {
-      "source": "tests_test_flapping_regression_rationale_350",
+      "source": "tests_test_flapping_regression_rationale_345",
       "target": "tests_test_flapping_regression_test_hybrid_d02_while_on_single_pulse_does_not_starve_timer",
       "relation": "rationale_for",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "tests/test_flapping_regression.py",
-      "source_location": "L350",
+      "source_location": "L345",
       "weight": 1.0
     },
     {
-      "source": "tests_test_flapping_regression_rationale_372",
+      "source": "tests_test_flapping_regression_rationale_367",
       "target": "tests_test_flapping_regression_test_hybrid_d02_while_on_sustained_motion_renews_timer",
       "relation": "rationale_for",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "tests/test_flapping_regression.py",
-      "source_location": "L372",
+      "source_location": "L367",
       "weight": 1.0
     },
     {
@@ -54589,5 +54589,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "76d01144f215346236c47131490e46f572fd4643"
+  "built_at_commit": "b4ce9b55d75cd2b3eee036d0332a2dfa171978f3"
 }

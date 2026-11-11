@@ -278,7 +278,7 @@ def test_hybrid_d02_alone_car_transient_ignored():
 
 
 def test_hybrid_d02_alone_sustained_pedestrian_triggers():
-    """D02 isolada: pedestre caminhando emite >= 3 pulsos entre 3.0s e 8.0s -> presença emulada CONFIRMADA!"""
+    """D02 isolada: pedestre caminhando emite >= 2 pulsos entre 2.0s e 8.0s -> presença emulada CONFIRMADA!"""
     import scripts.solar_worker as sw
     sw.current_states["home/outdoor/muro"] = "OFF"
     sw.active_camera_timers.clear()
@@ -296,18 +296,13 @@ def test_hybrid_d02_alone_sustained_pedestrian_triggers():
          patch("scripts.solar_worker.log_event_to_db"):
         _setup_nvr_mock_db(mock_conn, channels="1,2,3")
 
-        # Pulso 1 em t=7000.0s
+        # Pulso 1 em t=7000.0s (entra em probation)
         with patch("time.time", return_value=7000.0):
             sw.process_nvr_alarm_packet(client, pkt_d02)
             client.publish.assert_not_called()
 
-        # Pulso 2 em t=7002.0s
-        with patch("time.time", return_value=7002.0):
-            sw.process_nvr_alarm_packet(client, pkt_d02)
-            client.publish.assert_not_called()
-
-        # Pulso 3 em t=7004.2s (3 pulsos, elapsed=4.2s >= 3.0s e <= 8.0s) -> PRESENÇA EMULADA CONFIRMADA!
-        with patch("time.time", return_value=7004.2):
+        # Pulso 2 em t=7002.5s (2 pulsos, elapsed=2.5s >= 2.0s e <= 8.0s) -> PRESENÇA EMULADA CONFIRMADA!
+        with patch("time.time", return_value=7002.5):
             sw.process_nvr_alarm_packet(client, pkt_d02)
             client.publish.assert_called_with("home/outdoor/muro/set", "ON", qos=1, retain=True)
             assert sw.current_states["home/outdoor/muro"] == "ON"
