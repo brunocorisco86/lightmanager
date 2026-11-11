@@ -1045,7 +1045,7 @@
       "file_type": "code",
       "norm_label": "test_hybrid_d02_alone_car_transient_ignored()",
       "source_file": "tests/test_flapping_regression.py",
-      "source_location": "L253"
+      "source_location": "L248"
     },
     {
       "id": "tests_test_flapping_regression_test_hybrid_d02_alone_sustained_pedestrian_triggers",
@@ -1057,7 +1057,7 @@
       "file_type": "code",
       "norm_label": "test_hybrid_d02_alone_sustained_pedestrian_triggers()",
       "source_file": "tests/test_flapping_regression.py",
-      "source_location": "L285"
+      "source_location": "L280"
     },
     {
       "id": "tests_test_flapping_regression_test_hybrid_d02_precursor_to_d01_or_d03",
@@ -1069,7 +1069,7 @@
       "file_type": "code",
       "norm_label": "test_hybrid_d02_precursor_to_d01_or_d03()",
       "source_file": "tests/test_flapping_regression.py",
-      "source_location": "L322"
+      "source_location": "L317"
     },
     {
       "id": "tests_test_flapping_regression_test_hybrid_d02_while_on_single_pulse_does_not_starve_timer",
@@ -1081,7 +1081,7 @@
       "file_type": "code",
       "norm_label": "test_hybrid_d02_while_on_single_pulse_does_not_starve_timer()",
       "source_file": "tests/test_flapping_regression.py",
-      "source_location": "L354"
+      "source_location": "L349"
     },
     {
       "id": "tests_test_flapping_regression_test_hybrid_d02_while_on_sustained_motion_renews_timer",
@@ -1093,7 +1093,19 @@
       "file_type": "code",
       "norm_label": "test_hybrid_d02_while_on_sustained_motion_renews_timer()",
       "source_file": "tests/test_flapping_regression.py",
-      "source_location": "L376"
+      "source_location": "L371"
+    },
+    {
+      "id": "tests_test_flapping_regression_test_presence_ai_human_detection_activates_immediately",
+      "label": "test_presence_ai_human_detection_activates_immediately()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 10,
+      "community_name": "test_flapping_regression.py",
+      "file_type": "code",
+      "norm_label": "test_presence_ai_human_detection_activates_immediately()",
+      "source_file": "tests/test_flapping_regression.py",
+      "source_location": "L137"
     },
     {
       "id": "tests_test_flapping_regression_test_presence_continuous_ceiling_stops_renewal",
@@ -1105,7 +1117,7 @@
       "file_type": "code",
       "norm_label": "test_presence_continuous_ceiling_stops_renewal()",
       "source_file": "tests/test_flapping_regression.py",
-      "source_location": "L231"
+      "source_location": "L226"
     },
     {
       "id": "tests_test_flapping_regression_test_presence_cooldown_anti_flippering",
@@ -1117,7 +1129,7 @@
       "file_type": "code",
       "norm_label": "test_presence_cooldown_anti_flippering()",
       "source_file": "tests/test_flapping_regression.py",
-      "source_location": "L200"
+      "source_location": "L195"
     },
     {
       "id": "tests_test_flapping_regression_test_presence_cross_camera_correlation_confirms_immediately",
@@ -1129,19 +1141,7 @@
       "file_type": "code",
       "norm_label": "test_presence_cross_camera_correlation_confirms_immediately()",
       "source_file": "tests/test_flapping_regression.py",
-      "source_location": "L169"
-    },
-    {
-      "id": "tests_test_flapping_regression_test_presence_sustained_human_walkby_confirms_and_activates",
-      "label": "test_presence_sustained_human_walkby_confirms_and_activates()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 10,
-      "community_name": "test_flapping_regression.py",
-      "file_type": "code",
-      "norm_label": "test_presence_sustained_human_walkby_confirms_and_activates()",
-      "source_file": "tests/test_flapping_regression.py",
-      "source_location": "L137"
+      "source_location": "L164"
     },
     {
       "id": "tests_test_flapping_regression_test_presence_transient_vehicle_pulse_ignored",
@@ -2413,7 +2413,7 @@
       "file_type": "code",
       "norm_label": "check_expired_camera_timers()",
       "source_file": "scripts/solar_worker.py",
-      "source_location": "L1057"
+      "source_location": "L1035"
     },
     {
       "id": "scripts_solar_worker_fetch_sun_data_with_retry",
@@ -2497,7 +2497,7 @@
       "file_type": "code",
       "norm_label": "nvr_guard_worker()",
       "source_file": "scripts/solar_worker.py",
-      "source_location": "L1097"
+      "source_location": "L1075"
     },
     {
       "id": "scripts_solar_worker_on_connect",
@@ -12703,39 +12703,39 @@
     },
     {
       "id": "tests_test_flapping_regression_rationale_112",
-      "label": "Um carro ou moto veloz dispara apenas 1 pulso r\u00e1pido (< 2s) -> rel\u00e9 N\u00c3O liga.",
+      "label": "Um carro ou moto veloz na c\u00e2mera de movimento (D02, canal 2) dispara 1 pulso ->\u2026",
       "_origin": "ast",
       "community": 10,
       "community_name": "test_flapping_regression.py",
       "file_type": "rationale",
-      "norm_label": "um carro ou moto veloz dispara apenas 1 pulso rapido (< 2s) -> rele nao liga.",
+      "norm_label": "um carro ou moto veloz na camera de movimento (d02, canal 2) dispara 1 pulso ->...",
       "source_file": "tests/test_flapping_regression.py",
       "source_location": "L112"
     },
     {
       "id": "tests_test_flapping_regression_rationale_138",
-      "label": "Dois pulsos espa\u00e7ados entre 2.0s e 7.0s (pedestre caminhando) -> confirma e\u2026",
+      "label": "C\u00e2mera com IA de corpo humano (D03, canal 3): pulso de IA liga o rel\u00e9 de\u2026",
       "_origin": "ast",
       "community": 10,
       "community_name": "test_flapping_regression.py",
       "file_type": "rationale",
-      "norm_label": "dois pulsos espacados entre 2.0s e 7.0s (pedestre caminhando) -> confirma e...",
+      "norm_label": "camera com ia de corpo humano (d03, canal 3): pulso de ia liga o rele de...",
       "source_file": "tests/test_flapping_regression.py",
       "source_location": "L138"
     },
     {
-      "id": "tests_test_flapping_regression_rationale_170",
-      "label": "C\u00e2meras diferentes vinculadas (D03 e D04) detectando dentro da janela confirmam\u2026",
+      "id": "tests_test_flapping_regression_rationale_165",
+      "label": "D02 (movimento precursor) seguido de D04 (IA) confirma imediatamente.",
       "_origin": "ast",
       "community": 10,
       "community_name": "test_flapping_regression.py",
       "file_type": "rationale",
-      "norm_label": "cameras diferentes vinculadas (d03 e d04) detectando dentro da janela confirmam...",
+      "norm_label": "d02 (movimento precursor) seguido de d04 (ia) confirma imediatamente.",
       "source_file": "tests/test_flapping_regression.py",
-      "source_location": "L170"
+      "source_location": "L165"
     },
     {
-      "id": "tests_test_flapping_regression_rationale_201",
+      "id": "tests_test_flapping_regression_rationale_196",
       "label": "Ap\u00f3s desligamento por timeout, novo alarme durante cooldown de 15s \u00e9 ignorado.",
       "_origin": "ast",
       "community": 10,
@@ -12743,10 +12743,10 @@
       "file_type": "rationale",
       "norm_label": "apos desligamento por timeout, novo alarme durante cooldown de 15s e ignorado.",
       "source_file": "tests/test_flapping_regression.py",
-      "source_location": "L201"
+      "source_location": "L196"
     },
     {
-      "id": "tests_test_flapping_regression_rationale_232",
+      "id": "tests_test_flapping_regression_rationale_227",
       "label": "Se a l\u00e2mpada ficar 300s ininterruptos ligada, novos alarmes n\u00e3o renovam o timer.",
       "_origin": "ast",
       "community": 10,
@@ -12754,10 +12754,10 @@
       "file_type": "rationale",
       "norm_label": "se a lampada ficar 300s ininterruptos ligada, novos alarmes nao renovam o timer.",
       "source_file": "tests/test_flapping_regression.py",
-      "source_location": "L232"
+      "source_location": "L227"
     },
     {
-      "id": "tests_test_flapping_regression_rationale_254",
+      "id": "tests_test_flapping_regression_rationale_249",
       "label": "D02 isolada (canal 2, movimento puro): 1 ou 2 pulsos r\u00e1pidos de ve\u00edculo n\u00e3o\u2026",
       "_origin": "ast",
       "community": 10,
@@ -12765,10 +12765,10 @@
       "file_type": "rationale",
       "norm_label": "d02 isolada (canal 2, movimento puro): 1 ou 2 pulsos rapidos de veiculo nao...",
       "source_file": "tests/test_flapping_regression.py",
-      "source_location": "L254"
+      "source_location": "L249"
     },
     {
-      "id": "tests_test_flapping_regression_rationale_286",
+      "id": "tests_test_flapping_regression_rationale_281",
       "label": "D02 isolada: pedestre caminhando emite >= 3 pulsos entre 3.0s e 8.0s ->\u2026",
       "_origin": "ast",
       "community": 10,
@@ -12776,10 +12776,10 @@
       "file_type": "rationale",
       "norm_label": "d02 isolada: pedestre caminhando emite >= 3 pulsos entre 3.0s e 8.0s ->...",
       "source_file": "tests/test_flapping_regression.py",
-      "source_location": "L286"
+      "source_location": "L281"
     },
     {
-      "id": "tests_test_flapping_regression_rationale_323",
+      "id": "tests_test_flapping_regression_rationale_318",
       "label": "D02 (rua) detecta movimento e D03 (IA no port\u00e3o) confirma em at\u00e9 5s -> liga\u2026",
       "_origin": "ast",
       "community": 10,
@@ -12787,10 +12787,10 @@
       "file_type": "rationale",
       "norm_label": "d02 (rua) detecta movimento e d03 (ia no portao) confirma em ate 5s -> liga...",
       "source_file": "tests/test_flapping_regression.py",
-      "source_location": "L323"
+      "source_location": "L318"
     },
     {
-      "id": "tests_test_flapping_regression_rationale_355",
+      "id": "tests_test_flapping_regression_rationale_350",
       "label": "Com Muro j\u00e1 ON, pulso \u00fanico em D02 (carro passando na rua) N\u00c3O renova o timer\u2026",
       "_origin": "ast",
       "community": 10,
@@ -12798,10 +12798,10 @@
       "file_type": "rationale",
       "norm_label": "com muro ja on, pulso unico em d02 (carro passando na rua) nao renova o timer...",
       "source_file": "tests/test_flapping_regression.py",
-      "source_location": "L355"
+      "source_location": "L350"
     },
     {
-      "id": "tests_test_flapping_regression_rationale_377",
+      "id": "tests_test_flapping_regression_rationale_372",
       "label": "Com Muro j\u00e1 ON, movimento sustentado em D02 (2 pulsos com dt >= 2.0s) renova o\u2026",
       "_origin": "ast",
       "community": 10,
@@ -12809,7 +12809,7 @@
       "file_type": "rationale",
       "norm_label": "com muro ja on, movimento sustentado em d02 (2 pulsos com dt >= 2.0s) renova o...",
       "source_file": "tests/test_flapping_regression.py",
-      "source_location": "L377"
+      "source_location": "L372"
     },
     {
       "id": "tests_test_flapping_regression_rationale_91",
@@ -14487,7 +14487,7 @@
       "source_location": "L1"
     },
     {
-      "id": "scripts_solar_worker_rationale_1058",
+      "id": "scripts_solar_worker_rationale_1036",
       "label": "Verifica os timers ativos de pontos acionados por c\u00e2mera e gerencia expira\u00e7\u00e3o\u2026",
       "_origin": "ast",
       "community": 2,
@@ -14495,10 +14495,10 @@
       "file_type": "rationale",
       "norm_label": "verifica os timers ativos de pontos acionados por camera e gerencia expiracao...",
       "source_file": "scripts/solar_worker.py",
-      "source_location": "L1058"
+      "source_location": "L1036"
     },
     {
-      "id": "scripts_solar_worker_rationale_1098",
+      "id": "scripts_solar_worker_rationale_1076",
       "label": "Thread leve (somente-leitura no NVR) que mant\u00e9m sess\u00e3o Guard (msg_id=1500)\u2026",
       "_origin": "ast",
       "community": 2,
@@ -14506,7 +14506,7 @@
       "file_type": "rationale",
       "norm_label": "thread leve (somente-leitura no nvr) que mantem sessao guard (msg_id=1500)...",
       "source_file": "scripts/solar_worker.py",
-      "source_location": "L1098"
+      "source_location": "L1076"
     },
     {
       "id": "scripts_solar_worker_rationale_168",
@@ -19440,7 +19440,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "scripts/solar_worker.py",
-      "source_location": "L1082",
+      "source_location": "L1060",
       "weight": 1.0
     },
     {
@@ -19512,7 +19512,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "scripts/solar_worker.py",
-      "source_location": "L1109",
+      "source_location": "L1087",
       "weight": 1.0
     },
     {
@@ -19524,7 +19524,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "scripts/solar_worker.py",
-      "source_location": "L1117",
+      "source_location": "L1095",
       "weight": 1.0
     },
     {
@@ -19536,7 +19536,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "scripts/solar_worker.py",
-      "source_location": "L1124",
+      "source_location": "L1102",
       "weight": 1.0
     },
     {
@@ -19596,7 +19596,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "scripts/solar_worker.py",
-      "source_location": "L1031",
+      "source_location": "L1009",
       "weight": 1.0
     },
     {
@@ -19608,7 +19608,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "scripts/solar_worker.py",
-      "source_location": "L1054",
+      "source_location": "L1032",
       "weight": 1.0
     },
     {
@@ -20196,7 +20196,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "tests/test_flapping_regression.py",
-      "source_location": "L270",
+      "source_location": "L265",
       "weight": 1.0
     },
     {
@@ -20208,7 +20208,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "tests/test_flapping_regression.py",
-      "source_location": "L302",
+      "source_location": "L297",
       "weight": 1.0
     },
     {
@@ -20220,7 +20220,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "tests/test_flapping_regression.py",
-      "source_location": "L340",
+      "source_location": "L335",
       "weight": 1.0
     },
     {
@@ -20232,7 +20232,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "tests/test_flapping_regression.py",
-      "source_location": "L368",
+      "source_location": "L363",
       "weight": 1.0
     },
     {
@@ -20244,7 +20244,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "tests/test_flapping_regression.py",
-      "source_location": "L390",
+      "source_location": "L385",
       "weight": 1.0
     },
     {
@@ -20260,6 +20260,18 @@
       "weight": 1.0
     },
     {
+      "source": "tests_test_flapping_regression_test_presence_ai_human_detection_activates_immediately",
+      "target": "tests_test_flapping_regression_setup_nvr_mock_db",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "tests/test_flapping_regression.py",
+      "source_location": "L153",
+      "weight": 1.0
+    },
+    {
       "source": "tests_test_flapping_regression_test_presence_continuous_ceiling_stops_renewal",
       "target": "tests_test_flapping_regression_setup_nvr_mock_db",
       "relation": "calls",
@@ -20268,7 +20280,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "tests/test_flapping_regression.py",
-      "source_location": "L244",
+      "source_location": "L239",
       "weight": 1.0
     },
     {
@@ -20280,7 +20292,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "tests/test_flapping_regression.py",
-      "source_location": "L215",
+      "source_location": "L210",
       "weight": 1.0
     },
     {
@@ -20292,19 +20304,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "tests/test_flapping_regression.py",
-      "source_location": "L186",
-      "weight": 1.0
-    },
-    {
-      "source": "tests_test_flapping_regression_test_presence_sustained_human_walkby_confirms_and_activates",
-      "target": "tests_test_flapping_regression_setup_nvr_mock_db",
-      "relation": "calls",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "call",
-      "source_file": "tests/test_flapping_regression.py",
-      "source_location": "L153",
+      "source_location": "L181",
       "weight": 1.0
     },
     {
@@ -41829,7 +41829,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "scripts/solar_worker.py",
-      "source_location": "L1057",
+      "source_location": "L1035",
       "weight": 1.0
     },
     {
@@ -41840,7 +41840,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "scripts/solar_worker.py",
-      "source_location": "L1097",
+      "source_location": "L1075",
       "weight": 1.0
     },
     {
@@ -42340,7 +42340,7 @@
     },
     {
       "source": "tests_test_flapping_regression",
-      "target": "tests_test_flapping_regression_test_presence_sustained_human_walkby_confirms_and_activates",
+      "target": "tests_test_flapping_regression_test_presence_ai_human_detection_activates_immediately",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -42357,7 +42357,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "tests/test_flapping_regression.py",
-      "source_location": "L169",
+      "source_location": "L164",
       "weight": 1.0
     },
     {
@@ -42379,7 +42379,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "tests/test_flapping_regression.py",
-      "source_location": "L200",
+      "source_location": "L195",
       "weight": 1.0
     },
     {
@@ -42390,7 +42390,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "tests/test_flapping_regression.py",
-      "source_location": "L231",
+      "source_location": "L226",
       "weight": 1.0
     },
     {
@@ -42401,7 +42401,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "tests/test_flapping_regression.py",
-      "source_location": "L253",
+      "source_location": "L248",
       "weight": 1.0
     },
     {
@@ -42412,7 +42412,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "tests/test_flapping_regression.py",
-      "source_location": "L285",
+      "source_location": "L280",
       "weight": 1.0
     },
     {
@@ -42423,7 +42423,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "tests/test_flapping_regression.py",
-      "source_location": "L322",
+      "source_location": "L317",
       "weight": 1.0
     },
     {
@@ -42434,7 +42434,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "tests/test_flapping_regression.py",
-      "source_location": "L354",
+      "source_location": "L349",
       "weight": 1.0
     },
     {
@@ -42445,7 +42445,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "tests/test_flapping_regression.py",
-      "source_location": "L376",
+      "source_location": "L371",
       "weight": 1.0
     },
     {
@@ -52646,25 +52646,25 @@
       "weight": 1.0
     },
     {
-      "source": "scripts_solar_worker_rationale_1058",
+      "source": "scripts_solar_worker_rationale_1036",
       "target": "scripts_solar_worker_check_expired_camera_timers",
       "relation": "rationale_for",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "scripts/solar_worker.py",
-      "source_location": "L1058",
+      "source_location": "L1036",
       "weight": 1.0
     },
     {
-      "source": "scripts_solar_worker_rationale_1098",
+      "source": "scripts_solar_worker_rationale_1076",
       "target": "scripts_solar_worker_nvr_guard_worker",
       "relation": "rationale_for",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "scripts/solar_worker.py",
-      "source_location": "L1098",
+      "source_location": "L1076",
       "weight": 1.0
     },
     {
@@ -52966,7 +52966,7 @@
     },
     {
       "source": "tests_test_flapping_regression_rationale_138",
-      "target": "tests_test_flapping_regression_test_presence_sustained_human_walkby_confirms_and_activates",
+      "target": "tests_test_flapping_regression_test_presence_ai_human_detection_activates_immediately",
       "relation": "rationale_for",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -52976,91 +52976,91 @@
       "weight": 1.0
     },
     {
-      "source": "tests_test_flapping_regression_rationale_170",
+      "source": "tests_test_flapping_regression_rationale_165",
       "target": "tests_test_flapping_regression_test_presence_cross_camera_correlation_confirms_immediately",
       "relation": "rationale_for",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "tests/test_flapping_regression.py",
-      "source_location": "L170",
+      "source_location": "L165",
       "weight": 1.0
     },
     {
-      "source": "tests_test_flapping_regression_rationale_201",
+      "source": "tests_test_flapping_regression_rationale_196",
       "target": "tests_test_flapping_regression_test_presence_cooldown_anti_flippering",
       "relation": "rationale_for",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "tests/test_flapping_regression.py",
-      "source_location": "L201",
+      "source_location": "L196",
       "weight": 1.0
     },
     {
-      "source": "tests_test_flapping_regression_rationale_232",
+      "source": "tests_test_flapping_regression_rationale_227",
       "target": "tests_test_flapping_regression_test_presence_continuous_ceiling_stops_renewal",
       "relation": "rationale_for",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "tests/test_flapping_regression.py",
-      "source_location": "L232",
+      "source_location": "L227",
       "weight": 1.0
     },
     {
-      "source": "tests_test_flapping_regression_rationale_254",
+      "source": "tests_test_flapping_regression_rationale_249",
       "target": "tests_test_flapping_regression_test_hybrid_d02_alone_car_transient_ignored",
       "relation": "rationale_for",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "tests/test_flapping_regression.py",
-      "source_location": "L254",
+      "source_location": "L249",
       "weight": 1.0
     },
     {
-      "source": "tests_test_flapping_regression_rationale_286",
+      "source": "tests_test_flapping_regression_rationale_281",
       "target": "tests_test_flapping_regression_test_hybrid_d02_alone_sustained_pedestrian_triggers",
       "relation": "rationale_for",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "tests/test_flapping_regression.py",
-      "source_location": "L286",
+      "source_location": "L281",
       "weight": 1.0
     },
     {
-      "source": "tests_test_flapping_regression_rationale_323",
+      "source": "tests_test_flapping_regression_rationale_318",
       "target": "tests_test_flapping_regression_test_hybrid_d02_precursor_to_d01_or_d03",
       "relation": "rationale_for",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "tests/test_flapping_regression.py",
-      "source_location": "L323",
+      "source_location": "L318",
       "weight": 1.0
     },
     {
-      "source": "tests_test_flapping_regression_rationale_355",
+      "source": "tests_test_flapping_regression_rationale_350",
       "target": "tests_test_flapping_regression_test_hybrid_d02_while_on_single_pulse_does_not_starve_timer",
       "relation": "rationale_for",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "tests/test_flapping_regression.py",
-      "source_location": "L355",
+      "source_location": "L350",
       "weight": 1.0
     },
     {
-      "source": "tests_test_flapping_regression_rationale_377",
+      "source": "tests_test_flapping_regression_rationale_372",
       "target": "tests_test_flapping_regression_test_hybrid_d02_while_on_sustained_motion_renews_timer",
       "relation": "rationale_for",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "tests/test_flapping_regression.py",
-      "source_location": "L377",
+      "source_location": "L372",
       "weight": 1.0
     },
     {
@@ -54272,7 +54272,7 @@
       "confidence_score": 0.85,
       "context": "assignment",
       "source_file": "scripts/solar_worker.py",
-      "source_location": "L1140",
+      "source_location": "L1118",
       "weight": 1.0
     },
     {
@@ -54284,7 +54284,7 @@
       "confidence_score": 0.85,
       "context": "assignment",
       "source_file": "scripts/solar_worker.py",
-      "source_location": "L1141",
+      "source_location": "L1119",
       "weight": 1.0
     },
     {
@@ -54589,5 +54589,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "c1a20602aa81994f707305f0d9ebe6dbc44261e9"
+  "built_at_commit": "76d01144f215346236c47131490e46f572fd4643"
 }

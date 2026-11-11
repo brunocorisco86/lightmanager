@@ -910,72 +910,55 @@ def process_nvr_alarm_packet(client, pkt: dict):
                 continue
 
             # 2.3 Motor Híbrido de Presença (IA Nativa vs Movimento Emulado)
-            with camera_timers_lock:
-                probation = pending_presence.get(topic)
-
-            if probation is None:
-                # Primeiro evento: entra em probation e não liga o relé ainda
-                with camera_timers_lock:
-                    pending_presence[topic] = {"first_ts": now_ts, "channels": {ch_num}, "pulses": [now_ts]}
-                in_probation_count += 1
-                tipo_sensor = "IA Humana" if ch_num in AI_HUMAN_CHANNELS else "Movimento Perimetral"
-                logging.info(
-                    f"🚶 Câmera {ch_code} ({tipo_sensor}): Pré-detecção (Probation) para '{name}' ({topic}). "
-                    f"Aguardando confirmação de presença..."
-                )
-                continue
-
-            # Segundo ou subsequente evento durante a probation
-            first_ts = probation["first_ts"]
-            elapsed = now_ts - first_ts
-            channels_seen = probation["channels"]
-            channels_seen.add(ch_num)
-            probation.setdefault("pulses", []).append(now_ts)
-            pulses = probation["pulses"]
-
             presence_confirmed = False
             reason_desc = ""
 
-            # Caso 1: Câmera com IA Nativa (D01, D03, D04, D06)
+            # Caso 1: Câmera com IA Nativa de Corpo Humano (D01, D03, D04, D06)
+            # O SoC neural da câmera já classificou e reconheceu a silhueta humana.
+            # Aciona de imediato para pedestres e moradores (zero latência percebida)
             if ch_num in AI_HUMAN_CHANNELS:
-                is_sustained = (CAMERA_CONFIRMATION_WINDOW_MIN <= elapsed <= CAMERA_CONFIRMATION_WINDOW_MAX)
-                is_cross_camera = (len(channels_seen) >= 2 and elapsed <= CAMERA_CONFIRMATION_WINDOW_MAX)
-                if is_sustained or is_cross_camera:
-                    presence_confirmed = True
-                    reason_desc = (
-                        f"Multi-Câmera ({','.join(f'D{c:02d}' for c in sorted(channels_seen))})"
-                        if is_cross_camera
-                        else f"Persistência Temporal IA ({elapsed:.1f}s)"
-                    )
-                elif elapsed > CAMERA_CONFIRMATION_WINDOW_MAX:
+                presence_confirmed = True
+                with camera_timers_lock:
+                    probation = pending_presence.pop(topic, None)
+                    if probation and probation.get("channels") and any(c not in AI_HUMAN_CHANNELS for c in probation["channels"]):
+                        precursor_ch = list(probation["channels"])[0]
+                        reason_desc = f"Fusão Precursor D{precursor_ch:02d} + IA {ch_code}"
+                    else:
+                        reason_desc = f"Detecção IA {ch_code}"
+
+            # Caso 2: Câmera com Detecção Pura de Movimento de Pixels (D02, D05)
+            # Não possui IA para distinguir carros de pessoas. Aplica emulação por densidade de pulsos.
+            else:
+                with camera_timers_lock:
+                    probation = pending_presence.get(topic)
+
+                if probation is None:
+                    # 1º pulso de movimento: entra em probation (não liga o relé ainda para ignorar carros e faróis rápidos)
                     with camera_timers_lock:
                         pending_presence[topic] = {"first_ts": now_ts, "channels": {ch_num}, "pulses": [now_ts]}
                     in_probation_count += 1
                     logging.info(
-                        f"🚶 Câmera {ch_code}: Janela de probation IA anterior expirou ({elapsed:.1f}s). "
-                        f"Reiniciando probation para '{name}' ({topic})..."
+                        f"🚶 Câmera {ch_code} (Movimento Perimetral): Pré-detecção (Probation) para '{name}' ({topic}). "
+                        f"Aguardando densidade de passos ou confirmação de IA..."
                     )
                     continue
 
-            # Caso 2: Câmera com Detecção Pura de Movimento (D02, D05)
-            else:
-                # Fusão Precursora: se uma câmera com IA já disparou no mesmo ciclo de probation (em até 5.0s)
-                has_ai_precursor = any(c in AI_HUMAN_CHANNELS for c in channels_seen)
-                is_cross_ai = (has_ai_precursor and elapsed <= 5.0)
+                first_ts = probation["first_ts"]
+                elapsed = now_ts - first_ts
+                channels_seen = probation["channels"]
+                channels_seen.add(ch_num)
+                probation.setdefault("pulses", []).append(now_ts)
+                pulses = probation["pulses"]
 
-                # Emulação por Densidade: pelo menos 3 pulsos espaçados entre 3.0s e 8.0s
+                # Emulação por Densidade: pelo menos 3 pulsos espaçados entre 3.0s e 8.0s (passos contínuos)
                 is_density_confirmed = (
                     len(pulses) >= MOTION_MIN_PULSES_REQUIRED
                     and (MOTION_MIN_INTERVAL_SECONDS <= elapsed <= MOTION_MAX_WINDOW_SECONDS)
                 )
 
-                if is_cross_ai or is_density_confirmed:
+                if is_density_confirmed:
                     presence_confirmed = True
-                    reason_desc = (
-                        f"Fusão Precursor + IA ({','.join(f'D{c:02d}' for c in sorted(channels_seen))})"
-                        if is_cross_ai
-                        else f"Presença Emulada ({len(pulses)} pulsos / {elapsed:.1f}s)"
-                    )
+                    reason_desc = f"Presença Emulada ({len(pulses)} pulsos / {elapsed:.1f}s)"
                 elif elapsed > MOTION_MAX_WINDOW_SECONDS:
                     with camera_timers_lock:
                         pending_presence[topic] = {"first_ts": now_ts, "channels": {ch_num}, "pulses": [now_ts]}
@@ -1008,16 +991,11 @@ def process_nvr_alarm_packet(client, pkt: dict):
                     f"LIGANDO por {hold_seconds}s via Broker MQTT"
                 )
                 log_event_to_db(topic, "ON", source=source_tag, cursor=cur)
-            else:
-                logging.debug(
-                    f"🚶 Câmera {ch_code}: Pulso rápido ({elapsed:.2f}s) no mesmo canal. "
-                    f"Mantendo probation para '{name}' ({topic})."
-                )
 
         # Registro na tabela nvr_detections e logs
         if triggered_names:
             last_ts = last_nvr_detection_ts.get(ch_num, 0.0)
-            if (now_ts - last_ts) >= NVR_DEBOUNCE_SECONDS or max_hold_sec > 0:
+            if (now_ts - last_ts) >= NVR_DEBOUNCE_SECONDS:
                 last_nvr_detection_ts[ch_num] = now_ts
                 trig_str = ", ".join(triggered_names)
                 cur.execute(

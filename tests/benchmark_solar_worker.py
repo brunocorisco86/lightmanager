@@ -294,20 +294,17 @@ class TestSolarWorkerPerformance(unittest.TestCase):
             "Name": "AlarmInfo"
         }
 
-        # 1st pulse at t=1000.0: Probation (must NOT turn relay ON yet to ignore vehicle transients)
-        solar_worker.process_nvr_alarm_packet(client, alarm_pkt)
-        client.publish.assert_not_called()
-        self.assertEqual(solar_worker.current_states.get("home/outdoor/muro"), "OFF")
-        self.assertNotIn("home/outdoor/muro", solar_worker.active_camera_timers)
-        self.assertIn("home/outdoor/muro", solar_worker.pending_presence)
-
-        # 2nd pulse 3 seconds later (t=1003.0) from sustained walk-by:
-        # Confirms presence (2.0s <= dt <= 7.0s), turns relay ON and sets hold timer to 1123.0
-        mock_time.time.return_value = 1003.0
+        # 1st pulse at t=1000.0 from D03 (AI camera): Confirms human immediately and turns relay ON
         solar_worker.process_nvr_alarm_packet(client, alarm_pkt)
         client.publish.assert_called_with("home/outdoor/muro/set", "ON", qos=1, retain=True)
         self.assertEqual(solar_worker.current_states.get("home/outdoor/muro"), "ON")
         self.assertIn("home/outdoor/muro", solar_worker.active_camera_timers)
+        self.assertEqual(solar_worker.active_camera_timers["home/outdoor/muro"], 1120.0)
+
+        # 2nd pulse 3 seconds later (t=1003.0) from same walk-by:
+        # Renews hold timer to 1123.0, but debounce prevents duplicate INSERT INTO nvr_detections
+        mock_time.time.return_value = 1003.0
+        solar_worker.process_nvr_alarm_packet(client, alarm_pkt)
         self.assertEqual(solar_worker.active_camera_timers["home/outdoor/muro"], 1123.0)
 
         nvr_det_inserts = [

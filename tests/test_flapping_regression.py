@@ -109,7 +109,7 @@ def _setup_nvr_mock_db(mock_get_conn, channels="3,4"):
 
 
 def test_presence_transient_vehicle_pulse_ignored():
-    """Um carro ou moto veloz dispara apenas 1 pulso rápido (< 2s) -> relé NÃO liga."""
+    """Um carro ou moto veloz na câmera de movimento (D02, canal 2) dispara 1 pulso -> relé NÃO liga."""
     import scripts.solar_worker as sw
     sw.current_states["home/outdoor/muro"] = "OFF"
     sw.active_camera_timers.clear()
@@ -118,24 +118,24 @@ def test_presence_transient_vehicle_pulse_ignored():
     sw.continuous_on_tracker.clear()
 
     client = MagicMock()
-    alarm_pkt = {"AlarmInfo": {"Channel": 2, "Status": "Start"}}  # D03
+    alarm_pkt = {"AlarmInfo": {"Channel": 1, "Status": "Start"}}  # D02 (canal 2, movimento puro)
 
     with patch("scripts.solar_worker.get_db_conn") as mock_conn, \
          patch("scripts.solar_worker.release_db_conn"), \
          patch("scripts.solar_worker.is_currently_night", return_value=True), \
          patch("time.time", return_value=2000.0):
-        _setup_nvr_mock_db(mock_conn)
+        _setup_nvr_mock_db(mock_conn, channels="1,2,3")
         sw.process_nvr_alarm_packet(client, alarm_pkt)
 
-        # Relé não deve ser acionado
+        # Relé não deve ser acionado para pulso único em câmera sem IA
         client.publish.assert_not_called()
         assert sw.current_states["home/outdoor/muro"] == "OFF"
         assert "home/outdoor/muro" in sw.pending_presence
         assert sw.pending_presence["home/outdoor/muro"]["first_ts"] == 2000.0
 
 
-def test_presence_sustained_human_walkby_confirms_and_activates():
-    """Dois pulsos espaçados entre 2.0s e 7.0s (pedestre caminhando) -> confirma e liga relé."""
+def test_presence_ai_human_detection_activates_immediately():
+    """Câmera com IA de corpo humano (D03, canal 3): pulso de IA liga o relé de imediato para pedestres."""
     import scripts.solar_worker as sw
     sw.current_states["home/outdoor/muro"] = "OFF"
     sw.active_camera_timers.clear()
@@ -144,30 +144,25 @@ def test_presence_sustained_human_walkby_confirms_and_activates():
     sw.continuous_on_tracker.clear()
 
     client = MagicMock()
-    alarm_pkt = {"AlarmInfo": {"Channel": 2, "Status": "Start"}}  # D03
+    alarm_pkt = {"AlarmInfo": {"Channel": 2, "Status": "Start"}}  # D03 (canal 3, IA)
 
     with patch("scripts.solar_worker.get_db_conn") as mock_conn, \
          patch("scripts.solar_worker.release_db_conn"), \
          patch("scripts.solar_worker.is_currently_night", return_value=True), \
          patch("scripts.solar_worker.log_event_to_db"):
-        _setup_nvr_mock_db(mock_conn)
+        _setup_nvr_mock_db(mock_conn, channels="1,2,3")
 
-        # 1º pulso (t=2000.0) -> probation
+        # 1º pulso de IA (t=2000.0) -> liga imediatamente!
         with patch("time.time", return_value=2000.0):
-            sw.process_nvr_alarm_packet(client, alarm_pkt)
-            client.publish.assert_not_called()
-
-        # 2º pulso (t=2002.5 -> dt=2.5s) -> confirmação de presença!
-        with patch("time.time", return_value=2002.5):
             sw.process_nvr_alarm_packet(client, alarm_pkt)
             client.publish.assert_called_with("home/outdoor/muro/set", "ON", qos=1, retain=True)
             assert sw.current_states["home/outdoor/muro"] == "ON"
             assert "home/outdoor/muro" not in sw.pending_presence
-            assert sw.active_camera_timers["home/outdoor/muro"] == 2002.5 + 120
+            assert sw.active_camera_timers["home/outdoor/muro"] == 2000.0 + 120
 
 
 def test_presence_cross_camera_correlation_confirms_immediately():
-    """Câmeras diferentes vinculadas (D03 e D04) detectando dentro da janela confirmam imediatamente."""
+    """D02 (movimento precursor) seguido de D04 (IA) confirma imediatamente."""
     import scripts.solar_worker as sw
     sw.current_states["home/outdoor/muro"] = "OFF"
     sw.active_camera_timers.clear()
@@ -176,18 +171,18 @@ def test_presence_cross_camera_correlation_confirms_immediately():
     sw.continuous_on_tracker.clear()
 
     client = MagicMock()
-    pkt_d03 = {"AlarmInfo": {"Channel": 2, "Status": "Start"}}  # D03 (idx 2)
-    pkt_d04 = {"AlarmInfo": {"Channel": 3, "Status": "Start"}}  # D04 (idx 3)
+    pkt_d02 = {"AlarmInfo": {"Channel": 1, "Status": "Start"}}  # D02 (idx 1, movimento)
+    pkt_d04 = {"AlarmInfo": {"Channel": 3, "Status": "Start"}}  # D04 (idx 3, IA)
 
     with patch("scripts.solar_worker.get_db_conn") as mock_conn, \
          patch("scripts.solar_worker.release_db_conn"), \
          patch("scripts.solar_worker.is_currently_night", return_value=True), \
          patch("scripts.solar_worker.log_event_to_db"):
-        _setup_nvr_mock_db(mock_conn, channels="3,4")
+        _setup_nvr_mock_db(mock_conn, channels="1,2,3,4")
 
-        # 1º pulso na D03 em t=3000.0
+        # 1º pulso na D02 em t=3000.0 (precursor na rua, não aciona relé)
         with patch("time.time", return_value=3000.0):
-            sw.process_nvr_alarm_packet(client, pkt_d03)
+            sw.process_nvr_alarm_packet(client, pkt_d02)
             client.publish.assert_not_called()
 
         # 2º pulso na D04 logo em seguida (t=3000.8 -> dt=0.8s) -> correlação multi-câmera confirma!

@@ -1,7 +1,7 @@
 # Graph Report - 9_LIGHT_MANAGER  (2026-11-10)
 
 ## Corpus Check
-- 100 files · ~74,161 words
+- 100 files · ~74,098 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
@@ -10,7 +10,7 @@
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `c1a20602`
+- Built from commit: `76d01144`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -198,7 +198,7 @@ Nodes (24): For /graphify add and --watch, For /graphify query, For the commit h
 
 ### Community 10 - "test_flapping_regression.py"
 Cohesion: 0.10
-Nodes (29): check_and_record_transition(), on_message(), Registra transições e detecta oscilações anômalas (flapping) em tópicos…, Um carro ou moto veloz dispara apenas 1 pulso rápido (< 2s) -> relé NÃO liga., Dois pulsos espaçados entre 2.0s e 7.0s (pedestre caminhando) -> confirma e…, Câmeras diferentes vinculadas (D03 e D04) detectando dentro da janela confirmam…, Após desligamento por timeout, novo alarme durante cooldown de 15s é ignorado., Se a lâmpada ficar 300s ininterruptos ligada, novos alarmes não renovam o timer. (+21 more)
+Nodes (29): check_and_record_transition(), on_message(), Registra transições e detecta oscilações anômalas (flapping) em tópicos…, Um carro ou moto veloz na câmera de movimento (D02, canal 2) dispara 1 pulso ->…, Câmera com IA de corpo humano (D03, canal 3): pulso de IA liga o relé de…, D02 (movimento precursor) seguido de D04 (IA) confirma imediatamente., Após desligamento por timeout, novo alarme durante cooldown de 15s é ignorado., Se a lâmpada ficar 300s ininterruptos ligada, novos alarmes não renovam o timer. (+21 more)
 
 ### Community 11 - "fetch_solar_forecast"
 Cohesion: 0.06
